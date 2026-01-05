@@ -2,71 +2,54 @@
 #include <gtest/gtest.h>
 #include <psr/database.h>
 #include <string>
+#include "database_fixture.h"
 
 namespace fs = std::filesystem;
 
-class DatabaseTest : public ::testing::Test {
-protected:
-    void SetUp() override { test_db_path_ = (fs::temp_directory_path() / "psr_test.db").string(); }
-
-    void TearDown() override {
-        if (fs::exists(test_db_path_)) {
-            fs::remove(test_db_path_);
-        }
-        // Clean up log file
-        auto log_path = fs::temp_directory_path() / "psr_database.log";
-        if (fs::exists(log_path)) {
-            fs::remove(log_path);
-        }
-    }
-
-    std::string test_db_path_;
-};
-
-TEST_F(DatabaseTest, OpenAndClose) {
-    psr::Database db(test_db_path_);
+TEST_F(DatabaseFixture, OpenAndClose) {
+    psr::Database db(path);
     EXPECT_TRUE(db.is_open());
-    EXPECT_EQ(db.path(), test_db_path_);
+    EXPECT_EQ(db.path(), path);
 
     db.close();
     EXPECT_FALSE(db.is_open());
 }
 
-TEST_F(DatabaseTest, OpenInMemory) {
+TEST_F(DatabaseFixture, OpenInMemory) {
     psr::Database db(":memory:");
     EXPECT_TRUE(db.is_open());
     EXPECT_EQ(db.path(), ":memory:");
 }
 
-TEST_F(DatabaseTest, DestructorClosesDatabase) {
+TEST_F(DatabaseFixture, DestructorClosesDatabase) {
     {
-        psr::Database db(test_db_path_);
+        psr::Database db(path);
         EXPECT_TRUE(db.is_open());
     }
     // Database should be closed after destructor
-    EXPECT_TRUE(fs::exists(test_db_path_));
+    EXPECT_TRUE(fs::exists(path));
 }
 
-TEST_F(DatabaseTest, MoveConstructor) {
-    psr::Database db1(test_db_path_);
+TEST_F(DatabaseFixture, MoveConstructor) {
+    psr::Database db1(path);
     EXPECT_TRUE(db1.is_open());
 
     psr::Database db2 = std::move(db1);
     EXPECT_TRUE(db2.is_open());
-    EXPECT_EQ(db2.path(), test_db_path_);
+    EXPECT_EQ(db2.path(), path);
 }
 
-TEST_F(DatabaseTest, MoveAssignment) {
-    psr::Database db1(test_db_path_);
+TEST_F(DatabaseFixture, MoveAssignment) {
+    psr::Database db1(path);
     psr::Database db2(":memory:");
 
     db2 = std::move(db1);
     EXPECT_TRUE(db2.is_open());
-    EXPECT_EQ(db2.path(), test_db_path_);
+    EXPECT_EQ(db2.path(), path);
 }
 
-TEST_F(DatabaseTest, CloseIsIdempotent) {
-    psr::Database db(test_db_path_);
+TEST_F(DatabaseFixture, CloseIsIdempotent) {
+    psr::Database db(path);
     db.close();
     EXPECT_FALSE(db.is_open());
 
@@ -75,20 +58,20 @@ TEST_F(DatabaseTest, CloseIsIdempotent) {
     EXPECT_FALSE(db.is_open());
 }
 
-TEST_F(DatabaseTest, LogLevelDebug) {
+TEST_F(DatabaseFixture, LogLevelDebug) {
     psr::Database db(":memory:", {.console_level = psr::LogLevel::debug});
     EXPECT_TRUE(db.is_open());
 }
 
-TEST_F(DatabaseTest, LogLevelOff) {
+TEST_F(DatabaseFixture, LogLevelOff) {
     psr::Database db(":memory:", {.console_level = psr::LogLevel::off});
     EXPECT_TRUE(db.is_open());
 }
 
-TEST_F(DatabaseTest, CreatesFileOnDisk) {
+TEST_F(DatabaseFixture, CreatesFileOnDisk) {
     {
-        psr::Database db(test_db_path_);
+        psr::Database db(path);
         EXPECT_TRUE(db.is_open());
     }
-    EXPECT_TRUE(fs::exists(test_db_path_));
+    EXPECT_TRUE(fs::exists(path));
 }

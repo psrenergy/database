@@ -2,31 +2,14 @@
 #include <gtest/gtest.h>
 #include <psr/c/database.h>
 #include <string>
+#include "database_fixture.h"
 
 namespace fs = std::filesystem;
 
-class CApiTest : public ::testing::Test {
-protected:
-    void SetUp() override { test_db_path_ = (fs::temp_directory_path() / "psr_c_test.db").string(); }
-
-    void TearDown() override {
-        if (fs::exists(test_db_path_)) {
-            fs::remove(test_db_path_);
-        }
-        // Clean up log file
-        auto log_path = fs::temp_directory_path() / "psr_database.log";
-        if (fs::exists(log_path)) {
-            fs::remove(log_path);
-        }
-    }
-
-    std::string test_db_path_;
-};
-
-TEST_F(CApiTest, OpenAndClose) {
+TEST_F(DatabaseFixture, OpenAndClose) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_open(test_db_path_.c_str(), &options);
+    auto db = psr_database_open(path.c_str(), &options);
 
     ASSERT_NE(db, nullptr);
     EXPECT_EQ(psr_database_is_open(db), 1);
@@ -34,7 +17,7 @@ TEST_F(CApiTest, OpenAndClose) {
     psr_database_close(db);
 }
 
-TEST_F(CApiTest, OpenInMemory) {
+TEST_F(DatabaseFixture, OpenInMemory) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
     auto db = psr_database_open(":memory:", &options);
@@ -45,7 +28,7 @@ TEST_F(CApiTest, OpenInMemory) {
     psr_database_close(db);
 }
 
-TEST_F(CApiTest, OpenNullPath) {
+TEST_F(DatabaseFixture, OpenNullPath) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
     auto db = psr_database_open(nullptr, &options);
@@ -53,18 +36,18 @@ TEST_F(CApiTest, OpenNullPath) {
     EXPECT_EQ(db, nullptr);
 }
 
-TEST_F(CApiTest, DatabasePath) {
+TEST_F(DatabaseFixture, DatabasePath) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_open(test_db_path_.c_str(), &options);
+    auto db = psr_database_open(path.c_str(), &options);
 
     ASSERT_NE(db, nullptr);
-    EXPECT_STREQ(psr_database_path(db), test_db_path_.c_str());
+    EXPECT_STREQ(psr_database_path(db), path.c_str());
 
     psr_database_close(db);
 }
 
-TEST_F(CApiTest, DatabasePathInMemory) {
+TEST_F(DatabaseFixture, DatabasePathInMemory) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
     auto db = psr_database_open(":memory:", &options);
@@ -75,32 +58,32 @@ TEST_F(CApiTest, DatabasePathInMemory) {
     psr_database_close(db);
 }
 
-TEST_F(CApiTest, DatabasePathNullDb) {
+TEST_F(DatabaseFixture, DatabasePathNullDb) {
     EXPECT_EQ(psr_database_path(nullptr), nullptr);
 }
 
-TEST_F(CApiTest, IsOpenNullDb) {
+TEST_F(DatabaseFixture, IsOpenNullDb) {
     EXPECT_EQ(psr_database_is_open(nullptr), 0);
 }
 
-TEST_F(CApiTest, CloseNullDb) {
+TEST_F(DatabaseFixture, CloseNullDb) {
     // Should not crash
     psr_database_close(nullptr);
 }
 
-TEST_F(CApiTest, ErrorStrings) {
+TEST_F(DatabaseFixture, ErrorStrings) {
     EXPECT_STREQ(psr_error_string(PSR_OK), "Success");
     EXPECT_STREQ(psr_error_string(PSR_ERROR_INVALID_ARGUMENT), "Invalid argument");
     EXPECT_STREQ(psr_error_string(PSR_ERROR_DATABASE), "Database error");
 }
 
-TEST_F(CApiTest, Version) {
+TEST_F(DatabaseFixture, Version) {
     auto version = psr_version();
     EXPECT_NE(version, nullptr);
     EXPECT_STREQ(version, "1.0.0");
 }
 
-TEST_F(CApiTest, LogLevelDebug) {
+TEST_F(DatabaseFixture, LogLevelDebug) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_DEBUG;
     auto db = psr_database_open(":memory:", &options);
@@ -110,7 +93,7 @@ TEST_F(CApiTest, LogLevelDebug) {
     psr_database_close(db);
 }
 
-TEST_F(CApiTest, LogLevelInfo) {
+TEST_F(DatabaseFixture, LogLevelInfo) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_INFO;
     auto db = psr_database_open(":memory:", &options);
@@ -120,7 +103,7 @@ TEST_F(CApiTest, LogLevelInfo) {
     psr_database_close(db);
 }
 
-TEST_F(CApiTest, LogLevelWarn) {
+TEST_F(DatabaseFixture, LogLevelWarn) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_WARN;
     auto db = psr_database_open(":memory:", &options);
@@ -130,7 +113,7 @@ TEST_F(CApiTest, LogLevelWarn) {
     psr_database_close(db);
 }
 
-TEST_F(CApiTest, LogLevelError) {
+TEST_F(DatabaseFixture, LogLevelError) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_ERROR;
     auto db = psr_database_open(":memory:", &options);
@@ -140,24 +123,24 @@ TEST_F(CApiTest, LogLevelError) {
     psr_database_close(db);
 }
 
-TEST_F(CApiTest, CreatesFileOnDisk) {
+TEST_F(DatabaseFixture, CreatesFileOnDisk) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_open(test_db_path_.c_str(), &options);
+    auto db = psr_database_open(path.c_str(), &options);
 
     ASSERT_NE(db, nullptr);
 
-    EXPECT_TRUE(fs::exists(test_db_path_));
+    EXPECT_TRUE(fs::exists(path));
 }
 
-TEST_F(CApiTest, DefaultOptions) {
+TEST_F(DatabaseFixture, DefaultOptions) {
     auto options = psr_database_options_default();
 
     EXPECT_EQ(options.read_only, 0);
     EXPECT_EQ(options.console_level, PSR_LOG_INFO);
 }
 
-TEST_F(CApiTest, OpenWithNullOptions) {
+TEST_F(DatabaseFixture, OpenWithNullOptions) {
     auto db = psr_database_open(":memory:", nullptr);
 
     ASSERT_NE(db, nullptr);
@@ -165,17 +148,17 @@ TEST_F(CApiTest, OpenWithNullOptions) {
     psr_database_close(db);
 }
 
-TEST_F(CApiTest, OpenReadOnly) {
+TEST_F(DatabaseFixture, OpenReadOnly) {
     // First create a database
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_open(test_db_path_.c_str(), &options);
+    auto db = psr_database_open(path.c_str(), &options);
     ASSERT_NE(db, nullptr);
     psr_database_close(db);
 
     // Now open it in read-only mode
     options.read_only = 1;
-    db = psr_database_open(test_db_path_.c_str(), &options);
+    db = psr_database_open(path.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     psr_database_close(db);
