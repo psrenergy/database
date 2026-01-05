@@ -1,0 +1,3 @@
+cmake -B build -DCMAKE_BUILD_TYPE=Release -DPSR_BUILD_C_API=ON
+cmake --build build --config Release
+ctest --test-dir build -C Release --output-on-failure

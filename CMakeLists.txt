@@ -1,0 +1,79 @@
+cmake_minimum_required(VERSION 3.21)
+
+project(psr_database
+    VERSION 1.0.0
+    DESCRIPTION "Cross-platform C++ SQLite wrapper library"
+    LANGUAGES CXX C
+)
+
+# C++ Standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# Build options
+option(PSR_BUILD_SHARED "Build shared library" ON)
+option(PSR_BUILD_TESTS "Build test suite" ON)
+option(PSR_BUILD_C_API "Build C API wrapper" OFF)
+
+# Include CMake modules
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+include(CompilerOptions)
+include(Dependencies)
+include(Platform)
+
+# Set output directories
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+# Core library (and C API if enabled)
+add_subdirectory(src)
+
+# Tests
+if(PSR_BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
+
+# Package config for find_package() support
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
+write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/psr_databaseConfigVersion.cmake"
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY SameMajorVersion
+)
+
+configure_package_config_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/psr_databaseConfig.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/psr_databaseConfig.cmake"
+    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/psr_database
+)
+
+install(EXPORT psr_databaseTargets
+    FILE psr_databaseTargets.cmake
+    NAMESPACE psr::
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/psr_database
+)
+
+install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/psr_databaseConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/psr_databaseConfigVersion.cmake"
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/psr_database
+)
+
+# Format target
+find_program(CLANG_FORMAT clang-format)
+if(CLANG_FORMAT)
+    file(GLOB_RECURSE ALL_SOURCE_FILES
+        ${CMAKE_SOURCE_DIR}/include/*.h
+        ${CMAKE_SOURCE_DIR}/src/*.cpp
+        ${CMAKE_SOURCE_DIR}/tests/*.cpp
+    )
+    add_custom_target(format
+        COMMAND ${CLANG_FORMAT} -i ${ALL_SOURCE_FILES}
+        COMMENT "Formatting code with clang-format"
+    )
+endif()
