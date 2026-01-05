@@ -2,10 +2,10 @@
 #define PSR_DATABASE_ROW_H
 
 #include "export.h"
-
 #include "value.h"
-#include <vector>
+
 #include <optional>
+#include <vector>
 
 namespace psr {
 

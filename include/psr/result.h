@@ -2,12 +2,11 @@
 #define PSR_DATABASE_RESULT_H
 
 #include "export.h"
+#include "row.h"
 #include "value.h"
 
 #include <optional>
 #include <vector>
-
-#include    "row.h"
 
 namespace psr {
 

@@ -1,8 +1,8 @@
 #ifndef PSR_TEST_DATABASE_FIXTURE_H
 #define PSR_TEST_DATABASE_FIXTURE_H
 
-#include <gtest/gtest.h>
 #include <filesystem>
+#include <gtest/gtest.h>
 #include <string>
 
 namespace fs = std::filesystem;

@@ -10,6 +10,4 @@ namespace fs = std::filesystem;
 TEST_F(DatabaseFixture, OpenInMemory) {
     psr::Database db(":memory:");
     EXPECT_TRUE(db.is_open());
-
-
 }
