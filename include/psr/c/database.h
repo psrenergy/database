@@ -35,11 +35,20 @@ typedef enum {
     PSR_LOG_OFF = 4,
 } psr_log_level_t;
 
+// Database options
+typedef struct {
+    int read_only;
+    psr_log_level_t console_level;
+} psr_database_options_t;
+
+// Returns default options
+PSR_C_API psr_database_options_t psr_database_options_default(void);
+
 // Opaque handle type
 typedef struct psr_database psr_database_t;
 
 // Database functions
-PSR_C_API psr_database_t* psr_database_open(const char* path, psr_log_level_t console_level, psr_error_t* error);
+PSR_C_API psr_database_t* psr_database_open(const char* path, const psr_database_options_t* options);
 PSR_C_API void psr_database_close(psr_database_t* db);
 PSR_C_API int psr_database_is_open(psr_database_t* db);
 PSR_C_API const char* psr_database_path(psr_database_t* db);

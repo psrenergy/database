@@ -23,35 +23,43 @@ psr::LogLevel to_cpp_log_level(psr_log_level_t level) {
     }
 }
 
+psr::DatabaseOptions to_cpp_options(const psr_database_options_t* options) {
+    psr::DatabaseOptions cpp_options;
+    if (options) {
+        cpp_options.read_only = options->read_only != 0;
+        cpp_options.console_level = to_cpp_log_level(options->console_level);
+    }
+    return cpp_options;
+}
+
 }  // anonymous namespace
 
 // Internal struct definition
 struct psr_database {
     psr::Database db;
-    psr_database(const std::string& path, psr::LogLevel level) : db(path, level) {}
+    psr_database(const std::string& path, const psr::DatabaseOptions& options) : db(path, options) {}
 };
 
 extern "C" {
 
-PSR_C_API psr_database_t* psr_database_open(const char* path, psr_log_level_t console_level, psr_error_t* error) {
+PSR_C_API psr_database_options_t psr_database_options_default(void) {
+    psr_database_options_t options;
+    options.read_only = 0;
+    options.console_level = PSR_LOG_INFO;
+    return options;
+}
+
+PSR_C_API psr_database_t* psr_database_open(const char* path, const psr_database_options_t* options) {
     if (!path) {
-        if (error)
-            *error = PSR_ERROR_INVALID_ARGUMENT;
         return nullptr;
     }
 
     try {
-        auto* db = new psr_database(path, to_cpp_log_level(console_level));
-        if (error)
-            *error = PSR_OK;
-        return db;
+        auto cpp_options = to_cpp_options(options);
+        return new psr_database(path, cpp_options);
     } catch (const std::bad_alloc&) {
-        if (error)
-            *error = PSR_ERROR_DATABASE;
         return nullptr;
     } catch (const std::exception&) {
-        if (error)
-            *error = PSR_ERROR_DATABASE;
         return nullptr;
     }
 }
