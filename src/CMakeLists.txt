@@ -1,6 +1,8 @@
 # Core library sources
 set(PSR_SOURCES
     database.cpp
+    result.cpp
+    row.cpp
 )
 
 # Build type
