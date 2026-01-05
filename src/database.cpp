@@ -87,7 +87,8 @@ struct Database::Impl {
 
     ~Impl() {
         if (db) {
-            sqlite3_close(db);
+            sqlite3_close_v2(db);
+            db = nullptr;
         }
     }
 };
@@ -111,6 +112,10 @@ Database::Database(const std::string& path, const DatabaseOptions& options) : im
         throw std::runtime_error("Failed to open database: " + error_msg);
     }
 
+    // Enable foreign keys
+    sqlite3_exec(impl_->db, "PRAGMA foreign_keys = ON;", nullptr, nullptr, nullptr);
+    impl_->logger->debug("Database opened successfully, foreign keys enabled");
+
     impl_->logger->info("Database opened successfully: {}", path);
 }
 
@@ -126,7 +131,7 @@ bool Database::is_open() const {
 void Database::close() {
     if (impl_ && impl_->db) {
         impl_->logger->debug("Closing database: {}", impl_->path);
-        sqlite3_close(impl_->db);
+        sqlite3_close_v2(impl_->db);
         impl_->db = nullptr;
         impl_->logger->info("Database closed");
     }
