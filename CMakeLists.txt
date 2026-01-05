@@ -7,7 +7,7 @@ project(psr_database
 )
 
 # C++ Standard
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -32,6 +32,7 @@ add_subdirectory(src)
 
 # Tests
 if(PSR_BUILD_TESTS)
+    include(CTest)
     enable_testing()
     add_subdirectory(tests)
 endif()
