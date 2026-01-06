@@ -23,21 +23,24 @@ std::string value_to_string(const Value& value) {
             } else if constexpr (std::is_same_v<T, std::vector<int64_t>>) {
                 std::string result = "[";
                 for (size_t i = 0; i < arg.size(); ++i) {
-                    if (i > 0) result += ", ";
+                    if (i > 0)
+                        result += ", ";
                     result += std::to_string(arg[i]);
                 }
                 return result + "]";
             } else if constexpr (std::is_same_v<T, std::vector<double>>) {
                 std::string result = "[";
                 for (size_t i = 0; i < arg.size(); ++i) {
-                    if (i > 0) result += ", ";
+                    if (i > 0)
+                        result += ", ";
                     result += std::to_string(arg[i]);
                 }
                 return result + "]";
             } else if constexpr (std::is_same_v<T, std::vector<std::string>>) {
                 std::string result = "[";
                 for (size_t i = 0; i < arg.size(); ++i) {
-                    if (i > 0) result += ", ";
+                    if (i > 0)
+                        result += ", ";
                     result += "\"" + arg[i] + "\"";
                 }
                 return result + "]";
