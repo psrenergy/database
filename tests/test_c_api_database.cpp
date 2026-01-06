@@ -203,9 +203,8 @@ TEST_F(DatabaseFixture, CreateElementWithVector) {
     {
         psr::Database db(path, {.console_level = psr::LogLevel::off});
         db.execute("CREATE TABLE Plant (id INTEGER PRIMARY KEY, label TEXT)");
-        db.execute(
-            "CREATE TABLE Plant_vector_costs (id INTEGER, vector_index INTEGER, costs REAL, PRIMARY KEY (id, "
-            "vector_index))");
+        db.execute("CREATE TABLE Plant_vector_costs (id INTEGER, vector_index INTEGER, costs REAL, PRIMARY KEY (id, "
+                   "vector_index))");
     }
 
     // Test: Use C API to create element with vector

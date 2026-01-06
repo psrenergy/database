@@ -90,8 +90,8 @@ TEST_F(DatabaseFixture, CreateElementWithVector) {
 
     // Create tables
     db.execute("CREATE TABLE Plant (id INTEGER PRIMARY KEY, label TEXT)");
-    db.execute(
-        "CREATE TABLE Plant_vector_costs (id INTEGER, vector_index INTEGER, costs REAL, PRIMARY KEY (id, vector_index))");
+    db.execute("CREATE TABLE Plant_vector_costs (id INTEGER, vector_index INTEGER, costs REAL, PRIMARY KEY (id, "
+               "vector_index))");
 
     // Create element with vector
     psr::Element element;
@@ -106,8 +106,8 @@ TEST_F(DatabaseFixture, CreateElementWithVector) {
     EXPECT_EQ(result[0].get_string(0).value(), "Plant 1");
 
     // Verify vector table
-    auto vec_result = db.execute("SELECT vector_index, costs FROM Plant_vector_costs WHERE id = ? ORDER BY vector_index",
-                                 {id});
+    auto vec_result =
+        db.execute("SELECT vector_index, costs FROM Plant_vector_costs WHERE id = ? ORDER BY vector_index", {id});
     EXPECT_EQ(vec_result.row_count(), 3);
     EXPECT_EQ(vec_result[0].get_int(0).value(), 1);
     EXPECT_EQ(vec_result[0].get_double(1).value(), 1.5);
