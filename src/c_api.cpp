@@ -82,16 +82,16 @@ PSR_C_API const char* psr_database_path(psr_database_t* db) {
     return db->db.path().c_str();
 }
 
-PSR_C_API psr_database_t* psr_database_from_schema(const char* db_path, const char* schema_path,
+PSR_C_API psr_database_t* psr_database_from_migration(const char* db_path, const char* migrations_path,
                                                    const psr_database_options_t* options) {
-    if (!db_path || !schema_path) {
+    if (!db_path || !migrations_path) {
         return nullptr;
     }
 
     try {
         auto cpp_options = to_cpp_options(options);
         auto* wrapper = new psr_database(db_path, cpp_options);
-        wrapper->db.migrate_up(schema_path);
+        wrapper->db.migrate_up(migrations_path);
         return wrapper;
     } catch (const std::bad_alloc&) {
         return nullptr;
@@ -123,12 +123,12 @@ PSR_C_API psr_error_t psr_database_set_version(psr_database_t* db, int64_t versi
     }
 }
 
-PSR_C_API psr_error_t psr_database_migrate_up(psr_database_t* db, const char* schema_path) {
-    if (!db || !schema_path) {
+PSR_C_API psr_error_t psr_database_migrate_up(psr_database_t* db, const char* migrations_path) {
+    if (!db || !migrations_path) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }
     try {
-        db->db.migrate_up(schema_path);
+        db->db.migrate_up(migrations_path);
         return PSR_OK;
     } catch (const std::exception&) {
         return PSR_ERROR_MIGRATION;

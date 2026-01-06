@@ -29,20 +29,18 @@ public:
     Database(Database&& other) noexcept;
     Database& operator=(Database&& other) noexcept;
 
-    // Factory method: open database and apply migrations from schema directory
-    static Database from_schema(const std::string& db_path, const std::string& schema_path,
+    // Factory method: open database and apply migrations
+    static Database from_migrations(const std::string& db_path, const std::string& migrations_path,
                                 const DatabaseOptions& options = DatabaseOptions());
 
     bool is_healthy() const;
 
     Result execute(const std::string& sql, const std::vector<Value>& params = {});
 
-    // Schema version management
     int64_t current_version() const;
     void set_version(int64_t version);
 
-    // Migration
-    void migrate_up(const std::string& schema_path);
+    void migrate_up(const std::string& migration_path);
 
     // Transaction management
     void begin_transaction();

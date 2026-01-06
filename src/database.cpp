@@ -247,10 +247,10 @@ const std::string& Database::path() const {
     return impl_ ? impl_->path : empty;
 }
 
-Database Database::from_schema(const std::string& db_path, const std::string& schema_path,
+Database Database::from_migrations(const std::string& db_path, const std::string& migrations_path,
                                const DatabaseOptions& options) {
     Database db(db_path, options);
-    db.migrate_up(schema_path);
+    db.migrate_up(migrations_path);
     return db;
 }
 
@@ -267,7 +267,7 @@ void Database::set_version(int64_t version) {
         sqlite3_free(err_msg);
         throw std::runtime_error("Failed to set user_version: " + error);
     }
-    impl_->logger->debug("Set schema version to {}", version);
+    impl_->logger->debug("Set database version to {}", version);
 }
 
 void Database::begin_transaction() {
@@ -315,10 +315,10 @@ void Database::execute_raw(const std::string& sql) {
     }
 }
 
-void Database::migrate_up(const std::string& schema_path) {
-    Migrations migrations(schema_path);
+void Database::migrate_up(const std::string& migrations_path) {
+    Migrations migrations(migrations_path);
     if (migrations.empty()) {
-        impl_->logger->debug("No migrations found in {}", schema_path);
+        impl_->logger->debug("No migrations found in {}", migrations_path);
         return;
     }
 

@@ -22,11 +22,11 @@ std::string get_test_migrations_path() {
 // Test fixture for migration tests
 class MigrationFixture : public DatabaseFixture {
 protected:
-    std::string schema_path;
+    std::string migrations_path;
 
     void SetUp() override {
         DatabaseFixture::SetUp();
-        schema_path = get_test_migrations_path();
+        migrations_path = get_test_migrations_path();
     }
 };
 
@@ -35,29 +35,29 @@ protected:
 // ============================================================================
 
 TEST_F(MigrationFixture, MigrationCreation) {
-    psr::Migration migration(1, schema_path + "/1");
+    psr::Migration migration(1, migrations_path + "/1");
     EXPECT_EQ(migration.version(), 1);
     EXPECT_FALSE(migration.path().empty());
 }
 
 TEST_F(MigrationFixture, MigrationUpSqlRead) {
-    psr::Migration migration(1, schema_path + "/1");
+    psr::Migration migration(1, migrations_path + "/1");
     std::string sql = migration.up_sql();
     EXPECT_FALSE(sql.empty());
     EXPECT_NE(sql.find("CREATE TABLE Test1"), std::string::npos);
 }
 
 TEST_F(MigrationFixture, MigrationDownSqlRead) {
-    psr::Migration migration(1, schema_path + "/1");
+    psr::Migration migration(1, migrations_path + "/1");
     std::string sql = migration.down_sql();
     EXPECT_FALSE(sql.empty());
     EXPECT_NE(sql.find("DROP TABLE"), std::string::npos);
 }
 
 TEST_F(MigrationFixture, MigrationComparison) {
-    psr::Migration m1(1, schema_path + "/1");
-    psr::Migration m2(2, schema_path + "/2");
-    psr::Migration m3(3, schema_path + "/3");
+    psr::Migration m1(1, migrations_path + "/1");
+    psr::Migration m2(2, migrations_path + "/2");
+    psr::Migration m3(3, migrations_path + "/3");
 
     EXPECT_TRUE(m1 < m2);
     EXPECT_TRUE(m2 < m3);
@@ -70,7 +70,7 @@ TEST_F(MigrationFixture, MigrationComparison) {
 }
 
 TEST_F(MigrationFixture, MigrationCopy) {
-    psr::Migration original(2, schema_path + "/2");
+    psr::Migration original(2, migrations_path + "/2");
     psr::Migration copy = original;
 
     EXPECT_EQ(copy.version(), original.version());
@@ -82,7 +82,7 @@ TEST_F(MigrationFixture, MigrationCopy) {
 // ============================================================================
 
 TEST_F(MigrationFixture, MigrationsLoad) {
-    psr::Migrations migrations(schema_path);
+    psr::Migrations migrations(migrations_path);
 
     EXPECT_FALSE(migrations.empty());
     EXPECT_EQ(migrations.count(), 3u);
@@ -90,7 +90,7 @@ TEST_F(MigrationFixture, MigrationsLoad) {
 }
 
 TEST_F(MigrationFixture, MigrationsOrder) {
-    psr::Migrations migrations(schema_path);
+    psr::Migrations migrations(migrations_path);
     auto all = migrations.all();
 
     ASSERT_EQ(all.size(), 3u);
@@ -100,7 +100,7 @@ TEST_F(MigrationFixture, MigrationsOrder) {
 }
 
 TEST_F(MigrationFixture, MigrationsPending) {
-    psr::Migrations migrations(schema_path);
+    psr::Migrations migrations(migrations_path);
 
     auto pending_from_0 = migrations.pending(0);
     EXPECT_EQ(pending_from_0.size(), 3u);
@@ -118,7 +118,7 @@ TEST_F(MigrationFixture, MigrationsPending) {
 }
 
 TEST_F(MigrationFixture, MigrationsIteration) {
-    psr::Migrations migrations(schema_path);
+    psr::Migrations migrations(migrations_path);
 
     int64_t expected_version = 1;
     for (const auto& migration : migrations) {
@@ -155,7 +155,7 @@ TEST_F(MigrationFixture, DatabaseMigrateUp) {
 
     EXPECT_EQ(db.current_version(), 0);
 
-    db.migrate_up(schema_path);
+    db.migrate_up(migrations_path);
 
     EXPECT_EQ(db.current_version(), 3);
 
@@ -178,16 +178,16 @@ TEST_F(MigrationFixture, DatabaseMigrateUp) {
 TEST_F(MigrationFixture, DatabaseMigrateUpIdempotent) {
     psr::Database db(path);
 
-    db.migrate_up(schema_path);
+    db.migrate_up(migrations_path);
     EXPECT_EQ(db.current_version(), 3);
 
     // Running again should be a no-op
-    db.migrate_up(schema_path);
+    db.migrate_up(migrations_path);
     EXPECT_EQ(db.current_version(), 3);
 }
 
-TEST_F(MigrationFixture, DatabaseFromSchema) {
-    auto db = psr::Database::from_schema(path, schema_path);
+TEST_F(MigrationFixture, DatabaseFromMigrations) {
+    auto db = psr::Database::from_migrations(path, migrations_path);
 
     EXPECT_EQ(db.current_version(), 3);
     EXPECT_TRUE(db.is_healthy());
@@ -208,7 +208,7 @@ TEST_F(MigrationFixture, DatabasePartialMigration) {
         psr::Database db(path);
         EXPECT_EQ(db.current_version(), 1);
 
-        db.migrate_up(schema_path);
+        db.migrate_up(migrations_path);
         EXPECT_EQ(db.current_version(), 3);
 
         // Verify final state: Test1 and Test3 exist, Test2 was dropped
