@@ -1,6 +1,7 @@
 # Core library sources
 set(PSR_SOURCES
     database.cpp
+    migrations.cpp
     result.cpp
     row.cpp
 )

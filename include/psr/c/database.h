@@ -50,7 +50,7 @@ typedef struct psr_database psr_database_t;
 // Database functions
 PSR_C_API psr_database_t* psr_database_open(const char* path, const psr_database_options_t* options);
 PSR_C_API void psr_database_close(psr_database_t* db);
-PSR_C_API int psr_database_is_open(psr_database_t* db);
+PSR_C_API int psr_database_is_healthy(psr_database_t* db);
 PSR_C_API const char* psr_database_path(psr_database_t* db);
 
 // Utility functions

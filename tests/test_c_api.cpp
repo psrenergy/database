@@ -13,7 +13,7 @@ TEST_F(DatabaseFixture, OpenAndClose) {
     auto db = psr_database_open(path.c_str(), &options);
 
     ASSERT_NE(db, nullptr);
-    EXPECT_EQ(psr_database_is_open(db), 1);
+    EXPECT_EQ(psr_database_is_healthy(db), 1);
 
     psr_database_close(db);
 }
@@ -24,7 +24,7 @@ TEST_F(DatabaseFixture, OpenInMemory) {
     auto db = psr_database_open(":memory:", &options);
 
     ASSERT_NE(db, nullptr);
-    EXPECT_EQ(psr_database_is_open(db), 1);
+    EXPECT_EQ(psr_database_is_healthy(db), 1);
 
     psr_database_close(db);
 }
@@ -64,7 +64,7 @@ TEST_F(DatabaseFixture, DatabasePathNullDb) {
 }
 
 TEST_F(DatabaseFixture, IsOpenNullDb) {
-    EXPECT_EQ(psr_database_is_open(nullptr), 0);
+    EXPECT_EQ(psr_database_is_healthy(nullptr), 0);
 }
 
 TEST_F(DatabaseFixture, CloseNullDb) {

@@ -7,10 +7,7 @@
 
 #include <memory>
 #include <string>
-#include <variant>
 #include <vector>
-
-struct sqlite3;
 
 namespace psr {
 
@@ -32,10 +29,11 @@ public:
     Database(Database&& other) noexcept;
     Database& operator=(Database&& other) noexcept;
 
-    bool is_open() const;
-    void close();
+    bool is_healthy() const;
 
     Result execute(const std::string& sql, const std::vector<Value>& params = {});
+
+    int get_user_version() const;
 
     const std::string& path() const;
 

@@ -121,16 +121,7 @@ Database::Database(const std::string& path, const DatabaseOptions& options) : im
     impl_->logger->info("Database opened successfully: {}", path);
 }
 
-Database::~Database() = default;
-
-Database::Database(Database&& other) noexcept = default;
-Database& Database::operator=(Database&& other) noexcept = default;
-
-bool Database::is_open() const {
-    return impl_ && impl_->db != nullptr;
-}
-
-void Database::close() {
+Database::~Database() {
     if (impl_ && impl_->db) {
         impl_->logger->debug("Closing database: {}", impl_->path);
         sqlite3_close_v2(impl_->db);
@@ -139,11 +130,14 @@ void Database::close() {
     }
 }
 
-Result Database::execute(const std::string& sql, const std::vector<Value>& params) {
-    if (!is_open()) {
-        throw std::runtime_error("Database is not open");
-    }
+Database::Database(Database&& other) noexcept = default;
+Database& Database::operator=(Database&& other) noexcept = default;
 
+bool Database::is_healthy() const {
+    return impl_ && impl_->db != nullptr;
+}
+
+Result Database::execute(const std::string& sql, const std::vector<Value>& params) {
     sqlite3_stmt* stmt = nullptr;
     int rc = sqlite3_prepare_v2(impl_->db, sql.c_str(), -1, &stmt, nullptr);
     if (rc != SQLITE_OK) {
@@ -224,6 +218,27 @@ Result Database::execute(const std::string& sql, const std::vector<Value>& param
     }
 
     return Result(std::move(columns), std::move(rows));
+}
+
+int Database::get_user_version() const {
+    sqlite3_stmt* stmt = nullptr;
+    const char* sql = "PRAGMA user_version;";
+    int rc = sqlite3_prepare_v2(impl_->db, sql, -1, &stmt, nullptr);
+    if (rc != SQLITE_OK) {
+        throw std::runtime_error("Failed to prepare statement: " + std::string(sqlite3_errmsg(impl_->db)));
+    }
+
+    rc = sqlite3_step(stmt);
+    int user_version = 0;
+    if (rc == SQLITE_ROW) {
+        user_version = sqlite3_column_int(stmt, 0);
+    } else {
+        sqlite3_finalize(stmt);
+        throw std::runtime_error("Failed to retrieve user_version: " + std::string(sqlite3_errmsg(impl_->db)));
+    }
+
+    sqlite3_finalize(stmt);
+    return user_version;
 }
 
 const std::string& Database::path() const {
