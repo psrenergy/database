@@ -1,5 +1,5 @@
-#ifndef PSR_ELEMENT_BUILDER_H
-#define PSR_ELEMENT_BUILDER_H
+#ifndef PSR_ELEMENT_H
+#define PSR_ELEMENT_H
 
 #include "export.h"
 #include "value.h"
@@ -41,4 +41,4 @@ private:
 
 }  // namespace psr
 
-#endif  // PSR_ELEMENT_BUILDER_H
+#endif  // PSR_ELEMENT_H

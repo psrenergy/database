@@ -4,6 +4,7 @@ add_executable(psr_database_tests
     test_database.cpp
     test_database_execute.cpp
     test_database_utils.cpp
+    test_element_builder.cpp
     test_migrations/test_migrations.cpp
 )
 
