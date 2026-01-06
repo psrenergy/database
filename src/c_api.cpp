@@ -1,4 +1,6 @@
+#include "psr/c/common.h"
 #include "psr/c/database.h"
+#include "psr/c/element.h"
 #include "psr/database.h"
 #include "psr/element.h"
 
