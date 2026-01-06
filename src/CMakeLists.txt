@@ -1,6 +1,7 @@
 # Core library sources
 set(PSR_SOURCES
     database.cpp
+    element_builder.cpp
     migration.cpp
     migrations.cpp
     result.cpp
