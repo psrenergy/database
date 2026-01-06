@@ -82,6 +82,96 @@ PSR_C_API const char* psr_database_path(psr_database_t* db) {
     return db->db.path().c_str();
 }
 
+PSR_C_API psr_database_t* psr_database_from_schema(const char* db_path,
+                                                    const char* schema_path,
+                                                    const psr_database_options_t* options) {
+    if (!db_path || !schema_path) {
+        return nullptr;
+    }
+
+    try {
+        auto cpp_options = to_cpp_options(options);
+        auto* wrapper = new psr_database(db_path, cpp_options);
+        wrapper->db.migrate_up(schema_path);
+        return wrapper;
+    } catch (const std::bad_alloc&) {
+        return nullptr;
+    } catch (const std::exception&) {
+        return nullptr;
+    }
+}
+
+PSR_C_API int64_t psr_database_current_version(psr_database_t* db) {
+    if (!db) {
+        return -1;
+    }
+    try {
+        return db->db.current_version();
+    } catch (const std::exception&) {
+        return -1;
+    }
+}
+
+PSR_C_API psr_error_t psr_database_set_version(psr_database_t* db, int64_t version) {
+    if (!db) {
+        return PSR_ERROR_INVALID_ARGUMENT;
+    }
+    try {
+        db->db.set_version(version);
+        return PSR_OK;
+    } catch (const std::exception&) {
+        return PSR_ERROR_DATABASE;
+    }
+}
+
+PSR_C_API psr_error_t psr_database_migrate_up(psr_database_t* db, const char* schema_path) {
+    if (!db || !schema_path) {
+        return PSR_ERROR_INVALID_ARGUMENT;
+    }
+    try {
+        db->db.migrate_up(schema_path);
+        return PSR_OK;
+    } catch (const std::exception&) {
+        return PSR_ERROR_MIGRATION;
+    }
+}
+
+PSR_C_API psr_error_t psr_database_begin_transaction(psr_database_t* db) {
+    if (!db) {
+        return PSR_ERROR_INVALID_ARGUMENT;
+    }
+    try {
+        db->db.begin_transaction();
+        return PSR_OK;
+    } catch (const std::exception&) {
+        return PSR_ERROR_DATABASE;
+    }
+}
+
+PSR_C_API psr_error_t psr_database_commit(psr_database_t* db) {
+    if (!db) {
+        return PSR_ERROR_INVALID_ARGUMENT;
+    }
+    try {
+        db->db.commit();
+        return PSR_OK;
+    } catch (const std::exception&) {
+        return PSR_ERROR_DATABASE;
+    }
+}
+
+PSR_C_API psr_error_t psr_database_rollback(psr_database_t* db) {
+    if (!db) {
+        return PSR_ERROR_INVALID_ARGUMENT;
+    }
+    try {
+        db->db.rollback();
+        return PSR_OK;
+    } catch (const std::exception&) {
+        return PSR_ERROR_DATABASE;
+    }
+}
+
 PSR_C_API const char* psr_error_string(psr_error_t error) {
     switch (error) {
     case PSR_OK:
@@ -90,6 +180,8 @@ PSR_C_API const char* psr_error_string(psr_error_t error) {
         return "Invalid argument";
     case PSR_ERROR_DATABASE:
         return "Database error";
+    case PSR_ERROR_MIGRATION:
+        return "Migration error";
     default:
         return "Unknown error";
     }

@@ -24,6 +24,7 @@ typedef enum {
     PSR_OK = 0,
     PSR_ERROR_INVALID_ARGUMENT = -1,
     PSR_ERROR_DATABASE = -2,
+    PSR_ERROR_MIGRATION = -3,
 } psr_error_t;
 
 // Log levels for console output
@@ -49,9 +50,22 @@ typedef struct psr_database psr_database_t;
 
 // Database functions
 PSR_C_API psr_database_t* psr_database_open(const char* path, const psr_database_options_t* options);
+PSR_C_API psr_database_t* psr_database_from_schema(const char* db_path,
+                                                    const char* schema_path,
+                                                    const psr_database_options_t* options);
 PSR_C_API void psr_database_close(psr_database_t* db);
 PSR_C_API int psr_database_is_healthy(psr_database_t* db);
 PSR_C_API const char* psr_database_path(psr_database_t* db);
+
+// Schema version and migration
+PSR_C_API int64_t psr_database_current_version(psr_database_t* db);
+PSR_C_API psr_error_t psr_database_set_version(psr_database_t* db, int64_t version);
+PSR_C_API psr_error_t psr_database_migrate_up(psr_database_t* db, const char* schema_path);
+
+// Transaction management
+PSR_C_API psr_error_t psr_database_begin_transaction(psr_database_t* db);
+PSR_C_API psr_error_t psr_database_commit(psr_database_t* db);
+PSR_C_API psr_error_t psr_database_rollback(psr_database_t* db);
 
 // Utility functions
 PSR_C_API const char* psr_error_string(psr_error_t error);
