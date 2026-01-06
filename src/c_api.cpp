@@ -83,7 +83,7 @@ PSR_C_API const char* psr_database_path(psr_database_t* db) {
 }
 
 PSR_C_API psr_database_t* psr_database_from_migration(const char* db_path, const char* migrations_path,
-                                                   const psr_database_options_t* options) {
+                                                      const psr_database_options_t* options) {
     if (!db_path || !migrations_path) {
         return nullptr;
     }

@@ -248,7 +248,7 @@ const std::string& Database::path() const {
 }
 
 Database Database::from_migrations(const std::string& db_path, const std::string& migrations_path,
-                               const DatabaseOptions& options) {
+                                   const DatabaseOptions& options) {
     Database db(db_path, options);
     db.migrate_up(migrations_path);
     return db;
@@ -330,8 +330,8 @@ void Database::migrate_up(const std::string& migrations_path) {
         return;
     }
 
-    impl_->logger->info("Applying {} pending migration(s) from version {} to {}", pending.size(), current,
-                        migrations.latest_version());
+    impl_->logger->info(
+        "Applying {} pending migration(s) from version {} to {}", pending.size(), current, migrations.latest_version());
 
     for (const auto& migration : pending) {
         impl_->logger->info("Applying migration {}", migration.version());

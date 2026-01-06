@@ -31,7 +31,7 @@ public:
 
     // Factory method: open database and apply migrations
     static Database from_migrations(const std::string& db_path, const std::string& migrations_path,
-                                const DatabaseOptions& options = DatabaseOptions());
+                                    const DatabaseOptions& options = DatabaseOptions());
 
     bool is_healthy() const;
 
