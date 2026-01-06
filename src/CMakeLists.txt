@@ -62,7 +62,11 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/psr
 
 # C API wrapper (optional)
 if(PSR_BUILD_C_API)
-    add_library(psr_database_c SHARED c_api.cpp)
+    add_library(psr_database_c SHARED
+        c_api_common.cpp
+        c_api_database.cpp
+        c_api_element.cpp
+    )
 
     target_compile_definitions(psr_database_c PRIVATE
         PSR_DATABASE_C_EXPORTS
