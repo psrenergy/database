@@ -193,8 +193,7 @@ void SchemaValidator::validate_collection_names() {
 
         // Check for invalid collection names (underscores not allowed except for special tables)
         if (table.find('_') != std::string::npos && table != "Configuration") {
-            validation_error("Invalid collection name '" + table +
-                             "': collection names cannot contain underscores");
+            validation_error("Invalid collection name '" + table + "': collection names cannot contain underscores");
         }
     }
 }
@@ -300,7 +299,8 @@ void SchemaValidator::validate_vector_table(const std::string& name) {
         if (fk.from_column == "id" && fk.to_table == parent) {
             has_parent_fk = true;
             if (fk.on_delete != "CASCADE" || fk.on_update != "CASCADE") {
-                validation_error("Vector table '" + name + "' FK to parent must use ON DELETE CASCADE ON UPDATE CASCADE");
+                validation_error("Vector table '" + name +
+                                 "' FK to parent must use ON DELETE CASCADE ON UPDATE CASCADE");
             }
             break;
         }
@@ -353,8 +353,7 @@ void SchemaValidator::validate_set_table(const std::string& name) {
         }
         // Non-FK columns should be in unique constraint
         if (unique_columns.find(col.name) == unique_columns.end()) {
-            validation_error("Set table '" + name + "' column '" + col.name +
-                             "' must be part of a UNIQUE constraint");
+            validation_error("Set table '" + name + "' column '" + col.name + "' must be part of a UNIQUE constraint");
         }
     }
 }
