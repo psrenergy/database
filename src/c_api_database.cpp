@@ -43,6 +43,7 @@ psr::DatabaseOptions to_cpp_options(const psr_database_options_t* options) {
 struct psr_database {
     psr::Database db;
     psr_database(const std::string& path, const psr::DatabaseOptions& options) : db(path, options) {}
+    psr_database(psr::Database&& database) : db(std::move(database)) {}
 };
 
 extern "C" {
@@ -187,15 +188,20 @@ PSR_C_API int64_t psr_database_create_element(psr_database_t* db, const char* co
     }
 }
 
-PSR_C_API psr_error_t psr_database_apply_schema(psr_database_t* db, const char* schema_path) {
-    if (!db || !schema_path) {
-        return PSR_ERROR_INVALID_ARGUMENT;
+PSR_C_API psr_database_t*
+psr_database_from_schema(const char* db_path, const char* schema_path, const psr_database_options_t* options) {
+    if (!db_path || !schema_path) {
+        return nullptr;
     }
+
     try {
-        db->db.apply_schema(schema_path);
-        return PSR_OK;
+        auto cpp_options = to_cpp_options(options);
+        auto db = psr::Database::from_schema(db_path, schema_path, cpp_options);
+        return new psr_database(std::move(db));
+    } catch (const std::bad_alloc&) {
+        return nullptr;
     } catch (const std::exception&) {
-        return PSR_ERROR_SCHEMA;
+        return nullptr;
     }
 }
 
