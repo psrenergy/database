@@ -8,12 +8,13 @@ function create_empty_db_from_schema(db_path, schema_path; force::Bool = true)
 end
 
 function create_element!(db::Database, collection::String, e::Element)
-    C.psr_database_create_element(db.ptr, collection, e.ptr)
+    if C.psr_database_create_element(db.ptr, collection, e.ptr) == -1
+        throw(DatabaseException("Failed to create element in collection $collection"))
+    end
     return nothing
 end
 
 function create_element!(db::Database, collection::String; kwargs...)
-    @show kwargs
     e = Element()
     for (k, v) in kwargs
         e[String(k)] = v
@@ -31,8 +32,6 @@ function debug()
     db_path = raw"C:\Development\Database\database\bindings\julia\test\test_database.db"
     schema_path = raw"C:\Development\Database\database\tests\test_create\test_create_parameters.sql"
     db = create_empty_db_from_schema(db_path, schema_path)
-
-    # db = from_schema(":memory:", schema_path; read_only=false, console_level=C.PSR_LOG_DEBUG)
 
     configuration = Element()
     configuration["id"] = 1

@@ -47,10 +47,10 @@ std::shared_ptr<spdlog::logger> create_database_logger(const std::string& db_pat
     console_sink->set_level(to_spdlog_level(console_level));
 
     if (db_path == ":memory:") {
-        //
-        auto logger = std::make_shared<spdlog::logger>(logger_name, console_sink);
+        // In-memory database: no file logging
+        const auto logger = std::make_shared<spdlog::logger>(logger_name, console_sink);
         logger->set_level(spdlog::level::debug);
-        logger->warn("...");
+        logger->warn("Database is in-memory only; no file logging will be performed.");
         return logger;
     } else {
         // File-based database: use database directory
@@ -63,7 +63,7 @@ std::shared_ptr<spdlog::logger> create_database_logger(const std::string& db_pat
         // Create file sink (thread-safe)
         std::shared_ptr<spdlog::sinks::basic_file_sink_mt> file_sink = nullptr;
         try {
-            auto log_file_path = (db_dir / "psr_database.log").string();
+            const auto log_file_path = (db_dir / "psr_database.log").string();
             file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(log_file_path, true);
             file_sink->set_level(spdlog::level::debug);
 
@@ -74,7 +74,7 @@ std::shared_ptr<spdlog::logger> create_database_logger(const std::string& db_pat
             return logger;
         } catch (const spdlog::spdlog_ex& ex) {
             // If file sink creation fails, continue with console-only logging
-            auto logger = std::make_shared<spdlog::logger>(logger_name, console_sink);
+            const auto logger = std::make_shared<spdlog::logger>(logger_name, console_sink);
             logger->set_level(spdlog::level::debug);
             logger->warn("Failed to create file sink: {}. Logging to console only.", ex.what());
             return logger;
@@ -106,7 +106,7 @@ Database::Database(const std::string& path, const DatabaseOptions& options) : im
     impl_->logger->debug("Opening database: {}", path);
 
     int flags = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE;
-    auto rc = sqlite3_open_v2(path.c_str(), &impl_->db, flags, nullptr);
+    const auto rc = sqlite3_open_v2(path.c_str(), &impl_->db, flags, nullptr);
 
     if (rc != SQLITE_OK) {
         std::string error_msg = impl_->db ? sqlite3_errmsg(impl_->db) : "Unknown error";
@@ -150,7 +150,7 @@ Result Database::execute(const std::string& sql, const std::vector<Value>& param
 
     // Bind parameters
     for (size_t i = 0; i < params.size(); ++i) {
-        int idx = static_cast<int>(i + 1);
+        const auto idx = static_cast<int>(i + 1);
         const auto& param = params[i];
 
         std::visit(
@@ -173,7 +173,7 @@ Result Database::execute(const std::string& sql, const std::vector<Value>& param
 
     // Get column info
     std::vector<std::string> columns;
-    int col_count = sqlite3_column_count(stmt);
+    const auto col_count = sqlite3_column_count(stmt);
     columns.reserve(col_count);
     for (int i = 0; i < col_count; ++i) {
         const char* name = sqlite3_column_name(stmt, i);
@@ -253,14 +253,14 @@ const std::string& Database::path() const {
 Database Database::from_migrations(const std::string& db_path,
                                    const std::string& migrations_path,
                                    const DatabaseOptions& options) {
-    Database db(db_path, options);
+    auto db = Database(db_path, options);
     db.migrate_up(migrations_path);
     return db;
 }
 
 Database
 Database::from_schema(const std::string& db_path, const std::string& schema_path, const DatabaseOptions& options) {
-    Database db(db_path, options);
+    auto db = Database(db_path, options);
     db.apply_schema(schema_path);
     return db;
 }
@@ -268,7 +268,7 @@ Database::from_schema(const std::string& db_path, const std::string& schema_path
 void Database::set_version(int64_t version) {
     std::string sql = "PRAGMA user_version = " + std::to_string(version) + ";";
     char* err_msg = nullptr;
-    auto rc = sqlite3_exec(impl_->db, sql.c_str(), nullptr, nullptr, &err_msg);
+    const auto rc = sqlite3_exec(impl_->db, sql.c_str(), nullptr, nullptr, &err_msg);
     if (rc != SQLITE_OK) {
         std::string error = err_msg ? err_msg : "Unknown error";
         sqlite3_free(err_msg);
@@ -279,7 +279,7 @@ void Database::set_version(int64_t version) {
 
 void Database::begin_transaction() {
     char* err_msg = nullptr;
-    auto rc = sqlite3_exec(impl_->db, "BEGIN TRANSACTION;", nullptr, nullptr, &err_msg);
+    const auto rc = sqlite3_exec(impl_->db, "BEGIN TRANSACTION;", nullptr, nullptr, &err_msg);
     if (rc != SQLITE_OK) {
         std::string error = err_msg ? err_msg : "Unknown error";
         sqlite3_free(err_msg);
@@ -290,7 +290,7 @@ void Database::begin_transaction() {
 
 void Database::commit() {
     char* err_msg = nullptr;
-    auto rc = sqlite3_exec(impl_->db, "COMMIT;", nullptr, nullptr, &err_msg);
+    const auto rc = sqlite3_exec(impl_->db, "COMMIT;", nullptr, nullptr, &err_msg);
     if (rc != SQLITE_OK) {
         std::string error = err_msg ? err_msg : "Unknown error";
         sqlite3_free(err_msg);
@@ -301,7 +301,7 @@ void Database::commit() {
 
 void Database::rollback() {
     char* err_msg = nullptr;
-    auto rc = sqlite3_exec(impl_->db, "ROLLBACK;", nullptr, nullptr, &err_msg);
+    const auto rc = sqlite3_exec(impl_->db, "ROLLBACK;", nullptr, nullptr, &err_msg);
     if (rc != SQLITE_OK) {
         std::string error = err_msg ? err_msg : "Unknown error";
         sqlite3_free(err_msg);
@@ -314,7 +314,7 @@ void Database::rollback() {
 
 void Database::execute_raw(const std::string& sql) {
     char* err_msg = nullptr;
-    auto rc = sqlite3_exec(impl_->db, sql.c_str(), nullptr, nullptr, &err_msg);
+    const auto rc = sqlite3_exec(impl_->db, sql.c_str(), nullptr, nullptr, &err_msg);
     if (rc != SQLITE_OK) {
         std::string error = err_msg ? err_msg : "Unknown error";
         sqlite3_free(err_msg);
@@ -329,8 +329,8 @@ void Database::migrate_up(const std::string& migrations_path) {
         return;
     }
 
-    auto current = current_version();
-    auto pending = migrations.pending(current);
+    const auto current = current_version();
+    const auto pending = migrations.pending(current);
 
     if (pending.empty()) {
         impl_->logger->debug("Database is up to date at version {}", current);
@@ -343,7 +343,7 @@ void Database::migrate_up(const std::string& migrations_path) {
     for (const auto& migration : pending) {
         impl_->logger->info("Applying migration {}", migration.version());
 
-        auto up_sql = migration.up_sql();
+        const auto up_sql = migration.up_sql();
         if (up_sql.empty()) {
             throw std::runtime_error("Migration " + std::to_string(migration.version()) + " has no up.sql file");
         }
@@ -378,7 +378,7 @@ void Database::apply_schema(const std::string& schema_path) {
 
     std::stringstream buffer;
     buffer << file.rdbuf();
-    auto schema_sql = buffer.str();
+    const auto schema_sql = buffer.str();
 
     if (schema_sql.empty()) {
         throw std::runtime_error("Schema file is empty: " + schema_path);
@@ -407,6 +407,7 @@ int64_t Database::create_element(const std::string& collection, const Element& e
     // Insert scalars into main table
     const auto& scalars = element.scalars();
     if (scalars.empty()) {
+        impl_->logger->error("Element must have at least one scalar attribute");
         throw std::runtime_error("Element must have at least one scalar attribute");
     }
 
@@ -415,7 +416,7 @@ int64_t Database::create_element(const std::string& collection, const Element& e
     std::string placeholders;
     std::vector<Value> params;
 
-    bool first = true;
+    auto first = true;
     for (const auto& [name, value] : scalars) {
         if (!first) {
             sql += ", ";
@@ -429,7 +430,7 @@ int64_t Database::create_element(const std::string& collection, const Element& e
     sql += ") VALUES (" + placeholders + ")";
 
     execute(sql, params);
-    int64_t element_id = sqlite3_last_insert_rowid(impl_->db);
+    const auto element_id = sqlite3_last_insert_rowid(impl_->db);
     impl_->logger->debug("Inserted element with id: {}", element_id);
 
     // Insert vectors into vector tables
