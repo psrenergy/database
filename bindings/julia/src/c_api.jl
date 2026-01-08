@@ -3,7 +3,7 @@ module C
 using CEnum
 using Libdl
 
-global libpsr_database_c = raw"C:\Development\Database\database\build\bin\libpsr_database_c.dll"
+const libpsr_database_c = raw"C:\Development\Database\database\build\bin\libpsr_database_c.dll"
 
 @cenum psr_error_t::Int32 begin
     PSR_OK = 0
