@@ -7,7 +7,7 @@ using Libdl
 
 function get_headers_recursive(dir::String)
     headers = String[]
-    for entry in readdir(dir, join=true)
+    for entry in readdir(dir, join = true)
         if isdir(entry)
             append!(headers, get_headers_recursive(entry))
         elseif endswith(entry, ".h")

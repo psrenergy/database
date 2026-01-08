@@ -33,7 +33,7 @@ end
     @test_throws PSRDatabase.DatabaseException PSRDatabase.create_element!(
         db,
         "Resource",
-    )  
+    )
     PSRDatabase.close!(db)
 end
 
