@@ -3,4 +3,4 @@
 using CEnum
 using Libdl
 
-global libpsr_database_c = raw"C:\Development\Database\database\build\bin\libpsr_database_c.dll"
+const libpsr_database_c = joinpath(@__DIR__, "..", "..", "..", "build", "bin", "libpsr_database_c.dll")  

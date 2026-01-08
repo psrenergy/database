@@ -1,9 +1,11 @@
 module C
 
+#! format: off
+
 using CEnum
 using Libdl
 
-const libpsr_database_c = raw"C:\Development\Database\database\build\bin\libpsr_database_c.dll"
+const libpsr_database_c = joinpath(@__DIR__, "..", "..", "..", "build", "bin", "libpsr_database_c.dll")  
 
 @cenum psr_error_t::Int32 begin
     PSR_OK = 0
@@ -11,6 +13,7 @@ const libpsr_database_c = raw"C:\Development\Database\database\build\bin\libpsr_
     PSR_ERROR_DATABASE = -2
     PSR_ERROR_MIGRATION = -3
     PSR_ERROR_SCHEMA = -4
+    PSR_ERROR_CREATE_ELEMENT = -5
 end
 
 function psr_error_string(error)
@@ -164,6 +167,6 @@ end
 
 # const PSR_C_API = __declspec(dllimport)
 
-
+#! format: on
 
 end # module
