@@ -27,26 +27,3 @@ function close!(db::Database)
     C.psr_database_close(db.ptr)
     return nothing
 end
-
-function debug()
-    db_path = raw"C:\Development\Database\database\bindings\julia\test\test_database.db"
-    schema_path = raw"C:\Development\Database\database\tests\test_create\test_create_parameters.sql"
-    db = create_empty_db_from_schema(db_path, schema_path)
-
-    configuration = Element()
-    configuration["id"] = 1
-    configuration["label"] = "Test Config"
-    configuration["value1"] = 42.0
-    configuration["enum1"] = "B"
-    create_element!(db, "Configuration", configuration)
-
-    resource = Element()
-    resource["id"] = 1
-    resource["label"] = "Test Resource"
-    resource["type"] = "D"
-    create_element!(db, "Resource", resource)
-
-    close!(db)
-
-    return nothing
-end
