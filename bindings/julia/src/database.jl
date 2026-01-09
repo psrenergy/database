@@ -20,14 +20,9 @@ end
 
 function create_element!(db::Database, collection::String; kwargs...)
     e = Element()
-    
-    # Simply set all kwargs on the element - the C++ layer handles
-    # routing arrays to vector tables or set tables, and resolving
-    # FK labels to IDs based on the schema
     for (k, v) in kwargs
         e[String(k)] = v
     end
-    
     create_element!(db, collection, e)
     return nothing
 end
