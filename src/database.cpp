@@ -489,8 +489,7 @@ int64_t Database::create_element(const std::string& collection, const Element& e
     return element_id;
 }
 
-std::vector<Value> Database::read_scalar_parameters(const std::string& collection,
-                                                    const std::string& attribute) const {
+std::vector<Value> Database::read_scalar_parameters(const std::string& collection, const std::string& attribute) const {
     impl_->logger->debug("Reading scalar parameters: {}.{}", collection, attribute);
 
     if (!impl_->schema) {

@@ -209,9 +209,9 @@ psr_database_from_schema(const char* db_path, const char* schema_path, const psr
 }
 
 PSR_C_API int64_t psr_database_read_scalar_parameters_double(psr_database_t* db,
-                                                              const char* collection,
-                                                              const char* attribute,
-                                                              double** out_values) {
+                                                             const char* collection,
+                                                             const char* attribute,
+                                                             double** out_values) {
     if (!db || !collection || !attribute || !out_values) {
         return -1;
     }
@@ -241,9 +241,9 @@ PSR_C_API int64_t psr_database_read_scalar_parameters_double(psr_database_t* db,
 }
 
 PSR_C_API int64_t psr_database_read_scalar_parameters_string(psr_database_t* db,
-                                                              const char* collection,
-                                                              const char* attribute,
-                                                              char*** out_values) {
+                                                             const char* collection,
+                                                             const char* attribute,
+                                                             char*** out_values) {
     if (!db || !collection || !attribute || !out_values) {
         return -1;
     }
@@ -277,11 +277,11 @@ PSR_C_API int64_t psr_database_read_scalar_parameters_string(psr_database_t* db,
 }
 
 PSR_C_API psr_error_t psr_database_read_scalar_parameter_double(psr_database_t* db,
-                                                                 const char* collection,
-                                                                 const char* attribute,
-                                                                 const char* label,
-                                                                 double* out_value,
-                                                                 int* is_null) {
+                                                                const char* collection,
+                                                                const char* attribute,
+                                                                const char* label,
+                                                                double* out_value,
+                                                                int* is_null) {
     if (!db || !collection || !attribute || !label || !out_value || !is_null) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }
@@ -310,10 +310,10 @@ PSR_C_API psr_error_t psr_database_read_scalar_parameter_double(psr_database_t* 
 }
 
 PSR_C_API psr_error_t psr_database_read_scalar_parameter_string(psr_database_t* db,
-                                                                 const char* collection,
-                                                                 const char* attribute,
-                                                                 const char* label,
-                                                                 char** out_value) {
+                                                                const char* collection,
+                                                                const char* attribute,
+                                                                const char* label,
+                                                                char** out_value) {
     if (!db || !collection || !attribute || !label || !out_value) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }
