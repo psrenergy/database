@@ -23,16 +23,16 @@ class PSR_API Element {
 public:
     Element() = default;
 
-    // Scalars (fluent)
+    // Scalars
     Element& set(const std::string& name, int64_t value);
     Element& set(const std::string& name, double value);
     Element& set(const std::string& name, const std::string& value);
     Element& set_null(const std::string& name);
 
-    // Vector groups (fluent) - for tables like Collection_vector_group
+    // Vector groups
     Element& add_vector_group(const std::string& group_name, VectorGroup rows);
 
-    // Set groups (fluent) - for tables like Collection_set_group
+    // Set groups
     Element& add_set_group(const std::string& group_name, SetGroup rows);
 
     // Accessors

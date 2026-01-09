@@ -12,7 +12,7 @@ typedef struct psr_element psr_element_t;
 typedef struct psr_vector_group psr_vector_group_t;
 typedef struct psr_set_group psr_set_group_t;
 
-// Element lifecycle
+// Element builder
 PSR_C_API psr_element_t* psr_element_create(void);
 PSR_C_API void psr_element_destroy(psr_element_t* element);
 PSR_C_API void psr_element_clear(psr_element_t* element);
