@@ -10,15 +10,6 @@
 
 namespace psr {
 
-// A row in a vector group: map of column names to values
-using VectorRow = std::map<std::string, Value>;
-
-// A vector group: group name -> list of rows (ordered by index)
-using VectorGroup = std::vector<VectorRow>;
-
-// A set group: group name -> list of rows (unordered, unique)
-using SetGroup = std::vector<VectorRow>;
-
 class PSR_API Element {
 public:
     Element() = default;
@@ -29,20 +20,17 @@ public:
     Element& set(const std::string& name, const std::string& value);
     Element& set_null(const std::string& name);
 
-    // Vector groups
-    Element& add_vector_group(const std::string& group_name, VectorGroup rows);
-
-    // Set groups
-    Element& add_set_group(const std::string& group_name, SetGroup rows);
+    // Arrays - stored generically, Database::create_element routes to vector/set tables
+    Element& set_array(const std::string& name, const std::vector<int64_t>& values);
+    Element& set_array(const std::string& name, const std::vector<double>& values);
+    Element& set_array(const std::string& name, const std::vector<std::string>& values);
 
     // Accessors
     const std::map<std::string, Value>& scalars() const;
-    const std::map<std::string, VectorGroup>& vector_groups() const;
-    const std::map<std::string, SetGroup>& set_groups() const;
+    const std::map<std::string, std::vector<Value>>& arrays() const;
 
     bool has_scalars() const;
-    bool has_vector_groups() const;
-    bool has_set_groups() const;
+    bool has_arrays() const;
 
     void clear();
 
@@ -51,8 +39,7 @@ public:
 
 private:
     std::map<std::string, Value> scalars_;
-    std::map<std::string, VectorGroup> vector_groups_;
-    std::map<std::string, SetGroup> set_groups_;
+    std::map<std::string, std::vector<Value>> arrays_;
 };
 
 }  // namespace psr
