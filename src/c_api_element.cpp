@@ -4,7 +4,6 @@
 #include <cstring>
 #include <new>
 #include <string>
-#include <vector>
 
 struct psr_element {
     psr::Element element;
