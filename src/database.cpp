@@ -681,8 +681,8 @@ Value Database::read_scalar_parameter(const std::string& collection,
     return result.at(0).at(0);
 }
 
-std::vector<std::vector<Value>>
-Database::read_vector_parameters(const std::string& collection, const std::string& attribute) const {
+std::vector<std::vector<Value>> Database::read_vector_parameters(const std::string& collection,
+                                                                 const std::string& attribute) const {
     impl_->logger->debug("Reading vector parameters: {}.{}", collection, attribute);
 
     if (!impl_->schema) {
@@ -709,8 +709,8 @@ Database::read_vector_parameters(const std::string& collection, const std::strin
     }
 
     if (vector_table.empty()) {
-        throw std::runtime_error("Attribute '" + attribute + "' is not a vector attribute of collection '" + collection +
-                                 "'");
+        throw std::runtime_error("Attribute '" + attribute + "' is not a vector attribute of collection '" +
+                                 collection + "'");
     }
 
     // Get all element IDs from the main collection table
@@ -724,8 +724,7 @@ Database::read_vector_parameters(const std::string& collection, const std::strin
         int64_t element_id = std::get<int64_t>(id_row.at(0));
 
         // Get vector values for this element
-        std::string vec_sql =
-            "SELECT " + attribute + " FROM " + vector_table + " WHERE id = ? ORDER BY vector_index";
+        std::string vec_sql = "SELECT " + attribute + " FROM " + vector_table + " WHERE id = ? ORDER BY vector_index";
         auto vec_result = const_cast<Database*>(this)->execute(vec_sql, {element_id});
 
         std::vector<Value> element_values;
@@ -769,8 +768,8 @@ std::vector<Value> Database::read_vector_parameter(const std::string& collection
     }
 
     if (vector_table.empty()) {
-        throw std::runtime_error("Attribute '" + attribute + "' is not a vector attribute of collection '" + collection +
-                                 "'");
+        throw std::runtime_error("Attribute '" + attribute + "' is not a vector attribute of collection '" +
+                                 collection + "'");
     }
 
     // Get element ID from label

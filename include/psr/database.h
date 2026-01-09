@@ -66,11 +66,10 @@ public:
     read_scalar_parameter(const std::string& collection, const std::string& attribute, const std::string& label) const;
 
     // Vector parameter reading (from vector tables)
-    std::vector<std::vector<Value>>
-    read_vector_parameters(const std::string& collection, const std::string& attribute) const;
-    std::vector<Value> read_vector_parameter(const std::string& collection,
-                                             const std::string& attribute,
-                                             const std::string& label) const;
+    std::vector<std::vector<Value>> read_vector_parameters(const std::string& collection,
+                                                           const std::string& attribute) const;
+    std::vector<Value>
+    read_vector_parameter(const std::string& collection, const std::string& attribute, const std::string& label) const;
 
 private:
     struct Impl;

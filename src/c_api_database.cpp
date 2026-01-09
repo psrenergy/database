@@ -420,10 +420,10 @@ PSR_C_API void psr_int_array_free(int64_t* arr) {
 // Vector parameter reading (returns nested arrays - one per element)
 // Returns element count, or -1 on error
 PSR_C_API int64_t psr_database_read_vector_parameters_double(psr_database_t* db,
-                                                              const char* collection,
-                                                              const char* attribute,
-                                                              double*** out_values,
-                                                              int64_t** out_counts) {
+                                                             const char* collection,
+                                                             const char* attribute,
+                                                             double*** out_values,
+                                                             int64_t** out_counts) {
     if (!db || !collection || !attribute || !out_values || !out_counts) {
         return -1;
     }
@@ -474,10 +474,10 @@ PSR_C_API int64_t psr_database_read_vector_parameters_double(psr_database_t* db,
 }
 
 PSR_C_API int64_t psr_database_read_vector_parameters_string(psr_database_t* db,
-                                                              const char* collection,
-                                                              const char* attribute,
-                                                              char**** out_values,
-                                                              int64_t** out_counts) {
+                                                             const char* collection,
+                                                             const char* attribute,
+                                                             char**** out_values,
+                                                             int64_t** out_counts) {
     if (!db || !collection || !attribute || !out_values || !out_counts) {
         return -1;
     }
