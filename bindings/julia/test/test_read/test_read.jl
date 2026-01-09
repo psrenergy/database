@@ -133,29 +133,29 @@ using Test
     #     "Plant 4",
     # ) ==
     #       DateTime[typemin(DateTime), typemin(DateTime)]
-    # @test_throws PSRDatabase.DatabaseException PSRDatabase.read_vector_parameter(
-    #     db,
-    #     "Plant",
-    #     "some_factor",
-    #     "Plant 500",
-    # )
+    @test_throws PSRDatabase.DatabaseException PSRDatabase.read_vector_parameter(
+        db,
+        "Plant",
+        "some_factor",
+        "Plant 500",
+    )
 
-    # # It is a set not a vector
-    # @test_throws PSRDatabase.DatabaseException PSRDatabase.read_vector_parameters(
-    #     db,
-    #     "Resource",
-    #     "some_other_value",
-    # )
-    # @test PSRDatabase.read_set_parameter(db, "Resource", "some_other_value", "Resource 1") ==
-    #       [4, 5, 6.0]
-    # @test PSRDatabase.read_set_parameter(db, "Resource", "some_other_value", "Resource 2") ==
-    #       [4, 5, 7.0]
-    # @test PSRDatabase.read_set_parameters(db, "Resource", "some_other_value") ==
-    #       [[4, 5, 6.0], [4, 5, 7.0]]
-    # @test PSRDatabase.read_set_parameter(db, "Plant", "some_other_factor", "Plant 1") ==
-    #       [0.5]
-    # @test PSRDatabase.read_set_parameters(db, "Plant", "some_other_factor") ==
-    #       [[0.5], Float64[], Float64[], Float64[]]
+    # It is a set not a vector
+    @test_throws PSRDatabase.DatabaseException PSRDatabase.read_vector_parameters(
+        db,
+        "Resource",
+        "some_other_value",
+    )
+    @test PSRDatabase.read_set_parameter(db, "Resource", "some_other_value", "Resource 1") ==
+          [4, 5, 6.0]
+    @test PSRDatabase.read_set_parameter(db, "Resource", "some_other_value", "Resource 2") ==
+          [4, 5, 7.0]
+    @test PSRDatabase.read_set_parameters(db, "Resource", "some_other_value") ==
+          [[4, 5, 6.0], [4, 5, 7.0]]
+    @test PSRDatabase.read_set_parameter(db, "Plant", "some_other_factor", "Plant 1") ==
+          [0.5]
+    @test PSRDatabase.read_set_parameters(db, "Plant", "some_other_factor") ==
+          [[0.5], Float64[], Float64[], Float64[]]
 
     # PSRDatabase.update_scalar_parameter!(db, "Plant", "capacity", "Plant 1", 2.0)
     # @test PSRDatabase.read_scalar_parameters(db, "Plant", "capacity") ==
