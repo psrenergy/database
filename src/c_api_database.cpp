@@ -276,6 +276,36 @@ PSR_C_API int64_t psr_database_read_scalar_parameters_string(psr_database_t* db,
     }
 }
 
+PSR_C_API int64_t psr_database_read_scalar_parameters_int(psr_database_t* db,
+                                                          const char* collection,
+                                                          const char* attribute,
+                                                          int64_t** out_values) {
+    if (!db || !collection || !attribute || !out_values) {
+        return -1;
+    }
+
+    try {
+        auto values = db->db.read_scalar_parameters(collection, attribute);
+
+        *out_values = new int64_t[values.size()];
+        for (size_t i = 0; i < values.size(); ++i) {
+            const auto& val = values[i];
+            if (std::holds_alternative<std::nullptr_t>(val)) {
+                (*out_values)[i] = 0;
+            } else if (std::holds_alternative<int64_t>(val)) {
+                (*out_values)[i] = std::get<int64_t>(val);
+            } else {
+                delete[] *out_values;
+                *out_values = nullptr;
+                return -1;
+            }
+        }
+        return static_cast<int64_t>(values.size());
+    } catch (const std::exception&) {
+        return -1;
+    }
+}
+
 PSR_C_API psr_error_t psr_database_read_scalar_parameter_double(psr_database_t* db,
                                                                 const char* collection,
                                                                 const char* attribute,
@@ -340,6 +370,36 @@ PSR_C_API psr_error_t psr_database_read_scalar_parameter_string(psr_database_t* 
     }
 }
 
+PSR_C_API psr_error_t psr_database_read_scalar_parameter_int(psr_database_t* db,
+                                                             const char* collection,
+                                                             const char* attribute,
+                                                             const char* label,
+                                                             int64_t* out_value,
+                                                             int* is_null) {
+    if (!db || !collection || !attribute || !label || !out_value || !is_null) {
+        return PSR_ERROR_INVALID_ARGUMENT;
+    }
+
+    try {
+        auto value = db->db.read_scalar_parameter(collection, attribute, label);
+
+        if (std::holds_alternative<std::nullptr_t>(value)) {
+            *is_null = 1;
+            *out_value = 0;
+        } else if (std::holds_alternative<int64_t>(value)) {
+            *is_null = 0;
+            *out_value = std::get<int64_t>(value);
+        } else {
+            return PSR_ERROR_DATABASE;
+        }
+        return PSR_OK;
+    } catch (const std::runtime_error&) {
+        return PSR_ERROR_NOT_FOUND;
+    } catch (const std::exception&) {
+        return PSR_ERROR_DATABASE;
+    }
+}
+
 PSR_C_API void psr_double_array_free(double* arr) {
     delete[] arr;
 }
@@ -351,6 +411,10 @@ PSR_C_API void psr_string_array_free(char** arr, size_t count) {
         }
         delete[] arr;
     }
+}
+
+PSR_C_API void psr_int_array_free(int64_t* arr) {
+    delete[] arr;
 }
 
 }  // extern "C"

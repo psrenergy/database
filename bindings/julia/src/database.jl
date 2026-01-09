@@ -71,6 +71,22 @@ function read_scalar_parameters(db::Database, collection::String, attribute::Str
         end
     end
 
+    # Try int
+    out_ints = Ref{Ptr{Int64}}(C_NULL)
+    count = C.psr_database_read_scalar_parameters_int(db.ptr, collection, attribute, out_ints)
+
+    if count >= 0
+        try
+            result = Vector{Int64}(undef, count)
+            for i in 1:count
+                result[i] = unsafe_load(out_ints[], i)
+            end
+            return result
+        finally
+            C.psr_int_array_free(out_ints[])
+        end
+    end
+
     throw(DatabaseException("Failed to read scalar parameters '$attribute' from collection '$collection'"))
 end
 
@@ -96,6 +112,17 @@ function read_scalar_parameter(db::Database, collection::String, attribute::Stri
         finally
             C.psr_string_free(out_str[])
         end
+    elseif err == C.PSR_ERROR_NOT_FOUND
+        throw(DatabaseException("Element with label '$label' not found in collection '$collection'"))
+    end
+
+    # Try int
+    out_int = Ref{Int64}(0)
+    is_null = Ref{Cint}(0)
+    err = C.psr_database_read_scalar_parameter_int(db.ptr, collection, attribute, label, out_int, is_null)
+
+    if err == C.PSR_OK
+        return is_null[] != 0 ? 0 : out_int[]
     elseif err == C.PSR_ERROR_NOT_FOUND
         throw(DatabaseException("Element with label '$label' not found in collection '$collection'"))
     end

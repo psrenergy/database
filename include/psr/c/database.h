@@ -61,6 +61,10 @@ PSR_C_API int64_t psr_database_read_scalar_parameters_string(psr_database_t* db,
                                                              const char* collection,
                                                              const char* attribute,
                                                              char*** out_values);
+PSR_C_API int64_t psr_database_read_scalar_parameters_int(psr_database_t* db,
+                                                          const char* collection,
+                                                          const char* attribute,
+                                                          int64_t** out_values);
 
 // Scalar parameter reading - single value
 PSR_C_API psr_error_t psr_database_read_scalar_parameter_double(psr_database_t* db,
@@ -74,10 +78,17 @@ PSR_C_API psr_error_t psr_database_read_scalar_parameter_string(psr_database_t* 
                                                                 const char* attribute,
                                                                 const char* label,
                                                                 char** out_value);
+PSR_C_API psr_error_t psr_database_read_scalar_parameter_int(psr_database_t* db,
+                                                             const char* collection,
+                                                             const char* attribute,
+                                                             const char* label,
+                                                             int64_t* out_value,
+                                                             int* is_null);
 
 // Array memory management
 PSR_C_API void psr_double_array_free(double* arr);
 PSR_C_API void psr_string_array_free(char** arr, size_t count);
+PSR_C_API void psr_int_array_free(int64_t* arr);
 
 #ifdef __cplusplus
 }
