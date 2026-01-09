@@ -115,7 +115,9 @@ TEST(Element, OverwriteValue) {
 
 TEST(Element, ToString) {
     psr::Element element;
-    element.set("label", std::string{"Plant 1"}).set("capacity", 50.0).set_array("costs", std::vector<double>{1.5, 2.5});
+    element.set("label", std::string{"Plant 1"})
+        .set("capacity", 50.0)
+        .set_array("costs", std::vector<double>{1.5, 2.5});
 
     std::string str = element.to_string();
 

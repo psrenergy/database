@@ -61,8 +61,10 @@ PSR_C_API psr_error_t psr_element_set_null(psr_element_t* element, const char* n
     return PSR_OK;
 }
 
-PSR_C_API psr_error_t
-psr_element_set_array_int(psr_element_t* element, const char* name, const int64_t* values, int32_t count) {
+PSR_C_API psr_error_t psr_element_set_array_int(psr_element_t* element,
+                                                const char* name,
+                                                const int64_t* values,
+                                                int32_t count) {
     if (!element || !name || (!values && count > 0) || count < 0) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }
@@ -71,8 +73,10 @@ psr_element_set_array_int(psr_element_t* element, const char* name, const int64_
     return PSR_OK;
 }
 
-PSR_C_API psr_error_t
-psr_element_set_array_double(psr_element_t* element, const char* name, const double* values, int32_t count) {
+PSR_C_API psr_error_t psr_element_set_array_double(psr_element_t* element,
+                                                   const char* name,
+                                                   const double* values,
+                                                   int32_t count) {
     if (!element || !name || (!values && count > 0) || count < 0) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }
@@ -81,8 +85,10 @@ psr_element_set_array_double(psr_element_t* element, const char* name, const dou
     return PSR_OK;
 }
 
-PSR_C_API psr_error_t
-psr_element_set_array_string(psr_element_t* element, const char* name, const char* const* values, int32_t count) {
+PSR_C_API psr_error_t psr_element_set_array_string(psr_element_t* element,
+                                                   const char* name,
+                                                   const char* const* values,
+                                                   int32_t count) {
     if (!element || !name || (!values && count > 0) || count < 0) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }

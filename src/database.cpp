@@ -518,8 +518,8 @@ int64_t Database::create_element(const std::string& collection, const Element& e
         }
 
         if (!found_set_table) {
-            throw std::runtime_error("Array '" + array_name + "' does not match any vector or set table for collection '" +
-                                     collection + "'");
+            throw std::runtime_error("Array '" + array_name +
+                                     "' does not match any vector or set table for collection '" + collection + "'");
         }
     }
 
