@@ -1,8 +1,8 @@
 #ifndef PSR_C_ELEMENT_H
 #define PSR_C_ELEMENT_H
 
-#include "platform.h"
 #include "common.h"
+#include "platform.h"
 
 #ifdef __cplusplus
 extern "C" {
