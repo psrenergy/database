@@ -203,8 +203,6 @@ function psr_string_free(str)
     @ccall libpsr_database_c.psr_string_free(str::Ptr{Cchar})::Cvoid
 end
 
-# const PSR_C_API = __declspec(dllimport)
-
 #! format: on
 
 
