@@ -72,8 +72,8 @@ TEST_F(DatabaseFixture, CreatesFileOnDisk) {
 }
 
 TEST_F(DatabaseFixture, CreateElementWithScalars) {
-    auto db = psr::Database::from_schema(":memory:", schema_path("test_database_schema.sql"),
-                                         {.console_level = psr::LogLevel::off});
+    auto db = psr::Database::from_schema(
+        ":memory:", schema_path("test_database_schema.sql"), {.console_level = psr::LogLevel::off});
 
     // Create element
     psr::Element element;
@@ -90,8 +90,8 @@ TEST_F(DatabaseFixture, CreateElementWithScalars) {
 }
 
 TEST_F(DatabaseFixture, CreateElementWithVector) {
-    auto db = psr::Database::from_schema(":memory:", schema_path("test_database_schema.sql"),
-                                         {.console_level = psr::LogLevel::off});
+    auto db = psr::Database::from_schema(
+        ":memory:", schema_path("test_database_schema.sql"), {.console_level = psr::LogLevel::off});
 
     // Create element with vector
     psr::Element element;
@@ -118,8 +118,8 @@ TEST_F(DatabaseFixture, CreateElementWithVector) {
 }
 
 TEST_F(DatabaseFixture, CreateMultipleElements) {
-    auto db = psr::Database::from_schema(":memory:", schema_path("test_database_schema.sql"),
-                                         {.console_level = psr::LogLevel::off});
+    auto db = psr::Database::from_schema(
+        ":memory:", schema_path("test_database_schema.sql"), {.console_level = psr::LogLevel::off});
 
     // Use Configuration table which has name and value columns
     psr::Element e1;

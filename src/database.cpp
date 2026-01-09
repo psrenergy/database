@@ -92,11 +92,7 @@ struct Database::Impl {
     sqlite3* db = nullptr;
     std::string path;
     std::shared_ptr<spdlog::logger> logger;
-
-    // Schema metadata (owned)
     std::unique_ptr<Schema> schema;
-
-    // Type validator (uses schema reference)
     std::unique_ptr<TypeValidator> type_validator;
 
     ~Impl() {
@@ -274,7 +270,7 @@ Database::from_schema(const std::string& db_path, const std::string& schema_path
 }
 
 void Database::set_version(int64_t version) {
-    std::string sql = "PRAGMA user_version = " + std::to_string(version) + ";";
+    const auto sql = "PRAGMA user_version = " + std::to_string(version) + ";";
     char* err_msg = nullptr;
     const auto rc = sqlite3_exec(impl_->db, sql.c_str(), nullptr, nullptr, &err_msg);
     if (rc != SQLITE_OK) {
@@ -331,7 +327,7 @@ void Database::execute_raw(const std::string& sql) {
 }
 
 void Database::migrate_up(const std::string& migrations_path) {
-    Migrations migrations(migrations_path);
+    const auto migrations = Migrations(migrations_path);
     if (migrations.empty()) {
         impl_->logger->debug("No migrations found in {}", migrations_path);
         return;

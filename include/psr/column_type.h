@@ -9,10 +9,14 @@ namespace psr {
 enum class ColumnType { Integer, Real, Text, Blob };
 
 inline ColumnType column_type_from_string(const std::string& type_str) {
-    if (type_str == "INTEGER") return ColumnType::Integer;
-    if (type_str == "REAL") return ColumnType::Real;
-    if (type_str == "TEXT") return ColumnType::Text;
-    if (type_str == "BLOB") return ColumnType::Blob;
+    if (type_str == "INTEGER")
+        return ColumnType::Integer;
+    if (type_str == "REAL")
+        return ColumnType::Real;
+    if (type_str == "TEXT")
+        return ColumnType::Text;
+    if (type_str == "BLOB")
+        return ColumnType::Blob;
     throw std::runtime_error("Unknown column type: " + type_str);
 }
 
