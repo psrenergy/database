@@ -97,28 +97,28 @@ using Test
         "Resource",
         "some_value",
     )
-    # @test_throws PSRDatabase.DatabaseException PSRDatabase.read_vector_parameters(
-    #     db,
-    #     "Plant",
-    #     "capacity",
-    # )
-    # @test PSRDatabase.read_vector_parameters(db, "Resource", "some_value") ==
-    #       [[1, 2, 3.0], [1, 2, 4.0]]
-    # @test PSRDatabase.read_vector_parameters(db, "Plant", "some_factor") ==
-    #       [[1.0], [1.0, 2.0], Float64[], [1.0, 2.0]]
-    # @test PSRDatabase.read_vector_parameter(db, "Plant", "some_factor", "Plant 1") ==
-    #       [1.0]
-    # @test PSRDatabase.read_vector_parameter(db, "Plant", "some_factor", "Plant 2") ==
-    #       [1.0, 2.0]
-    # @test PSRDatabase.read_vector_parameter(db, "Plant", "some_factor", "Plant 3") ==
-    #       Float64[]
-    # @test PSRDatabase.read_vector_parameter(
-    #     db,
-    #     "Plant",
-    #     "date_some_date",
-    #     "Plant 2",
-    # ) ==
-    #       ["2020-01-01 00:00:00", "2020-01-02 00:00:00"]
+    @test_throws PSRDatabase.DatabaseException PSRDatabase.read_vector_parameters(
+        db,
+        "Plant",
+        "capacity",
+    )
+    @test PSRDatabase.read_vector_parameters(db, "Resource", "some_value") ==
+          [[1, 2, 3.0], [1, 2, 4.0]]
+    @test PSRDatabase.read_vector_parameters(db, "Plant", "some_factor") ==
+          [[1.0], [1.0, 2.0], Float64[], [1.0, 2.0]]
+    @test PSRDatabase.read_vector_parameter(db, "Plant", "some_factor", "Plant 1") ==
+          [1.0]
+    @test PSRDatabase.read_vector_parameter(db, "Plant", "some_factor", "Plant 2") ==
+          [1.0, 2.0]
+    @test PSRDatabase.read_vector_parameter(db, "Plant", "some_factor", "Plant 3") ==
+          Float64[]
+    @test PSRDatabase.read_vector_parameter(
+        db,
+        "Plant",
+        "date_some_date",
+        "Plant 2",
+    ) ==
+          ["2020-01-01 00:00:00", "2020-01-02 00:00:00"]
     # @test PSRDatabase.read_vector_parameter(
     #     db,
     #     "Plant",
