@@ -17,9 +17,11 @@ TEST(ElementCApi, EmptyElement) {
     ASSERT_NE(element, nullptr);
 
     EXPECT_EQ(psr_element_has_scalars(element), 0);
-    EXPECT_EQ(psr_element_has_vectors(element), 0);
+    EXPECT_EQ(psr_element_has_vector_groups(element), 0);
+    EXPECT_EQ(psr_element_has_set_groups(element), 0);
     EXPECT_EQ(psr_element_scalar_count(element), 0);
-    EXPECT_EQ(psr_element_vector_count(element), 0);
+    EXPECT_EQ(psr_element_vector_group_count(element), 0);
+    EXPECT_EQ(psr_element_set_group_count(element), 0);
 
     psr_element_destroy(element);
 }
@@ -65,37 +67,53 @@ TEST(ElementCApi, SetNull) {
     psr_element_destroy(element);
 }
 
-TEST(ElementCApi, SetVectorInt) {
+TEST(ElementCApi, VectorGroup) {
     auto element = psr_element_create();
     ASSERT_NE(element, nullptr);
 
-    int64_t values[] = {1, 2, 3};
-    EXPECT_EQ(psr_element_set_vector_int(element, "ids", values, 3), PSR_OK);
-    EXPECT_EQ(psr_element_has_vectors(element), 1);
-    EXPECT_EQ(psr_element_vector_count(element), 1);
+    auto group = psr_vector_group_create();
+    ASSERT_NE(group, nullptr);
 
+    // Add first row
+    EXPECT_EQ(psr_vector_group_add_row(group), PSR_OK);
+    EXPECT_EQ(psr_vector_group_set_double(group, "value", 1.5), PSR_OK);
+    EXPECT_EQ(psr_vector_group_set_int(group, "count", 10), PSR_OK);
+
+    // Add second row
+    EXPECT_EQ(psr_vector_group_add_row(group), PSR_OK);
+    EXPECT_EQ(psr_vector_group_set_double(group, "value", 2.5), PSR_OK);
+    EXPECT_EQ(psr_vector_group_set_int(group, "count", 20), PSR_OK);
+
+    EXPECT_EQ(psr_element_add_vector_group(element, "test_group", group), PSR_OK);
+    EXPECT_EQ(psr_element_has_vector_groups(element), 1);
+    EXPECT_EQ(psr_element_vector_group_count(element), 1);
+
+    psr_vector_group_destroy(group);
     psr_element_destroy(element);
 }
 
-TEST(ElementCApi, SetVectorDouble) {
+TEST(ElementCApi, SetGroup) {
     auto element = psr_element_create();
     ASSERT_NE(element, nullptr);
 
-    double values[] = {1.5, 2.5, 3.5};
-    EXPECT_EQ(psr_element_set_vector_double(element, "costs", values, 3), PSR_OK);
-    EXPECT_EQ(psr_element_has_vectors(element), 1);
+    auto group = psr_set_group_create();
+    ASSERT_NE(group, nullptr);
 
-    psr_element_destroy(element);
-}
+    // Add first row
+    EXPECT_EQ(psr_set_group_add_row(group), PSR_OK);
+    EXPECT_EQ(psr_set_group_set_string(group, "tag", "important"), PSR_OK);
+    EXPECT_EQ(psr_set_group_set_int(group, "priority", 1), PSR_OK);
 
-TEST(ElementCApi, SetVectorString) {
-    auto element = psr_element_create();
-    ASSERT_NE(element, nullptr);
+    // Add second row
+    EXPECT_EQ(psr_set_group_add_row(group), PSR_OK);
+    EXPECT_EQ(psr_set_group_set_string(group, "tag", "urgent"), PSR_OK);
+    EXPECT_EQ(psr_set_group_set_int(group, "priority", 2), PSR_OK);
 
-    const char* values[] = {"a", "b", "c"};
-    EXPECT_EQ(psr_element_set_vector_string(element, "names", values, 3), PSR_OK);
-    EXPECT_EQ(psr_element_has_vectors(element), 1);
+    EXPECT_EQ(psr_element_add_set_group(element, "tags", group), PSR_OK);
+    EXPECT_EQ(psr_element_has_set_groups(element), 1);
+    EXPECT_EQ(psr_element_set_group_count(element), 1);
 
+    psr_set_group_destroy(group);
     psr_element_destroy(element);
 }
 
@@ -104,16 +122,20 @@ TEST(ElementCApi, Clear) {
     ASSERT_NE(element, nullptr);
 
     psr_element_set_int(element, "id", 1);
-    double values[] = {1.0, 2.0};
-    psr_element_set_vector_double(element, "data", values, 2);
+    
+    auto group = psr_vector_group_create();
+    psr_vector_group_add_row(group);
+    psr_vector_group_set_double(group, "data", 1.0);
+    psr_element_add_vector_group(element, "data", group);
+    psr_vector_group_destroy(group);
 
     EXPECT_EQ(psr_element_has_scalars(element), 1);
-    EXPECT_EQ(psr_element_has_vectors(element), 1);
+    EXPECT_EQ(psr_element_has_vector_groups(element), 1);
 
     psr_element_clear(element);
 
     EXPECT_EQ(psr_element_has_scalars(element), 0);
-    EXPECT_EQ(psr_element_has_vectors(element), 0);
+    EXPECT_EQ(psr_element_has_vector_groups(element), 0);
 
     psr_element_destroy(element);
 }
@@ -123,15 +145,6 @@ TEST(ElementCApi, NullElementErrors) {
     EXPECT_EQ(psr_element_set_double(nullptr, "x", 1.0), PSR_ERROR_INVALID_ARGUMENT);
     EXPECT_EQ(psr_element_set_string(nullptr, "x", "y"), PSR_ERROR_INVALID_ARGUMENT);
     EXPECT_EQ(psr_element_set_null(nullptr, "x"), PSR_ERROR_INVALID_ARGUMENT);
-
-    int64_t ival[] = {1};
-    EXPECT_EQ(psr_element_set_vector_int(nullptr, "x", ival, 1), PSR_ERROR_INVALID_ARGUMENT);
-
-    double dval[] = {1.0};
-    EXPECT_EQ(psr_element_set_vector_double(nullptr, "x", dval, 1), PSR_ERROR_INVALID_ARGUMENT);
-
-    const char* sval[] = {"a"};
-    EXPECT_EQ(psr_element_set_vector_string(nullptr, "x", sval, 1), PSR_ERROR_INVALID_ARGUMENT);
 }
 
 TEST(ElementCApi, NullNameErrors) {
@@ -148,9 +161,11 @@ TEST(ElementCApi, NullNameErrors) {
 
 TEST(ElementCApi, NullAccessors) {
     EXPECT_EQ(psr_element_has_scalars(nullptr), 0);
-    EXPECT_EQ(psr_element_has_vectors(nullptr), 0);
+    EXPECT_EQ(psr_element_has_vector_groups(nullptr), 0);
+    EXPECT_EQ(psr_element_has_set_groups(nullptr), 0);
     EXPECT_EQ(psr_element_scalar_count(nullptr), 0);
-    EXPECT_EQ(psr_element_vector_count(nullptr), 0);
+    EXPECT_EQ(psr_element_vector_group_count(nullptr), 0);
+    EXPECT_EQ(psr_element_set_group_count(nullptr), 0);
 }
 
 TEST(ElementCApi, MultipleScalars) {
@@ -166,24 +181,20 @@ TEST(ElementCApi, MultipleScalars) {
     psr_element_destroy(element);
 }
 
-TEST(ElementCApi, EmptyVector) {
-    auto element = psr_element_create();
-    ASSERT_NE(element, nullptr);
-
-    EXPECT_EQ(psr_element_set_vector_double(element, "empty", nullptr, 0), PSR_OK);
-    EXPECT_EQ(psr_element_has_vectors(element), 1);
-
-    psr_element_destroy(element);
-}
-
 TEST(ElementCApi, ToString) {
     auto element = psr_element_create();
     ASSERT_NE(element, nullptr);
 
     psr_element_set_string(element, "label", "Plant 1");
     psr_element_set_double(element, "capacity", 50.0);
-    double costs[] = {1.5, 2.5};
-    psr_element_set_vector_double(element, "costs", costs, 2);
+    
+    auto group = psr_vector_group_create();
+    psr_vector_group_add_row(group);
+    psr_vector_group_set_double(group, "costs", 1.5);
+    psr_vector_group_add_row(group);
+    psr_vector_group_set_double(group, "costs", 2.5);
+    psr_element_add_vector_group(element, "costs", group);
+    psr_vector_group_destroy(group);
 
     char* str = psr_element_to_string(element);
     ASSERT_NE(str, nullptr);
@@ -191,7 +202,7 @@ TEST(ElementCApi, ToString) {
     std::string result(str);
     EXPECT_NE(result.find("Element {"), std::string::npos);
     EXPECT_NE(result.find("scalars:"), std::string::npos);
-    EXPECT_NE(result.find("vectors:"), std::string::npos);
+    EXPECT_NE(result.find("vector_groups:"), std::string::npos);
     EXPECT_NE(result.find("label: \"Plant 1\""), std::string::npos);
 
     psr_string_free(str);
@@ -204,4 +215,28 @@ TEST(ElementCApi, ToStringNull) {
 
 TEST(ElementCApi, StringFreeNull) {
     psr_string_free(nullptr);
+}
+
+TEST(ElementCApi, VectorGroupNullErrors) {
+    EXPECT_EQ(psr_vector_group_add_row(nullptr), PSR_ERROR_INVALID_ARGUMENT);
+    EXPECT_EQ(psr_vector_group_set_int(nullptr, "x", 1), PSR_ERROR_INVALID_ARGUMENT);
+    EXPECT_EQ(psr_vector_group_set_double(nullptr, "x", 1.0), PSR_ERROR_INVALID_ARGUMENT);
+    EXPECT_EQ(psr_vector_group_set_string(nullptr, "x", "y"), PSR_ERROR_INVALID_ARGUMENT);
+    
+    auto element = psr_element_create();
+    EXPECT_EQ(psr_element_add_vector_group(element, "x", nullptr), PSR_ERROR_INVALID_ARGUMENT);
+    EXPECT_EQ(psr_element_add_vector_group(nullptr, "x", nullptr), PSR_ERROR_INVALID_ARGUMENT);
+    psr_element_destroy(element);
+}
+
+TEST(ElementCApi, SetGroupNullErrors) {
+    EXPECT_EQ(psr_set_group_add_row(nullptr), PSR_ERROR_INVALID_ARGUMENT);
+    EXPECT_EQ(psr_set_group_set_int(nullptr, "x", 1), PSR_ERROR_INVALID_ARGUMENT);
+    EXPECT_EQ(psr_set_group_set_double(nullptr, "x", 1.0), PSR_ERROR_INVALID_ARGUMENT);
+    EXPECT_EQ(psr_set_group_set_string(nullptr, "x", "y"), PSR_ERROR_INVALID_ARGUMENT);
+    
+    auto element = psr_element_create();
+    EXPECT_EQ(psr_element_add_set_group(element, "x", nullptr), PSR_ERROR_INVALID_ARGUMENT);
+    EXPECT_EQ(psr_element_add_set_group(nullptr, "x", nullptr), PSR_ERROR_INVALID_ARGUMENT);
+    psr_element_destroy(element);
 }
