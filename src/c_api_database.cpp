@@ -418,6 +418,3 @@ PSR_C_API void psr_int_array_free(int64_t* arr) {
 }
 
 }  // extern "C"
-}
-
-}  // extern "C"
