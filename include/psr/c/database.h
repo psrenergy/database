@@ -120,6 +120,41 @@ PSR_C_API int64_t psr_database_read_vector_parameter_int(psr_database_t* db,
                                                          const char* label,
                                                          int64_t** out_values);
 
+// Set parameter reading - all elements (returns element count, -1 on error)
+// out_values is array of arrays, out_counts is array of lengths for each element
+PSR_C_API int64_t psr_database_read_set_parameters_double(psr_database_t* db,
+                                                          const char* collection,
+                                                          const char* attribute,
+                                                          double*** out_values,
+                                                          int64_t** out_counts);
+PSR_C_API int64_t psr_database_read_set_parameters_string(psr_database_t* db,
+                                                          const char* collection,
+                                                          const char* attribute,
+                                                          char**** out_values,
+                                                          int64_t** out_counts);
+PSR_C_API int64_t psr_database_read_set_parameters_int(psr_database_t* db,
+                                                       const char* collection,
+                                                       const char* attribute,
+                                                       int64_t*** out_values,
+                                                       int64_t** out_counts);
+
+// Set parameter reading - single element by label (returns array length, -1 on error)
+PSR_C_API int64_t psr_database_read_set_parameter_double(psr_database_t* db,
+                                                         const char* collection,
+                                                         const char* attribute,
+                                                         const char* label,
+                                                         double** out_values);
+PSR_C_API int64_t psr_database_read_set_parameter_string(psr_database_t* db,
+                                                         const char* collection,
+                                                         const char* attribute,
+                                                         const char* label,
+                                                         char*** out_values);
+PSR_C_API int64_t psr_database_read_set_parameter_int(psr_database_t* db,
+                                                      const char* collection,
+                                                      const char* attribute,
+                                                      const char* label,
+                                                      int64_t** out_values);
+
 // Array memory management
 PSR_C_API void psr_double_array_free(double* arr);
 PSR_C_API void psr_string_array_free(char** arr, size_t count);
