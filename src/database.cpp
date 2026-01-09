@@ -421,7 +421,7 @@ void Database::apply_schema(const std::string& schema_path) {
 int64_t Database::create_element(const std::string& collection, const Element& element) {
     impl_->logger->debug("Creating element in collection: {}", collection);
 
-    // Require schema to be loaded - fail explicitly
+    // Require schema to be loaded
     if (!impl_->schema) {
         throw std::runtime_error("Cannot create element: no schema loaded");
     }
@@ -439,7 +439,7 @@ int64_t Database::create_element(const std::string& collection, const Element& e
         impl_->type_validator->validate_scalar(collection, name, value);
     }
 
-    // Build INSERT SQL: INSERT INTO <collection> (<cols>) VALUES (<placeholders>)
+    // Build INSERT SQL for main collection table
     std::string sql = "INSERT INTO " + collection + " (";
     std::string placeholders;
     std::vector<Value> params;
@@ -461,63 +461,107 @@ int64_t Database::create_element(const std::string& collection, const Element& e
     const auto element_id = sqlite3_last_insert_rowid(impl_->db);
     impl_->logger->debug("Inserted element with id: {}", element_id);
 
-    // Insert vector groups into vector tables
-    const auto& vector_groups = element.vector_groups();
-    for (const auto& [group_name, rows] : vector_groups) {
-        // Validate vector group types
-        impl_->type_validator->validate_vector_group(collection, group_name, rows);
+    // Process arrays - route to vector or set tables based on schema
+    const auto& arrays = element.arrays();
 
-        std::string vector_table = Schema::vector_table_name(collection, group_name);
+    // Build a map of set table -> (column_name -> array values)
+    std::map<std::string, std::map<std::string, const std::vector<Value>*>> set_table_columns;
 
-        if (rows.empty()) {
-            throw std::runtime_error("Empty vector group not allowed for group '" + group_name + "'");
+    for (const auto& [array_name, values] : arrays) {
+        if (values.empty()) {
+            throw std::runtime_error("Empty array not allowed for '" + array_name + "'");
         }
 
-        // Build INSERT SQL dynamically based on columns in the first row
-        // All rows in a group must have the same columns
-        for (size_t row_idx = 0; row_idx < rows.size(); ++row_idx) {
-            const auto& row = rows[row_idx];
-            int64_t vector_index = static_cast<int64_t>(row_idx + 1);  // 1-based index
+        // Check if this is a vector table column (Collection_vector_arrayname)
+        std::string vector_table = Schema::vector_table_name(collection, array_name);
+        if (impl_->schema->has_table(vector_table)) {
+            // Validate array types
+            impl_->type_validator->validate_array(vector_table, array_name, values);
 
-            std::string vec_sql = "INSERT INTO " + vector_table + " (id, vector_index";
-            std::string vec_placeholders = "?, ?";
-            std::vector<Value> vec_params = {element_id, vector_index};
-
-            for (const auto& [col_name, value] : row) {
-                vec_sql += ", " + col_name;
-                vec_placeholders += ", ?";
-                vec_params.push_back(value);
+            // Insert into vector table
+            for (size_t i = 0; i < values.size(); ++i) {
+                int64_t vector_index = static_cast<int64_t>(i + 1);
+                std::string vec_sql =
+                    "INSERT INTO " + vector_table + " (id, vector_index, " + array_name + ") VALUES (?, ?, ?)";
+                execute(vec_sql, {element_id, vector_index, values[i]});
             }
-            vec_sql += ") VALUES (" + vec_placeholders + ")";
-
-            execute(vec_sql, vec_params);
+            impl_->logger->debug("Inserted {} vector rows for {}", values.size(), array_name);
+            continue;
         }
-        impl_->logger->debug("Inserted {} vector rows for group {}", rows.size(), group_name);
+
+        // Check if this array_name is a column in any set table
+        bool found_set_table = false;
+        for (const auto& table_name : impl_->schema->table_names()) {
+            if (!impl_->schema->is_set_table(table_name))
+                continue;
+            if (impl_->schema->get_parent_collection(table_name) != collection)
+                continue;
+
+            const auto* table_def = impl_->schema->get_table(table_name);
+            if (table_def && table_def->has_column(array_name)) {
+                set_table_columns[table_name][array_name] = &values;
+                found_set_table = true;
+                break;
+            }
+        }
+
+        if (!found_set_table) {
+            throw std::runtime_error("Array '" + array_name + "' does not match any vector or set table for collection '" +
+                                     collection + "'");
+        }
     }
 
-    // Insert set groups into set tables
-    const auto& set_groups = element.set_groups();
-    for (const auto& [group_name, rows] : set_groups) {
-        // Validate set group types
-        impl_->type_validator->validate_set_group(collection, group_name, rows);
+    // Insert set table data - zip arrays together into rows
+    for (const auto& [set_table, columns] : set_table_columns) {
+        const auto* table_def = impl_->schema->get_table(set_table);
+        if (!table_def) {
+            throw std::runtime_error("Set table not found: " + set_table);
+        }
 
-        std::string set_table = Schema::set_table_name(collection, group_name);
+        // Verify all arrays have same length
+        size_t num_rows = 0;
+        for (const auto& [col_name, values_ptr] : columns) {
+            if (num_rows == 0) {
+                num_rows = values_ptr->size();
+            } else if (values_ptr->size() != num_rows) {
+                throw std::runtime_error("Set columns in table '" + set_table +
+                                         "' must have the same length, but got different lengths for columns");
+            }
+        }
 
-        for (const auto& row : rows) {
+        // Insert each row
+        for (size_t row_idx = 0; row_idx < num_rows; ++row_idx) {
             std::string set_sql = "INSERT INTO " + set_table + " (id";
             std::string set_placeholders = "?";
             std::vector<Value> set_params = {element_id};
 
-            for (const auto& [col_name, value] : row) {
+            for (const auto& [col_name, values_ptr] : columns) {
                 set_sql += ", " + col_name;
                 set_placeholders += ", ?";
-                set_params.push_back(value);
+
+                Value val = (*values_ptr)[row_idx];
+
+                // Check if this column is a FK and value is a string (label) that needs resolution
+                for (const auto& fk : table_def->foreign_keys) {
+                    if (fk.from_column == col_name && std::holds_alternative<std::string>(val)) {
+                        const std::string& label = std::get<std::string>(val);
+                        // Look up the ID by label
+                        auto id_result = read_scalar_parameter(fk.to_table, "id", label);
+                        if (!std::holds_alternative<int64_t>(id_result)) {
+                            throw std::runtime_error("Failed to resolve label '" + label + "' to ID in table '" +
+                                                     fk.to_table + "'");
+                        }
+                        val = std::get<int64_t>(id_result);
+                        break;
+                    }
+                }
+
+                set_params.push_back(val);
             }
             set_sql += ") VALUES (" + set_placeholders + ")";
-
             execute(set_sql, set_params);
         }
-        impl_->logger->debug("Inserted {} set rows for group {}", rows.size(), group_name);
+        impl_->logger->debug("Inserted {} set rows for table {}", num_rows, set_table);
     }
 
     impl_->logger->info("Created element {} in {}", element_id, collection);
