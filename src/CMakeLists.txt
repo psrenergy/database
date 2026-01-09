@@ -6,7 +6,9 @@ set(PSR_SOURCES
     migrations.cpp
     result.cpp
     row.cpp
+    schema.cpp
     schema_validator.cpp
+    type_validator.cpp
 )
 
 # Build type

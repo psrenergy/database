@@ -2,58 +2,29 @@
 #define PSR_SCHEMA_VALIDATOR_H
 
 #include "export.h"
+#include "schema.h"
 
 #include <string>
 #include <vector>
 
-struct sqlite3;
-
 namespace psr {
 
-struct ColumnInfo {
-    std::string name;
-    std::string type;
-    bool not_null;
-    bool primary_key;
-};
-
-struct ForeignKeyInfo {
-    std::string from_column;
-    std::string to_table;
-    std::string to_column;
-    std::string on_update;
-    std::string on_delete;
-};
-
-struct IndexInfo {
-    std::string name;
-    bool unique;
-    std::vector<std::string> columns;
-};
-
+// Validates that a schema follows PSR conventions:
+// - Configuration table exists
+// - Collections have id/label with proper constraints
+// - Vector tables have proper structure and FK constraints
+// - Set tables have proper UNIQUE constraints
+// - No duplicate attributes across collection and its vector tables
 class PSR_API SchemaValidator {
 public:
-    explicit SchemaValidator(sqlite3* db);
+    explicit SchemaValidator(const Schema& schema);
 
+    // Throws std::runtime_error on validation failure
     void validate();
 
 private:
-    sqlite3* db_;
-    std::vector<std::string> tables_;
+    const Schema& schema_;
     std::vector<std::string> collections_;
-
-    // Table introspection
-    std::vector<std::string> get_table_names();
-    std::vector<ColumnInfo> get_columns(const std::string& table);
-    std::vector<ForeignKeyInfo> get_foreign_keys(const std::string& table);
-    std::vector<IndexInfo> get_indexes(const std::string& table);
-
-    // Table classification
-    bool is_collection(const std::string& name) const;
-    bool is_vector_table(const std::string& name) const;
-    bool is_set_table(const std::string& name) const;
-    bool is_time_series_table(const std::string& name) const;
-    std::string get_parent_collection(const std::string& table) const;
 
     // Individual validations
     void validate_configuration_exists();

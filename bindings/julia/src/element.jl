@@ -57,19 +57,21 @@ function Base.setindex!(el::Element, value::Vector{<:Float64}, name::String)
     end
 end
 
-# function Base.setindex!(el::Element, value::Vector{<:String}, name::String)
-#     cname = Base.cconvert(Cstring, name)
-#     cvalues = Vector{Ptr{Cchar}}(undef, length(value))
-#     for (i, str) in enumerate(value)
-#         cvalues[i] = Base.cconvert(Cstring, str)
-#     end
-#     cvalues_ptr = Base.unsafe_convert(Ptr{Ptr{Cchar}}, cvalues)
-#     count = Int32(length(value))
-#     err = C.psr_element_set_vector_string(el.ptr, cname, cvalues_ptr, count)
-#     if err != C.PSR_OK
-#         error("Failed to set vector<string> value for '$name'")
-#     end
-# end
+function Base.setindex!(el::Element, value::Vector{<:AbstractString}, name::String)
+    cname = Base.cconvert(Cstring, name)
+    # Convert strings to null-terminated C strings
+    cstrings = [Base.cconvert(Cstring, s) for s in value]
+    # Get pointers to each string
+    ptrs = [Base.unsafe_convert(Cstring, cs) for cs in cstrings]
+    count = Int32(length(value))
+    # GC.@preserve ensures the strings remain valid during the C call
+    GC.@preserve cstrings begin
+        err = C.psr_element_set_vector_string(el.ptr, cname, ptrs, count)
+    end
+    if err != C.PSR_OK
+        error("Failed to set vector<string> value for '$name'")
+    end
+end
 
 function Base.show(io::IO, e::Element)
     cstr = C.psr_element_to_string(e.ptr)

@@ -2,7 +2,9 @@
 
 #include "psr/migrations.h"
 #include "psr/result.h"
+#include "psr/schema.h"
 #include "psr/schema_validator.h"
+#include "psr/type_validator.h"
 
 #include <atomic>
 #include <filesystem>
@@ -90,6 +92,12 @@ struct Database::Impl {
     sqlite3* db = nullptr;
     std::string path;
     std::shared_ptr<spdlog::logger> logger;
+
+    // Schema metadata (owned)
+    std::unique_ptr<Schema> schema;
+
+    // Type validator (uses schema reference)
+    std::unique_ptr<TypeValidator> type_validator;
 
     ~Impl() {
         if (db) {
@@ -389,8 +397,17 @@ void Database::apply_schema(const std::string& schema_path) {
     begin_transaction();
     try {
         execute_raw(schema_sql);
-        SchemaValidator validator(impl_->db);
+
+        // Load schema metadata
+        impl_->schema = std::make_unique<Schema>(Schema::from_database(impl_->db));
+
+        // Validate schema structure
+        SchemaValidator validator(*impl_->schema);
         validator.validate();
+
+        // Create type validator
+        impl_->type_validator = std::make_unique<TypeValidator>(*impl_->schema);
+
         commit();
     } catch (const std::exception& e) {
         rollback();
@@ -404,11 +421,22 @@ void Database::apply_schema(const std::string& schema_path) {
 int64_t Database::create_element(const std::string& collection, const Element& element) {
     impl_->logger->debug("Creating element in collection: {}", collection);
 
-    // Insert scalars into main table
+    // Require schema to be loaded - fail explicitly
+    if (!impl_->schema) {
+        throw std::runtime_error("Cannot create element: no schema loaded");
+    }
+    if (!impl_->schema->has_table(collection)) {
+        throw std::runtime_error("Collection not found in schema: " + collection);
+    }
+
     const auto& scalars = element.scalars();
     if (scalars.empty()) {
-        impl_->logger->error("Element must have at least one scalar attribute");
         throw std::runtime_error("Element must have at least one scalar attribute");
+    }
+
+    // Validate scalar types
+    for (const auto& [name, value] : scalars) {
+        impl_->type_validator->validate_scalar(collection, name, value);
     }
 
     // Build INSERT SQL: INSERT INTO <collection> (<cols>) VALUES (<placeholders>)
@@ -436,7 +464,10 @@ int64_t Database::create_element(const std::string& collection, const Element& e
     // Insert vectors into vector tables
     const auto& vectors = element.vectors();
     for (const auto& [attr_name, value] : vectors) {
-        std::string vector_table = collection + "_vector_" + attr_name;
+        // Validate vector type
+        impl_->type_validator->validate_vector(collection, attr_name, value);
+
+        std::string vector_table = Schema::vector_table_name(collection, attr_name);
         std::string vector_sql =
             "INSERT INTO " + vector_table + " (id, vector_index, " + attr_name + ") VALUES (?, ?, ?)";
 

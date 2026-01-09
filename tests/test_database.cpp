@@ -8,6 +8,12 @@
 
 namespace fs = std::filesystem;
 
+namespace {
+std::string schema_path(const std::string& filename) {
+    return (fs::path(__FILE__).parent_path() / filename).string();
+}
+}  // namespace
+
 TEST_F(DatabaseFixture, OpenFileOnDisk) {
     psr::Database db(path);
     EXPECT_TRUE(db.is_healthy());
@@ -66,10 +72,8 @@ TEST_F(DatabaseFixture, CreatesFileOnDisk) {
 }
 
 TEST_F(DatabaseFixture, CreateElementWithScalars) {
-    psr::Database db(":memory:", {.console_level = psr::LogLevel::off});
-
-    // Create table
-    db.execute("CREATE TABLE Plant (id INTEGER PRIMARY KEY, label TEXT, capacity REAL)");
+    auto db = psr::Database::from_schema(":memory:", schema_path("test_database_schema.sql"),
+                                         {.console_level = psr::LogLevel::off});
 
     // Create element
     psr::Element element;
@@ -86,12 +90,8 @@ TEST_F(DatabaseFixture, CreateElementWithScalars) {
 }
 
 TEST_F(DatabaseFixture, CreateElementWithVector) {
-    psr::Database db(":memory:", {.console_level = psr::LogLevel::off});
-
-    // Create tables
-    db.execute("CREATE TABLE Plant (id INTEGER PRIMARY KEY, label TEXT)");
-    db.execute("CREATE TABLE Plant_vector_costs (id INTEGER, vector_index INTEGER, costs REAL, PRIMARY KEY (id, "
-               "vector_index))");
+    auto db = psr::Database::from_schema(":memory:", schema_path("test_database_schema.sql"),
+                                         {.console_level = psr::LogLevel::off});
 
     // Create element with vector
     psr::Element element;
@@ -118,21 +118,37 @@ TEST_F(DatabaseFixture, CreateElementWithVector) {
 }
 
 TEST_F(DatabaseFixture, CreateMultipleElements) {
-    psr::Database db(":memory:", {.console_level = psr::LogLevel::off});
+    auto db = psr::Database::from_schema(":memory:", schema_path("test_database_schema.sql"),
+                                         {.console_level = psr::LogLevel::off});
 
-    db.execute("CREATE TABLE Config (id INTEGER PRIMARY KEY, name TEXT, value REAL)");
-
+    // Use Configuration table which has name and value columns
     psr::Element e1;
-    e1.set("name", std::string("Config A")).set("value", 100.0);
-    int64_t id1 = db.create_element("Config", e1);
+    e1.set("label", std::string("Config A")).set("name", std::string("Setting 1")).set("value", 100.0);
+    int64_t id1 = db.create_element("Configuration", e1);
 
     psr::Element e2;
-    e2.set("name", std::string("Config B")).set("value", 200.0);
-    int64_t id2 = db.create_element("Config", e2);
+    e2.set("label", std::string("Config B")).set("name", std::string("Setting 2")).set("value", 200.0);
+    int64_t id2 = db.create_element("Configuration", e2);
 
     EXPECT_EQ(id1, 1);
     EXPECT_EQ(id2, 2);
 
-    auto result = db.execute("SELECT COUNT(*) FROM Config");
+    auto result = db.execute("SELECT COUNT(*) FROM Configuration");
     EXPECT_EQ(result[0].get_int(0).value(), 2);
+}
+
+TEST_F(DatabaseFixture, CreateTable) {
+    psr::Database db(":memory:", {.console_level = psr::LogLevel::off});
+
+    db.execute("CREATE TABLE test (id INTEGER PRIMARY KEY, value TEXT)");
+    db.execute("INSERT INTO test (value) VALUES (?)", {std::string("hello")});
+
+    auto result = db.execute("SELECT * FROM test");
+    EXPECT_EQ(result.row_count(), 1);
+    EXPECT_EQ(result[0].get_string(1).value(), "hello");
+}
+
+TEST_F(DatabaseFixture, CurrentVersion) {
+    psr::Database db(":memory:", {.console_level = psr::LogLevel::off});
+    EXPECT_EQ(db.current_version(), 0);
 }
