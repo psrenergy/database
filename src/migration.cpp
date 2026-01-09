@@ -57,7 +57,7 @@ std::string Migration::up_sql() const {
 }
 
 std::string Migration::down_sql() const {
-    fs::path sql_path = fs::path(impl_->path) / "down.sql";
+    const auto sql_path = fs::path(impl_->path) / "down.sql";
     if (!fs::exists(sql_path)) {
         return "";
     }

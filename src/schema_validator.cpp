@@ -132,7 +132,7 @@ void SchemaValidator::validate_vector_table(const std::string& name) {
     }
 
     // Must have FK to parent with ON DELETE CASCADE ON UPDATE CASCADE
-    bool has_parent_fk = false;
+    auto has_parent_fk = false;
     for (const auto& fk : table->foreign_keys) {
         if (fk.from_column == "id" && fk.to_table == parent) {
             has_parent_fk = true;
@@ -161,7 +161,7 @@ void SchemaValidator::validate_set_table(const std::string& name) {
     }
 
     // Must have at least one UNIQUE constraint
-    bool has_unique = false;
+    auto has_unique = false;
     for (const auto& idx : table->indexes) {
         if (idx.unique) {
             has_unique = true;
