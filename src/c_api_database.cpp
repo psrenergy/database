@@ -276,8 +276,8 @@ psr_database_from_schema(const char* db_path, const char* schema_path, const psr
 // Generic tagged union read functions
 
 PSR_C_API psr_read_result_t psr_database_read_scalar_parameters(psr_database_t* db,
-                                                                 const char* collection,
-                                                                 const char* attribute) {
+                                                                const char* collection,
+                                                                const char* attribute) {
     if (!db || !collection || !attribute) {
         return make_error_result(PSR_ERROR_INVALID_ARGUMENT);
     }
@@ -303,9 +303,9 @@ PSR_C_API psr_read_result_t psr_database_read_scalar_parameters(psr_database_t* 
 }
 
 PSR_C_API psr_read_result_t psr_database_read_scalar_parameter(psr_database_t* db,
-                                                                const char* collection,
-                                                                const char* attribute,
-                                                                const char* label) {
+                                                               const char* collection,
+                                                               const char* attribute,
+                                                               const char* label) {
     if (!db || !collection || !attribute || !label) {
         return make_error_result(PSR_ERROR_INVALID_ARGUMENT);
     }
@@ -325,8 +325,8 @@ PSR_C_API psr_read_result_t psr_database_read_scalar_parameter(psr_database_t* d
 }
 
 PSR_C_API psr_read_result_t psr_database_read_vector_parameters(psr_database_t* db,
-                                                                 const char* collection,
-                                                                 const char* attribute) {
+                                                                const char* collection,
+                                                                const char* attribute) {
     if (!db || !collection || !attribute) {
         return make_error_result(PSR_ERROR_INVALID_ARGUMENT);
     }
@@ -352,9 +352,9 @@ PSR_C_API psr_read_result_t psr_database_read_vector_parameters(psr_database_t* 
 }
 
 PSR_C_API psr_read_result_t psr_database_read_vector_parameter(psr_database_t* db,
-                                                                const char* collection,
-                                                                const char* attribute,
-                                                                const char* label) {
+                                                               const char* collection,
+                                                               const char* attribute,
+                                                               const char* label) {
     if (!db || !collection || !attribute || !label) {
         return make_error_result(PSR_ERROR_INVALID_ARGUMENT);
     }
@@ -380,8 +380,8 @@ PSR_C_API psr_read_result_t psr_database_read_vector_parameter(psr_database_t* d
 }
 
 PSR_C_API psr_read_result_t psr_database_read_set_parameters(psr_database_t* db,
-                                                              const char* collection,
-                                                              const char* attribute) {
+                                                             const char* collection,
+                                                             const char* attribute) {
     if (!db || !collection || !attribute) {
         return make_error_result(PSR_ERROR_INVALID_ARGUMENT);
     }
@@ -407,9 +407,9 @@ PSR_C_API psr_read_result_t psr_database_read_set_parameters(psr_database_t* db,
 }
 
 PSR_C_API psr_read_result_t psr_database_read_set_parameter(psr_database_t* db,
-                                                             const char* collection,
-                                                             const char* attribute,
-                                                             const char* label) {
+                                                            const char* collection,
+                                                            const char* attribute,
+                                                            const char* label) {
     if (!db || !collection || !attribute || !label) {
         return make_error_result(PSR_ERROR_INVALID_ARGUMENT);
     }
