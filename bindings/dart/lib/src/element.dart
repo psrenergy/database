@@ -11,7 +11,7 @@ import 'exceptions.dart';
 /// Elements are used to insert data into collections.
 /// After use, call [dispose] to free native memory.
 class Element {
-  final Pointer<psr_element_t$1> _ptr;
+  final Pointer<psr_element_t1> _ptr;
   bool _isDisposed = false;
 
   /// Creates a new empty element.
@@ -22,7 +22,7 @@ class Element {
   }
 
   /// Internal pointer for FFI calls.
-  Pointer<psr_element_t$1> get ptr {
+  Pointer<psr_element_t1> get ptr {
     _ensureNotDisposed();
     return _ptr;
   }
@@ -93,8 +93,8 @@ class Element {
     final namePtr = name.toNativeUtf8();
     try {
       final error = bindings.psr_element_set_int(_ptr, namePtr.cast(), value);
-      if (error != psr_error_t.PSR_OK) {
-        throw DatabaseException.fromError(error.value, "Failed to set int '$name'");
+      if (error != 0) {
+        throw DatabaseException.fromError(error, "Failed to set int '$name'");
       }
     } finally {
       malloc.free(namePtr);
@@ -107,8 +107,8 @@ class Element {
     final namePtr = name.toNativeUtf8();
     try {
       final error = bindings.psr_element_set_double(_ptr, namePtr.cast(), value);
-      if (error != psr_error_t.PSR_OK) {
-        throw DatabaseException.fromError(error.value, "Failed to set double '$name'");
+      if (error != 0) {
+        throw DatabaseException.fromError(error, "Failed to set double '$name'");
       }
     } finally {
       malloc.free(namePtr);
@@ -126,8 +126,8 @@ class Element {
         namePtr.cast(),
         valuePtr.cast(),
       );
-      if (error != psr_error_t.PSR_OK) {
-        throw DatabaseException.fromError(error.value, "Failed to set string '$name'");
+      if (error != 0) {
+        throw DatabaseException.fromError(error, "Failed to set string '$name'");
       }
     } finally {
       malloc.free(namePtr);
@@ -141,8 +141,8 @@ class Element {
     final namePtr = name.toNativeUtf8();
     try {
       final error = bindings.psr_element_set_null(_ptr, namePtr.cast());
-      if (error != psr_error_t.PSR_OK) {
-        throw DatabaseException.fromError(error.value, "Failed to set null '$name'");
+      if (error != 0) {
+        throw DatabaseException.fromError(error, "Failed to set null '$name'");
       }
     } finally {
       malloc.free(namePtr);
@@ -165,8 +165,8 @@ class Element {
         arrayPtr,
         values.length,
       );
-      if (error != psr_error_t.PSR_OK) {
-        throw DatabaseException.fromError(error.value, "Failed to set int array '$name'");
+      if (error != 0) {
+        throw DatabaseException.fromError(error, "Failed to set int array '$name'");
       }
     } finally {
       malloc.free(namePtr);
@@ -190,8 +190,8 @@ class Element {
         arrayPtr,
         values.length,
       );
-      if (error != psr_error_t.PSR_OK) {
-        throw DatabaseException.fromError(error.value, "Failed to set double array '$name'");
+      if (error != 0) {
+        throw DatabaseException.fromError(error, "Failed to set double array '$name'");
       }
     } finally {
       malloc.free(namePtr);
@@ -218,8 +218,8 @@ class Element {
         arrayPtr,
         values.length,
       );
-      if (error != psr_error_t.PSR_OK) {
-        throw DatabaseException.fromError(error.value, "Failed to set string array '$name'");
+      if (error != 0) {
+        throw DatabaseException.fromError(error, "Failed to set string array '$name'");
       }
     } finally {
       malloc.free(namePtr);

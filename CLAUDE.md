@@ -33,6 +33,11 @@ Julia tests (individual file):
 julia --project=bindings/julia -e "include(\"bindings/julia/test/test_read/test_read.jl\")"
 ```
 
+Dart tests:
+```bash
+bindings/dart/test/test.bat
+```
+
 ## Instructions
 
 - To create the `bindings/julia/src/c_api.jl` run the command `bindings/julia/generator/generator.bat`
