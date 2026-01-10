@@ -28,9 +28,9 @@ C++ tests:
 ./build/bin/psr_database_c_tests.exe
 ```
 
-Julia tests (individual file):
+Julia tests:
 ```bash
-julia --project=bindings/julia -e "include(\"bindings/julia/test/test_read/test_read.jl\")"
+bindings/julia/test/test.bat
 ```
 
 Dart tests:
@@ -38,12 +38,31 @@ Dart tests:
 bindings/dart/test/test.bat
 ```
 
-## Instructions
+## Bindings
 
-- To create the `bindings/julia/src/c_api.jl` run the command `bindings/julia/generator/generator.bat`
-- To create the `bindings/dart/lib/src/ffi/bindings.dart` run the command `bindings/dart/generator/generator.bat`
-- If Julia manifest has version conflicts, delete `bindings/julia/Manifest.toml` and run `julia --project=bindings/julia -e "using Pkg; Pkg.instantiate()"`
+### Regenerating FFI Bindings
 
+When the C API changes (new functions, changed signatures), regenerate the bindings:
+
+```bash
+# Julia
+bindings/julia/generator/generator.bat
+
+# Dart
+bindings/dart/generator/generator.bat
+```
+
+### Julia
+
+- If manifest has version conflicts, delete `bindings/julia/Manifest.toml` and run:
+  ```bash
+  julia --project=bindings/julia -e "using Pkg; Pkg.instantiate()"
+  ```
+
+### Dart
+
+- DLL dependencies: `libpsr_database_c.dll` depends on `libpsr_database.dll` - both must be in PATH or same directory
+- The test.bat script handles PATH setup automatically
 
 ## Patterns
 
