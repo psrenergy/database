@@ -3,8 +3,8 @@
 #include "psr/database.h"
 
 #include <cstring>
-#include <limits>
 #include <new>
+#include <stdexcept>
 #include <string>
 #include <variant>
 
