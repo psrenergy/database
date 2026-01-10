@@ -11,28 +11,13 @@ void TypeValidator::validate_scalar(const std::string& table, const std::string&
     validate_value("column '" + column + "'", expected, value);
 }
 
-void TypeValidator::validate_vector(const std::string& collection,
-                                    const std::string& attr_name,
-                                    const Value& vector_value) const {
-    ColumnType expected = get_vector_element_type(collection, attr_name);
-    validate_value("vector '" + attr_name + "'", expected, vector_value);
-}
-
-ColumnType TypeValidator::get_vector_element_type(const std::string& collection, const std::string& attr_name) const {
-    std::string vector_table = Schema::vector_table_name(collection, attr_name);
-    const auto* table = schema_.get_table(vector_table);
-    if (!table) {
-        throw std::runtime_error("Vector table not found: " + vector_table);
+void TypeValidator::validate_array(const std::string& table,
+                                   const std::string& column,
+                                   const std::vector<Value>& values) const {
+    ColumnType expected = schema_.get_column_type(table, column);
+    for (size_t i = 0; i < values.size(); ++i) {
+        validate_value("array '" + column + "' index " + std::to_string(i), expected, values[i]);
     }
-
-    // Find the value column (not id, not vector_index)
-    for (const auto& [name, col] : table->columns) {
-        if (name != "id" && name != "vector_index") {
-            return col.type;
-        }
-    }
-
-    throw std::runtime_error("Vector table '" + vector_table + "' has no value column");
 }
 
 void TypeValidator::validate_value(const std::string& context, ColumnType expected_type, const Value& value) {
@@ -58,24 +43,10 @@ void TypeValidator::validate_value(const std::string& context, ColumnType expect
                                              column_type_to_string(expected_type) + ", got REAL");
                 }
             } else if constexpr (std::is_same_v<T, std::string>) {
-                if (expected_type != ColumnType::Text) {
+                // String can go to TEXT or INTEGER (FK label resolution happens elsewhere)
+                if (expected_type != ColumnType::Text && expected_type != ColumnType::Integer) {
                     throw std::runtime_error("Type mismatch for " + context + ": expected " +
                                              column_type_to_string(expected_type) + ", got TEXT");
-                }
-            } else if constexpr (std::is_same_v<T, std::vector<int64_t>>) {
-                if (expected_type != ColumnType::Integer) {
-                    throw std::runtime_error("Type mismatch for " + context + ": expected " +
-                                             column_type_to_string(expected_type) + ", got INTEGER[]");
-                }
-            } else if constexpr (std::is_same_v<T, std::vector<double>>) {
-                if (expected_type != ColumnType::Real && expected_type != ColumnType::Integer) {
-                    throw std::runtime_error("Type mismatch for " + context + ": expected " +
-                                             column_type_to_string(expected_type) + ", got REAL[]");
-                }
-            } else if constexpr (std::is_same_v<T, std::vector<std::string>>) {
-                if (expected_type != ColumnType::Text) {
-                    throw std::runtime_error("Type mismatch for " + context + ": expected " +
-                                             column_type_to_string(expected_type) + ", got TEXT[]");
                 }
             }
         },

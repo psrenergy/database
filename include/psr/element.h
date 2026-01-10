@@ -14,23 +14,23 @@ class PSR_API Element {
 public:
     Element() = default;
 
-    // Scalars (fluent)
+    // Scalars
     Element& set(const std::string& name, int64_t value);
     Element& set(const std::string& name, double value);
     Element& set(const std::string& name, const std::string& value);
     Element& set_null(const std::string& name);
 
-    // Vectors (fluent)
-    Element& set_vector(const std::string& name, std::vector<int64_t> values);
-    Element& set_vector(const std::string& name, std::vector<double> values);
-    Element& set_vector(const std::string& name, std::vector<std::string> values);
+    // Arrays - stored generically, Database::create_element routes to vector/set tables
+    Element& set_array(const std::string& name, const std::vector<int64_t>& values);
+    Element& set_array(const std::string& name, const std::vector<double>& values);
+    Element& set_array(const std::string& name, const std::vector<std::string>& values);
 
     // Accessors
     const std::map<std::string, Value>& scalars() const;
-    const std::map<std::string, Value>& vectors() const;
+    const std::map<std::string, std::vector<Value>>& arrays() const;
 
     bool has_scalars() const;
-    bool has_vectors() const;
+    bool has_arrays() const;
 
     void clear();
 
@@ -39,7 +39,7 @@ public:
 
 private:
     std::map<std::string, Value> scalars_;
-    std::map<std::string, Value> vectors_;
+    std::map<std::string, std::vector<Value>> arrays_;
 };
 
 }  // namespace psr

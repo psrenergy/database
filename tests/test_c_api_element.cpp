@@ -17,9 +17,9 @@ TEST(ElementCApi, EmptyElement) {
     ASSERT_NE(element, nullptr);
 
     EXPECT_EQ(psr_element_has_scalars(element), 0);
-    EXPECT_EQ(psr_element_has_vectors(element), 0);
+    EXPECT_EQ(psr_element_has_arrays(element), 0);
     EXPECT_EQ(psr_element_scalar_count(element), 0);
-    EXPECT_EQ(psr_element_vector_count(element), 0);
+    EXPECT_EQ(psr_element_array_count(element), 0);
 
     psr_element_destroy(element);
 }
@@ -65,36 +65,38 @@ TEST(ElementCApi, SetNull) {
     psr_element_destroy(element);
 }
 
-TEST(ElementCApi, SetVectorInt) {
+TEST(ElementCApi, SetArrayInt) {
     auto element = psr_element_create();
     ASSERT_NE(element, nullptr);
 
-    int64_t values[] = {1, 2, 3};
-    EXPECT_EQ(psr_element_set_vector_int(element, "ids", values, 3), PSR_OK);
-    EXPECT_EQ(psr_element_has_vectors(element), 1);
-    EXPECT_EQ(psr_element_vector_count(element), 1);
+    int64_t values[] = {10, 20, 30};
+    EXPECT_EQ(psr_element_set_array_int(element, "counts", values, 3), PSR_OK);
+    EXPECT_EQ(psr_element_has_arrays(element), 1);
+    EXPECT_EQ(psr_element_array_count(element), 1);
 
     psr_element_destroy(element);
 }
 
-TEST(ElementCApi, SetVectorDouble) {
+TEST(ElementCApi, SetArrayDouble) {
     auto element = psr_element_create();
     ASSERT_NE(element, nullptr);
 
     double values[] = {1.5, 2.5, 3.5};
-    EXPECT_EQ(psr_element_set_vector_double(element, "costs", values, 3), PSR_OK);
-    EXPECT_EQ(psr_element_has_vectors(element), 1);
+    EXPECT_EQ(psr_element_set_array_double(element, "costs", values, 3), PSR_OK);
+    EXPECT_EQ(psr_element_has_arrays(element), 1);
+    EXPECT_EQ(psr_element_array_count(element), 1);
 
     psr_element_destroy(element);
 }
 
-TEST(ElementCApi, SetVectorString) {
+TEST(ElementCApi, SetArrayString) {
     auto element = psr_element_create();
     ASSERT_NE(element, nullptr);
 
-    const char* values[] = {"a", "b", "c"};
-    EXPECT_EQ(psr_element_set_vector_string(element, "names", values, 3), PSR_OK);
-    EXPECT_EQ(psr_element_has_vectors(element), 1);
+    const char* values[] = {"important", "urgent", "review"};
+    EXPECT_EQ(psr_element_set_array_string(element, "tags", values, 3), PSR_OK);
+    EXPECT_EQ(psr_element_has_arrays(element), 1);
+    EXPECT_EQ(psr_element_array_count(element), 1);
 
     psr_element_destroy(element);
 }
@@ -105,15 +107,15 @@ TEST(ElementCApi, Clear) {
 
     psr_element_set_int(element, "id", 1);
     double values[] = {1.0, 2.0};
-    psr_element_set_vector_double(element, "data", values, 2);
+    psr_element_set_array_double(element, "data", values, 2);
 
     EXPECT_EQ(psr_element_has_scalars(element), 1);
-    EXPECT_EQ(psr_element_has_vectors(element), 1);
+    EXPECT_EQ(psr_element_has_arrays(element), 1);
 
     psr_element_clear(element);
 
     EXPECT_EQ(psr_element_has_scalars(element), 0);
-    EXPECT_EQ(psr_element_has_vectors(element), 0);
+    EXPECT_EQ(psr_element_has_arrays(element), 0);
 
     psr_element_destroy(element);
 }
@@ -123,15 +125,6 @@ TEST(ElementCApi, NullElementErrors) {
     EXPECT_EQ(psr_element_set_double(nullptr, "x", 1.0), PSR_ERROR_INVALID_ARGUMENT);
     EXPECT_EQ(psr_element_set_string(nullptr, "x", "y"), PSR_ERROR_INVALID_ARGUMENT);
     EXPECT_EQ(psr_element_set_null(nullptr, "x"), PSR_ERROR_INVALID_ARGUMENT);
-
-    int64_t ival[] = {1};
-    EXPECT_EQ(psr_element_set_vector_int(nullptr, "x", ival, 1), PSR_ERROR_INVALID_ARGUMENT);
-
-    double dval[] = {1.0};
-    EXPECT_EQ(psr_element_set_vector_double(nullptr, "x", dval, 1), PSR_ERROR_INVALID_ARGUMENT);
-
-    const char* sval[] = {"a"};
-    EXPECT_EQ(psr_element_set_vector_string(nullptr, "x", sval, 1), PSR_ERROR_INVALID_ARGUMENT);
 }
 
 TEST(ElementCApi, NullNameErrors) {
@@ -148,9 +141,9 @@ TEST(ElementCApi, NullNameErrors) {
 
 TEST(ElementCApi, NullAccessors) {
     EXPECT_EQ(psr_element_has_scalars(nullptr), 0);
-    EXPECT_EQ(psr_element_has_vectors(nullptr), 0);
+    EXPECT_EQ(psr_element_has_arrays(nullptr), 0);
     EXPECT_EQ(psr_element_scalar_count(nullptr), 0);
-    EXPECT_EQ(psr_element_vector_count(nullptr), 0);
+    EXPECT_EQ(psr_element_array_count(nullptr), 0);
 }
 
 TEST(ElementCApi, MultipleScalars) {
@@ -166,24 +159,15 @@ TEST(ElementCApi, MultipleScalars) {
     psr_element_destroy(element);
 }
 
-TEST(ElementCApi, EmptyVector) {
-    auto element = psr_element_create();
-    ASSERT_NE(element, nullptr);
-
-    EXPECT_EQ(psr_element_set_vector_double(element, "empty", nullptr, 0), PSR_OK);
-    EXPECT_EQ(psr_element_has_vectors(element), 1);
-
-    psr_element_destroy(element);
-}
-
 TEST(ElementCApi, ToString) {
     auto element = psr_element_create();
     ASSERT_NE(element, nullptr);
 
     psr_element_set_string(element, "label", "Plant 1");
     psr_element_set_double(element, "capacity", 50.0);
+
     double costs[] = {1.5, 2.5};
-    psr_element_set_vector_double(element, "costs", costs, 2);
+    psr_element_set_array_double(element, "costs", costs, 2);
 
     char* str = psr_element_to_string(element);
     ASSERT_NE(str, nullptr);
@@ -191,7 +175,7 @@ TEST(ElementCApi, ToString) {
     std::string result(str);
     EXPECT_NE(result.find("Element {"), std::string::npos);
     EXPECT_NE(result.find("scalars:"), std::string::npos);
-    EXPECT_NE(result.find("vectors:"), std::string::npos);
+    EXPECT_NE(result.find("arrays:"), std::string::npos);
     EXPECT_NE(result.find("label: \"Plant 1\""), std::string::npos);
 
     psr_string_free(str);
@@ -204,4 +188,23 @@ TEST(ElementCApi, ToStringNull) {
 
 TEST(ElementCApi, StringFreeNull) {
     psr_string_free(nullptr);
+}
+
+TEST(ElementCApi, ArrayNullErrors) {
+    int64_t int_values[] = {1, 2, 3};
+    double double_values[] = {1.0, 2.0, 3.0};
+    const char* string_values[] = {"a", "b", "c"};
+
+    EXPECT_EQ(psr_element_set_array_int(nullptr, "x", int_values, 3), PSR_ERROR_INVALID_ARGUMENT);
+    EXPECT_EQ(psr_element_set_array_double(nullptr, "x", double_values, 3), PSR_ERROR_INVALID_ARGUMENT);
+    EXPECT_EQ(psr_element_set_array_string(nullptr, "x", string_values, 3), PSR_ERROR_INVALID_ARGUMENT);
+
+    auto element = psr_element_create();
+    EXPECT_EQ(psr_element_set_array_int(element, nullptr, int_values, 3), PSR_ERROR_INVALID_ARGUMENT);
+    EXPECT_EQ(psr_element_set_array_double(element, nullptr, double_values, 3), PSR_ERROR_INVALID_ARGUMENT);
+    EXPECT_EQ(psr_element_set_array_string(element, nullptr, string_values, 3), PSR_ERROR_INVALID_ARGUMENT);
+    EXPECT_EQ(psr_element_set_array_int(element, "x", nullptr, 3), PSR_ERROR_INVALID_ARGUMENT);
+    EXPECT_EQ(psr_element_set_array_double(element, "x", nullptr, 3), PSR_ERROR_INVALID_ARGUMENT);
+    EXPECT_EQ(psr_element_set_array_string(element, "x", nullptr, 3), PSR_ERROR_INVALID_ARGUMENT);
+    psr_element_destroy(element);
 }

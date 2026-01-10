@@ -254,6 +254,10 @@ const std::string& Database::path() const {
     return impl_ ? impl_->path : empty;
 }
 
+const Schema* Database::schema() const {
+    return impl_ ? impl_->schema.get() : nullptr;
+}
+
 Database Database::from_migrations(const std::string& db_path,
                                    const std::string& migrations_path,
                                    const DatabaseOptions& options) {
@@ -417,7 +421,7 @@ void Database::apply_schema(const std::string& schema_path) {
 int64_t Database::create_element(const std::string& collection, const Element& element) {
     impl_->logger->debug("Creating element in collection: {}", collection);
 
-    // Require schema to be loaded - fail explicitly
+    // Require schema to be loaded
     if (!impl_->schema) {
         throw std::runtime_error("Cannot create element: no schema loaded");
     }
@@ -435,7 +439,7 @@ int64_t Database::create_element(const std::string& collection, const Element& e
         impl_->type_validator->validate_scalar(collection, name, value);
     }
 
-    // Build INSERT SQL: INSERT INTO <collection> (<cols>) VALUES (<placeholders>)
+    // Build INSERT SQL for main collection table
     std::string sql = "INSERT INTO " + collection + " (";
     std::string placeholders;
     std::vector<Value> params;
@@ -457,32 +461,157 @@ int64_t Database::create_element(const std::string& collection, const Element& e
     const auto element_id = sqlite3_last_insert_rowid(impl_->db);
     impl_->logger->debug("Inserted element with id: {}", element_id);
 
-    // Insert vectors into vector tables
-    const auto& vectors = element.vectors();
-    for (const auto& [attr_name, value] : vectors) {
-        // Validate vector type
-        impl_->type_validator->validate_vector(collection, attr_name, value);
+    // Process arrays - route to vector or set tables based on schema
+    const auto& arrays = element.arrays();
 
-        std::string vector_table = Schema::vector_table_name(collection, attr_name);
-        std::string vector_sql =
-            "INSERT INTO " + vector_table + " (id, vector_index, " + attr_name + ") VALUES (?, ?, ?)";
+    // Build a map of set table -> (column_name -> array values)
+    std::map<std::string, std::map<std::string, const std::vector<Value>*>> set_table_columns;
+    // Build a map of vector table -> (column_name -> array values)
+    std::map<std::string, std::map<std::string, const std::vector<Value>*>> vector_table_columns;
 
-        std::visit(
-            [&](auto&& vec) {
-                using T = std::decay_t<decltype(vec)>;
-                if constexpr (std::is_same_v<T, std::vector<int64_t>> || std::is_same_v<T, std::vector<double>> ||
-                              std::is_same_v<T, std::vector<std::string>>) {
-                    if (vec.empty()) {
-                        throw std::runtime_error("Empty vector not allowed for attribute '" + attr_name + "'");
+    for (const auto& [array_name, values] : arrays) {
+        if (values.empty()) {
+            throw std::runtime_error("Empty array not allowed for '" + array_name + "'");
+        }
+
+        // Check if this is a single-column vector table (Collection_vector_arrayname)
+        std::string vector_table = Schema::vector_table_name(collection, array_name);
+        if (impl_->schema->has_table(vector_table)) {
+            vector_table_columns[vector_table][array_name] = &values;
+            continue;
+        }
+
+        // Check if this array_name is a column in any vector table for the collection
+        bool found_vector_table = false;
+        for (const auto& table_name : impl_->schema->table_names()) {
+            if (!impl_->schema->is_vector_table(table_name))
+                continue;
+            if (impl_->schema->get_parent_collection(table_name) != collection)
+                continue;
+
+            const auto* table_def = impl_->schema->get_table(table_name);
+            if (table_def && table_def->has_column(array_name)) {
+                vector_table_columns[table_name][array_name] = &values;
+                found_vector_table = true;
+                break;
+            }
+        }
+
+        if (found_vector_table) {
+            continue;
+        }
+
+        // Check if this array_name is a column in any set table
+        bool found_set_table = false;
+        for (const auto& table_name : impl_->schema->table_names()) {
+            if (!impl_->schema->is_set_table(table_name))
+                continue;
+            if (impl_->schema->get_parent_collection(table_name) != collection)
+                continue;
+
+            const auto* table_def = impl_->schema->get_table(table_name);
+            if (table_def && table_def->has_column(array_name)) {
+                set_table_columns[table_name][array_name] = &values;
+                found_set_table = true;
+                break;
+            }
+        }
+
+        if (!found_set_table) {
+            throw std::runtime_error("Array '" + array_name +
+                                     "' does not match any vector or set table for collection '" + collection + "'");
+        }
+    }
+
+    // Insert vector table data - zip arrays together into rows with vector_index
+    for (const auto& [vector_table, columns] : vector_table_columns) {
+        const auto* table_def = impl_->schema->get_table(vector_table);
+        if (!table_def) {
+            throw std::runtime_error("Vector table not found: " + vector_table);
+        }
+
+        // Verify all arrays have same length
+        size_t num_rows = 0;
+        for (const auto& [col_name, values_ptr] : columns) {
+            impl_->type_validator->validate_array(vector_table, col_name, *values_ptr);
+            if (num_rows == 0) {
+                num_rows = values_ptr->size();
+            } else if (values_ptr->size() != num_rows) {
+                throw std::runtime_error("Vector columns in table '" + vector_table +
+                                         "' must have the same length, but got different lengths for columns");
+            }
+        }
+
+        // Insert each row with vector_index
+        for (size_t row_idx = 0; row_idx < num_rows; ++row_idx) {
+            int64_t vector_index = static_cast<int64_t>(row_idx + 1);
+            std::string vec_sql = "INSERT INTO " + vector_table + " (id, vector_index";
+            std::string vec_placeholders = "?, ?";
+            std::vector<Value> vec_params = {element_id, vector_index};
+
+            for (const auto& [col_name, values_ptr] : columns) {
+                vec_sql += ", " + col_name;
+                vec_placeholders += ", ?";
+                vec_params.push_back((*values_ptr)[row_idx]);
+            }
+
+            vec_sql += ") VALUES (" + vec_placeholders + ")";
+            execute(vec_sql, vec_params);
+        }
+        impl_->logger->debug("Inserted {} vector rows into {}", num_rows, vector_table);
+    }
+
+    // Insert set table data - zip arrays together into rows
+    for (const auto& [set_table, columns] : set_table_columns) {
+        const auto* table_def = impl_->schema->get_table(set_table);
+        if (!table_def) {
+            throw std::runtime_error("Set table not found: " + set_table);
+        }
+
+        // Verify all arrays have same length
+        size_t num_rows = 0;
+        for (const auto& [col_name, values_ptr] : columns) {
+            if (num_rows == 0) {
+                num_rows = values_ptr->size();
+            } else if (values_ptr->size() != num_rows) {
+                throw std::runtime_error("Set columns in table '" + set_table +
+                                         "' must have the same length, but got different lengths for columns");
+            }
+        }
+
+        // Insert each row
+        for (size_t row_idx = 0; row_idx < num_rows; ++row_idx) {
+            std::string set_sql = "INSERT INTO " + set_table + " (id";
+            std::string set_placeholders = "?";
+            std::vector<Value> set_params = {element_id};
+
+            for (const auto& [col_name, values_ptr] : columns) {
+                set_sql += ", " + col_name;
+                set_placeholders += ", ?";
+
+                Value val = (*values_ptr)[row_idx];
+
+                // Check if this column is a FK and value is a string (label) that needs resolution
+                for (const auto& fk : table_def->foreign_keys) {
+                    if (fk.from_column == col_name && std::holds_alternative<std::string>(val)) {
+                        const std::string& label = std::get<std::string>(val);
+                        // Look up the ID by label
+                        auto id_result = read_scalar_parameter(fk.to_table, "id", label);
+                        if (!std::holds_alternative<int64_t>(id_result)) {
+                            throw std::runtime_error("Failed to resolve label '" + label + "' to ID in table '" +
+                                                     fk.to_table + "'");
+                        }
+                        val = std::get<int64_t>(id_result);
+                        break;
                     }
-                    for (size_t i = 0; i < vec.size(); ++i) {
-                        int64_t vector_index = static_cast<int64_t>(i + 1);  // 1-based index
-                        execute(vector_sql, {element_id, vector_index, vec[i]});
-                    }
-                    impl_->logger->debug("Inserted {} vector elements for {}", vec.size(), attr_name);
                 }
-            },
-            value);
+
+                set_params.push_back(val);
+            }
+            set_sql += ") VALUES (" + set_placeholders + ")";
+            execute(set_sql, set_params);
+        }
+        impl_->logger->debug("Inserted {} set rows for table {}", num_rows, set_table);
     }
 
     impl_->logger->info("Created element {} in {}", element_id, collection);
@@ -550,6 +679,236 @@ Value Database::read_scalar_parameter(const std::string& collection,
     }
 
     return result.at(0).at(0);
+}
+
+std::vector<std::vector<Value>> Database::read_vector_parameters(const std::string& collection,
+                                                                 const std::string& attribute) const {
+    impl_->logger->debug("Reading vector parameters: {}.{}", collection, attribute);
+
+    if (!impl_->schema) {
+        throw std::runtime_error("Cannot read parameters: no schema loaded");
+    }
+
+    if (!impl_->schema->is_collection(collection)) {
+        throw std::runtime_error("'" + collection + "' is not a valid collection");
+    }
+
+    // Find the vector table containing this attribute
+    std::string vector_table;
+    for (const auto& table_name : impl_->schema->table_names()) {
+        if (!impl_->schema->is_vector_table(table_name))
+            continue;
+        if (impl_->schema->get_parent_collection(table_name) != collection)
+            continue;
+
+        const auto* table_def = impl_->schema->get_table(table_name);
+        if (table_def && table_def->has_column(attribute)) {
+            vector_table = table_name;
+            break;
+        }
+    }
+
+    if (vector_table.empty()) {
+        throw std::runtime_error("Attribute '" + attribute + "' is not a vector attribute of collection '" +
+                                 collection + "'");
+    }
+
+    // Get all element IDs from the main collection table
+    std::string id_sql = "SELECT id FROM " + collection + " ORDER BY id";
+    auto id_result = const_cast<Database*>(this)->execute(id_sql);
+
+    std::vector<std::vector<Value>> all_values;
+    all_values.reserve(id_result.row_count());
+
+    for (const auto& id_row : id_result) {
+        int64_t element_id = std::get<int64_t>(id_row.at(0));
+
+        // Get vector values for this element
+        std::string vec_sql = "SELECT " + attribute + " FROM " + vector_table + " WHERE id = ? ORDER BY vector_index";
+        auto vec_result = const_cast<Database*>(this)->execute(vec_sql, {element_id});
+
+        std::vector<Value> element_values;
+        element_values.reserve(vec_result.row_count());
+        for (const auto& row : vec_result) {
+            element_values.push_back(row.at(0));
+        }
+        all_values.push_back(std::move(element_values));
+    }
+
+    impl_->logger->debug("Read vector parameters for {} elements", all_values.size());
+    return all_values;
+}
+
+std::vector<Value> Database::read_vector_parameter(const std::string& collection,
+                                                   const std::string& attribute,
+                                                   const std::string& label) const {
+    impl_->logger->debug("Reading vector parameter: {}.{} for label '{}'", collection, attribute, label);
+
+    if (!impl_->schema) {
+        throw std::runtime_error("Cannot read parameter: no schema loaded");
+    }
+
+    if (!impl_->schema->is_collection(collection)) {
+        throw std::runtime_error("'" + collection + "' is not a valid collection");
+    }
+
+    // Find the vector table containing this attribute
+    std::string vector_table;
+    for (const auto& table_name : impl_->schema->table_names()) {
+        if (!impl_->schema->is_vector_table(table_name))
+            continue;
+        if (impl_->schema->get_parent_collection(table_name) != collection)
+            continue;
+
+        const auto* table_def = impl_->schema->get_table(table_name);
+        if (table_def && table_def->has_column(attribute)) {
+            vector_table = table_name;
+            break;
+        }
+    }
+
+    if (vector_table.empty()) {
+        throw std::runtime_error("Attribute '" + attribute + "' is not a vector attribute of collection '" +
+                                 collection + "'");
+    }
+
+    // Get element ID from label
+    std::string id_sql = "SELECT id FROM " + collection + " WHERE label = ?";
+    auto id_result = const_cast<Database*>(this)->execute(id_sql, {label});
+
+    if (id_result.empty()) {
+        throw std::runtime_error("Element with label '" + label + "' not found in collection '" + collection + "'");
+    }
+
+    int64_t element_id = std::get<int64_t>(id_result.at(0).at(0));
+
+    // Get vector values for this element
+    std::string vec_sql = "SELECT " + attribute + " FROM " + vector_table + " WHERE id = ? ORDER BY vector_index";
+    auto vec_result = const_cast<Database*>(this)->execute(vec_sql, {element_id});
+
+    std::vector<Value> values;
+    values.reserve(vec_result.row_count());
+    for (const auto& row : vec_result) {
+        values.push_back(row.at(0));
+    }
+
+    impl_->logger->debug("Read {} vector values for {}.{} label '{}'", values.size(), collection, attribute, label);
+    return values;
+}
+
+std::vector<std::vector<Value>> Database::read_set_parameters(const std::string& collection,
+                                                              const std::string& attribute) const {
+    impl_->logger->debug("Reading set parameters: {}.{}", collection, attribute);
+
+    if (!impl_->schema) {
+        throw std::runtime_error("Cannot read parameters: no schema loaded");
+    }
+
+    if (!impl_->schema->is_collection(collection)) {
+        throw std::runtime_error("'" + collection + "' is not a valid collection");
+    }
+
+    // Find the set table containing this attribute
+    std::string set_table;
+    for (const auto& table_name : impl_->schema->table_names()) {
+        if (!impl_->schema->is_set_table(table_name))
+            continue;
+        if (impl_->schema->get_parent_collection(table_name) != collection)
+            continue;
+
+        const auto* table_def = impl_->schema->get_table(table_name);
+        if (table_def && table_def->has_column(attribute)) {
+            set_table = table_name;
+            break;
+        }
+    }
+
+    if (set_table.empty()) {
+        throw std::runtime_error("Attribute '" + attribute + "' is not a set attribute of collection '" + collection +
+                                 "'");
+    }
+
+    // Get all element IDs from the main collection table
+    std::string id_sql = "SELECT id FROM " + collection + " ORDER BY id";
+    auto id_result = const_cast<Database*>(this)->execute(id_sql);
+
+    std::vector<std::vector<Value>> all_values;
+    all_values.reserve(id_result.row_count());
+
+    for (const auto& id_row : id_result) {
+        int64_t element_id = std::get<int64_t>(id_row.at(0));
+
+        // Get set values for this element (no ordering - sets are unordered)
+        std::string set_sql = "SELECT " + attribute + " FROM " + set_table + " WHERE id = ?";
+        auto set_result = const_cast<Database*>(this)->execute(set_sql, {element_id});
+
+        std::vector<Value> element_values;
+        element_values.reserve(set_result.row_count());
+        for (const auto& row : set_result) {
+            element_values.push_back(row.at(0));
+        }
+        all_values.push_back(std::move(element_values));
+    }
+
+    impl_->logger->debug("Read set parameters for {} elements", all_values.size());
+    return all_values;
+}
+
+std::vector<Value> Database::read_set_parameter(const std::string& collection,
+                                                const std::string& attribute,
+                                                const std::string& label) const {
+    impl_->logger->debug("Reading set parameter: {}.{} for label '{}'", collection, attribute, label);
+
+    if (!impl_->schema) {
+        throw std::runtime_error("Cannot read parameter: no schema loaded");
+    }
+
+    if (!impl_->schema->is_collection(collection)) {
+        throw std::runtime_error("'" + collection + "' is not a valid collection");
+    }
+
+    // Find the set table containing this attribute
+    std::string set_table;
+    for (const auto& table_name : impl_->schema->table_names()) {
+        if (!impl_->schema->is_set_table(table_name))
+            continue;
+        if (impl_->schema->get_parent_collection(table_name) != collection)
+            continue;
+
+        const auto* table_def = impl_->schema->get_table(table_name);
+        if (table_def && table_def->has_column(attribute)) {
+            set_table = table_name;
+            break;
+        }
+    }
+
+    if (set_table.empty()) {
+        throw std::runtime_error("Attribute '" + attribute + "' is not a set attribute of collection '" + collection +
+                                 "'");
+    }
+
+    // Get element ID from label
+    std::string id_sql = "SELECT id FROM " + collection + " WHERE label = ?";
+    auto id_result = const_cast<Database*>(this)->execute(id_sql, {label});
+
+    if (id_result.empty()) {
+        throw std::runtime_error("Element with label '" + label + "' not found in collection '" + collection + "'");
+    }
+
+    int64_t element_id = std::get<int64_t>(id_result.at(0).at(0));
+
+    // Get set values for this element (no ordering - sets are unordered)
+    std::string set_sql = "SELECT " + attribute + " FROM " + set_table + " WHERE id = ?";
+    auto set_result = const_cast<Database*>(this)->execute(set_sql, {element_id});
+
+    std::vector<Value> values;
+    values.reserve(set_result.row_count());
+    for (const auto& row : set_result) {
+        values.push_back(row.at(0));
+    }
+
+    impl_->logger->debug("Read {} set values for {}.{} label '{}'", values.size(), collection, attribute, label);
+    return values;
 }
 
 }  // namespace psr

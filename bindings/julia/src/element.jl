@@ -14,7 +14,7 @@ end
 
 function Base.setindex!(el::Element, value::Integer, name::String)
     cname = Base.cconvert(Cstring, name)
-    err = C.psr_element_set_int(el.ptr, cname, Int32(value))
+    err = C.psr_element_set_int(el.ptr, cname, Int64(value))
     if err != C.PSR_OK
         error("Failed to set int value for '$name'")
     end
@@ -39,21 +39,18 @@ end
 
 function Base.setindex!(el::Element, value::Vector{<:Integer}, name::String)
     cname = Base.cconvert(Cstring, name)
-    cvalues = Base.unsafe_convert(Ptr{Int32}, value)
-    count = Int32(length(value))
-    err = C.psr_element_set_vector_int(el.ptr, cname, cvalues, count)
+    int_values = Int64[Int64(v) for v in value]
+    err = C.psr_element_set_array_int(el.ptr, cname, int_values, Int32(length(int_values)))
     if err != C.PSR_OK
-        error("Failed to set vector<int> value for '$name'")
+        error("Failed to set array<int> value for '$name'")
     end
 end
 
 function Base.setindex!(el::Element, value::Vector{<:Float64}, name::String)
     cname = Base.cconvert(Cstring, name)
-    cvalues = Base.unsafe_convert(Ptr{Float64}, value)
-    count = Int32(length(value))
-    err = C.psr_element_set_vector_double(el.ptr, cname, cvalues, count)
+    err = C.psr_element_set_array_double(el.ptr, cname, value, Int32(length(value)))
     if err != C.PSR_OK
-        error("Failed to set vector<double> value for '$name'")
+        error("Failed to set array<double> value for '$name'")
     end
 end
 
@@ -61,15 +58,30 @@ function Base.setindex!(el::Element, value::Vector{<:AbstractString}, name::Stri
     cname = Base.cconvert(Cstring, name)
     # Convert strings to null-terminated C strings
     cstrings = [Base.cconvert(Cstring, s) for s in value]
-    # Get pointers to each string
     ptrs = [Base.unsafe_convert(Cstring, cs) for cs in cstrings]
-    count = Int32(length(value))
-    # GC.@preserve ensures the strings remain valid during the C call
     GC.@preserve cstrings begin
-        err = C.psr_element_set_vector_string(el.ptr, cname, ptrs, count)
+        err = C.psr_element_set_array_string(el.ptr, cname, ptrs, Int32(length(value)))
     end
     if err != C.PSR_OK
-        error("Failed to set vector<string> value for '$name'")
+        error("Failed to set array<string> value for '$name'")
+    end
+end
+
+# Handle empty arrays (Vector{Any}) - throw a DatabaseException
+function Base.setindex!(el::Element, value::Vector{Any}, name::String)
+    if isempty(value)
+        throw(DatabaseException("Empty array not allowed for '$name'"))
+    end
+    # For non-empty Vector{Any}, try to determine the element type
+    first_val = first(value)
+    if first_val isa Integer
+        el[name] = Int64[Int64(v) for v in value]
+    elseif first_val isa AbstractFloat
+        el[name] = Float64[Float64(v) for v in value]
+    elseif first_val isa AbstractString
+        el[name] = String[String(v) for v in value]
+    else
+        error("Unsupported array element type for '$name': $(typeof(first_val))")
     end
 end
 

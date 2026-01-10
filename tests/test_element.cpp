@@ -4,9 +4,9 @@
 TEST(Element, DefaultEmpty) {
     psr::Element element;
     EXPECT_FALSE(element.has_scalars());
-    EXPECT_FALSE(element.has_vectors());
+    EXPECT_FALSE(element.has_arrays());
     EXPECT_TRUE(element.scalars().empty());
-    EXPECT_TRUE(element.vectors().empty());
+    EXPECT_TRUE(element.arrays().empty());
 }
 
 TEST(Element, SetInt) {
@@ -42,59 +42,66 @@ TEST(Element, SetNull) {
     EXPECT_TRUE(std::holds_alternative<std::nullptr_t>(element.scalars().at("empty")));
 }
 
-TEST(Element, SetVectorInt) {
+TEST(Element, SetArrayInt) {
     psr::Element element;
-    element.set_vector("ids", std::vector<int64_t>{1, 2, 3});
+    element.set_array("counts", std::vector<int64_t>{10, 20, 30});
 
-    EXPECT_TRUE(element.has_vectors());
-    auto& vec = std::get<std::vector<int64_t>>(element.vectors().at("ids"));
-    EXPECT_EQ(vec.size(), 3);
-    EXPECT_EQ(vec[0], 1);
-    EXPECT_EQ(vec[2], 3);
+    EXPECT_TRUE(element.has_arrays());
+    const auto& arrays = element.arrays();
+    EXPECT_EQ(arrays.size(), 1);
+    EXPECT_EQ(arrays.at("counts").size(), 3);
+    EXPECT_EQ(std::get<int64_t>(arrays.at("counts")[0]), 10);
+    EXPECT_EQ(std::get<int64_t>(arrays.at("counts")[1]), 20);
+    EXPECT_EQ(std::get<int64_t>(arrays.at("counts")[2]), 30);
 }
 
-TEST(Element, SetVectorDouble) {
+TEST(Element, SetArrayDouble) {
     psr::Element element;
-    element.set_vector("costs", std::vector<double>{1.5, 2.5, 3.5});
+    element.set_array("values", std::vector<double>{1.5, 2.5, 3.5});
 
-    EXPECT_TRUE(element.has_vectors());
-    auto& vec = std::get<std::vector<double>>(element.vectors().at("costs"));
-    EXPECT_EQ(vec.size(), 3);
-    EXPECT_EQ(vec[1], 2.5);
+    EXPECT_TRUE(element.has_arrays());
+    const auto& arrays = element.arrays();
+    EXPECT_EQ(arrays.size(), 1);
+    EXPECT_EQ(arrays.at("values").size(), 3);
+    EXPECT_EQ(std::get<double>(arrays.at("values")[0]), 1.5);
+    EXPECT_EQ(std::get<double>(arrays.at("values")[2]), 3.5);
 }
 
-TEST(Element, SetVectorString) {
+TEST(Element, SetArrayString) {
     psr::Element element;
-    element.set_vector("names", std::vector<std::string>{"a", "b", "c"});
+    element.set_array("tags", std::vector<std::string>{"important", "urgent"});
 
-    EXPECT_TRUE(element.has_vectors());
-    auto& vec = std::get<std::vector<std::string>>(element.vectors().at("names"));
-    EXPECT_EQ(vec.size(), 3);
-    EXPECT_EQ(vec[0], "a");
+    EXPECT_TRUE(element.has_arrays());
+    const auto& arrays = element.arrays();
+    EXPECT_EQ(arrays.size(), 1);
+    EXPECT_EQ(arrays.at("tags").size(), 2);
+    EXPECT_EQ(std::get<std::string>(arrays.at("tags")[0]), "important");
+    EXPECT_EQ(std::get<std::string>(arrays.at("tags")[1]), "urgent");
 }
 
 TEST(Element, FluentChaining) {
     psr::Element element;
+
     element.set("label", std::string{"Plant 1"})
         .set("capacity", 50.0)
         .set("id", int64_t{1})
-        .set_vector("costs", std::vector<double>{1.0, 2.0, 3.0});
+        .set_array("costs", std::vector<double>{1.0, 2.0, 3.0});
 
     EXPECT_EQ(element.scalars().size(), 3);
-    EXPECT_EQ(element.vectors().size(), 1);
+    EXPECT_EQ(element.arrays().size(), 1);
 }
 
 TEST(Element, Clear) {
     psr::Element element;
-    element.set("label", std::string{"test"}).set_vector("data", std::vector<double>{1.0});
+    element.set("label", std::string{"test"}).set_array("data", std::vector<double>{1.0});
 
     EXPECT_TRUE(element.has_scalars());
-    EXPECT_TRUE(element.has_vectors());
+    EXPECT_TRUE(element.has_arrays());
 
     element.clear();
 
     EXPECT_FALSE(element.has_scalars());
-    EXPECT_FALSE(element.has_vectors());
+    EXPECT_FALSE(element.has_arrays());
 }
 
 TEST(Element, OverwriteValue) {
@@ -110,16 +117,16 @@ TEST(Element, ToString) {
     psr::Element element;
     element.set("label", std::string{"Plant 1"})
         .set("capacity", 50.0)
-        .set_vector("costs", std::vector<double>{1.5, 2.5});
+        .set_array("costs", std::vector<double>{1.5, 2.5});
 
     std::string str = element.to_string();
 
     EXPECT_NE(str.find("Element {"), std::string::npos);
     EXPECT_NE(str.find("scalars:"), std::string::npos);
-    EXPECT_NE(str.find("vectors:"), std::string::npos);
+    EXPECT_NE(str.find("arrays:"), std::string::npos);
     EXPECT_NE(str.find("label: \"Plant 1\""), std::string::npos);
     EXPECT_NE(str.find("capacity:"), std::string::npos);
-    EXPECT_NE(str.find("costs: ["), std::string::npos);
+    EXPECT_NE(str.find("costs:"), std::string::npos);
 }
 
 TEST(Element, ToStringEmpty) {

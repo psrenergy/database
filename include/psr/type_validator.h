@@ -7,6 +7,7 @@
 #include "value.h"
 
 #include <string>
+#include <vector>
 
 namespace psr {
 
@@ -18,18 +19,14 @@ public:
     // Throws std::runtime_error on mismatch
     void validate_scalar(const std::string& table, const std::string& column, const Value& value) const;
 
-    // Validate a vector value against the expected element type
-    // Automatically determines vector table name from collection + attr
-    void validate_vector(const std::string& collection, const std::string& attr_name, const Value& vector_value) const;
+    // Validate an array value against a column in a table
+    void validate_array(const std::string& table, const std::string& column, const std::vector<Value>& values) const;
 
     // Low-level: validate value against explicit type
     static void validate_value(const std::string& context, ColumnType expected_type, const Value& value);
 
 private:
     const Schema& schema_;
-
-    // Helper to get expected type for vector elements
-    ColumnType get_vector_element_type(const std::string& collection, const std::string& attr_name) const;
 };
 
 }  // namespace psr

@@ -20,30 +20,6 @@ std::string value_to_string(const Value& value) {
                 return "\"" + arg + "\"";
             } else if constexpr (std::is_same_v<T, std::vector<uint8_t>>) {
                 return "<blob:" + std::to_string(arg.size()) + " bytes>";
-            } else if constexpr (std::is_same_v<T, std::vector<int64_t>>) {
-                std::string result = "[";
-                for (size_t i = 0; i < arg.size(); ++i) {
-                    if (i > 0)
-                        result += ", ";
-                    result += std::to_string(arg[i]);
-                }
-                return result + "]";
-            } else if constexpr (std::is_same_v<T, std::vector<double>>) {
-                std::string result = "[";
-                for (size_t i = 0; i < arg.size(); ++i) {
-                    if (i > 0)
-                        result += ", ";
-                    result += std::to_string(arg[i]);
-                }
-                return result + "]";
-            } else if constexpr (std::is_same_v<T, std::vector<std::string>>) {
-                std::string result = "[";
-                for (size_t i = 0; i < arg.size(); ++i) {
-                    if (i > 0)
-                        result += ", ";
-                    result += "\"" + arg[i] + "\"";
-                }
-                return result + "]";
             } else {
                 return "<unknown>";
             }
@@ -73,18 +49,33 @@ Element& Element::set_null(const std::string& name) {
     return *this;
 }
 
-Element& Element::set_vector(const std::string& name, std::vector<int64_t> values) {
-    vectors_[name] = std::move(values);
+Element& Element::set_array(const std::string& name, const std::vector<int64_t>& values) {
+    std::vector<Value> arr;
+    arr.reserve(values.size());
+    for (const auto& v : values) {
+        arr.emplace_back(v);
+    }
+    arrays_[name] = std::move(arr);
     return *this;
 }
 
-Element& Element::set_vector(const std::string& name, std::vector<double> values) {
-    vectors_[name] = std::move(values);
+Element& Element::set_array(const std::string& name, const std::vector<double>& values) {
+    std::vector<Value> arr;
+    arr.reserve(values.size());
+    for (const auto& v : values) {
+        arr.emplace_back(v);
+    }
+    arrays_[name] = std::move(arr);
     return *this;
 }
 
-Element& Element::set_vector(const std::string& name, std::vector<std::string> values) {
-    vectors_[name] = std::move(values);
+Element& Element::set_array(const std::string& name, const std::vector<std::string>& values) {
+    std::vector<Value> arr;
+    arr.reserve(values.size());
+    for (const auto& v : values) {
+        arr.emplace_back(v);
+    }
+    arrays_[name] = std::move(arr);
     return *this;
 }
 
@@ -92,21 +83,21 @@ const std::map<std::string, Value>& Element::scalars() const {
     return scalars_;
 }
 
-const std::map<std::string, Value>& Element::vectors() const {
-    return vectors_;
+const std::map<std::string, std::vector<Value>>& Element::arrays() const {
+    return arrays_;
 }
 
 bool Element::has_scalars() const {
     return !scalars_.empty();
 }
 
-bool Element::has_vectors() const {
-    return !vectors_.empty();
+bool Element::has_arrays() const {
+    return !arrays_.empty();
 }
 
 void Element::clear() {
     scalars_.clear();
-    vectors_.clear();
+    arrays_.clear();
 }
 
 std::string Element::to_string() const {
@@ -120,10 +111,16 @@ std::string Element::to_string() const {
         }
     }
 
-    if (!vectors_.empty()) {
-        oss << "  vectors:\n";
-        for (const auto& [name, value] : vectors_) {
-            oss << "    " << name << ": " << value_to_string(value) << "\n";
+    if (!arrays_.empty()) {
+        oss << "  arrays:\n";
+        for (const auto& [name, values] : arrays_) {
+            oss << "    " << name << ": [";
+            for (size_t i = 0; i < values.size(); ++i) {
+                if (i > 0)
+                    oss << ", ";
+                oss << value_to_string(values[i]);
+            }
+            oss << "]\n";
         }
     }
 

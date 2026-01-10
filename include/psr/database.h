@@ -57,10 +57,25 @@ public:
 
     const std::string& path() const;
 
+    // Schema access for introspection
+    const class Schema* schema() const;
+
     // Scalar parameter reading
     std::vector<Value> read_scalar_parameters(const std::string& collection, const std::string& attribute) const;
     Value
     read_scalar_parameter(const std::string& collection, const std::string& attribute, const std::string& label) const;
+
+    // Vector parameter reading (from vector tables - ordered by vector_index)
+    std::vector<std::vector<Value>> read_vector_parameters(const std::string& collection,
+                                                           const std::string& attribute) const;
+    std::vector<Value>
+    read_vector_parameter(const std::string& collection, const std::string& attribute, const std::string& label) const;
+
+    // Set parameter reading (from set tables - unordered)
+    std::vector<std::vector<Value>> read_set_parameters(const std::string& collection,
+                                                        const std::string& attribute) const;
+    std::vector<Value>
+    read_set_parameter(const std::string& collection, const std::string& attribute, const std::string& label) const;
 
 private:
     struct Impl;
