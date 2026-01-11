@@ -296,8 +296,6 @@ function Base.setproperty!(x::Ptr{var"##Ctag#233"}, f::Symbol, v)
     unsafe_store!(getproperty(x, f), v)
 end
 
-
 #! format: on
-
 
 end # module

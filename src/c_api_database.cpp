@@ -1,6 +1,7 @@
 #include "psr/c/database.h"
 #include "psr/c/element.h"
 #include "psr/database.h"
+#include "psr/schema.h"
 
 #include <cstring>
 #include <new>
