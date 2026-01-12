@@ -459,6 +459,135 @@ class PsrDatabaseBindings {
   late final _psr_read_result_free = _psr_read_result_freePtr
       .asFunction<void Function(ffi.Pointer<psr_read_result_t>)>();
 
+  psr_read_result_t psr_database_get_element_ids(
+    ffi.Pointer<psr_database_t> db,
+    ffi.Pointer<ffi.Char> collection,
+  ) {
+    return _psr_database_get_element_ids(
+      db,
+      collection,
+    );
+  }
+
+  late final _psr_database_get_element_idsPtr = _lookup<
+      ffi.NativeFunction<
+          psr_read_result_t Function(ffi.Pointer<psr_database_t>,
+              ffi.Pointer<ffi.Char>)>>('psr_database_get_element_ids');
+  late final _psr_database_get_element_ids =
+      _psr_database_get_element_idsPtr.asFunction<
+          psr_read_result_t Function(
+              ffi.Pointer<psr_database_t>, ffi.Pointer<ffi.Char>)>();
+
+  psr_read_result_t psr_database_read_element_scalars(
+    ffi.Pointer<psr_database_t> db,
+    ffi.Pointer<ffi.Char> collection,
+    int element_id,
+  ) {
+    return _psr_database_read_element_scalars(
+      db,
+      collection,
+      element_id,
+    );
+  }
+
+  late final _psr_database_read_element_scalarsPtr = _lookup<
+      ffi.NativeFunction<
+          psr_read_result_t Function(
+              ffi.Pointer<psr_database_t>,
+              ffi.Pointer<ffi.Char>,
+              ffi.Int64)>>('psr_database_read_element_scalars');
+  late final _psr_database_read_element_scalars =
+      _psr_database_read_element_scalarsPtr.asFunction<
+          psr_read_result_t Function(
+              ffi.Pointer<psr_database_t>, ffi.Pointer<ffi.Char>, int)>();
+
+  psr_read_result_t psr_database_read_element_vector_group(
+    ffi.Pointer<psr_database_t> db,
+    ffi.Pointer<ffi.Char> collection,
+    int element_id,
+    ffi.Pointer<ffi.Char> group,
+  ) {
+    return _psr_database_read_element_vector_group(
+      db,
+      collection,
+      element_id,
+      group,
+    );
+  }
+
+  late final _psr_database_read_element_vector_groupPtr = _lookup<
+          ffi.NativeFunction<
+              psr_read_result_t Function(ffi.Pointer<psr_database_t>,
+                  ffi.Pointer<ffi.Char>, ffi.Int64, ffi.Pointer<ffi.Char>)>>(
+      'psr_database_read_element_vector_group');
+  late final _psr_database_read_element_vector_group =
+      _psr_database_read_element_vector_groupPtr.asFunction<
+          psr_read_result_t Function(ffi.Pointer<psr_database_t>,
+              ffi.Pointer<ffi.Char>, int, ffi.Pointer<ffi.Char>)>();
+
+  psr_read_result_t psr_database_read_element_set_group(
+    ffi.Pointer<psr_database_t> db,
+    ffi.Pointer<ffi.Char> collection,
+    int element_id,
+    ffi.Pointer<ffi.Char> group,
+  ) {
+    return _psr_database_read_element_set_group(
+      db,
+      collection,
+      element_id,
+      group,
+    );
+  }
+
+  late final _psr_database_read_element_set_groupPtr = _lookup<
+      ffi.NativeFunction<
+          psr_read_result_t Function(
+              ffi.Pointer<psr_database_t>,
+              ffi.Pointer<ffi.Char>,
+              ffi.Int64,
+              ffi.Pointer<ffi.Char>)>>('psr_database_read_element_set_group');
+  late final _psr_database_read_element_set_group =
+      _psr_database_read_element_set_groupPtr.asFunction<
+          psr_read_result_t Function(ffi.Pointer<psr_database_t>,
+              ffi.Pointer<ffi.Char>, int, ffi.Pointer<ffi.Char>)>();
+
+  psr_read_result_t psr_database_read_element_time_series_group(
+    ffi.Pointer<psr_database_t> db,
+    ffi.Pointer<ffi.Char> collection,
+    int element_id,
+    ffi.Pointer<ffi.Char> group,
+    ffi.Pointer<ffi.Pointer<ffi.Char>> dimension_keys,
+    int dimension_count,
+  ) {
+    return _psr_database_read_element_time_series_group(
+      db,
+      collection,
+      element_id,
+      group,
+      dimension_keys,
+      dimension_count,
+    );
+  }
+
+  late final _psr_database_read_element_time_series_groupPtr = _lookup<
+      ffi.NativeFunction<
+          psr_read_result_t Function(
+              ffi.Pointer<psr_database_t>,
+              ffi.Pointer<ffi.Char>,
+              ffi.Int64,
+              ffi.Pointer<ffi.Char>,
+              ffi.Pointer<ffi.Pointer<ffi.Char>>,
+              ffi.Int32)>>('psr_database_read_element_time_series_group');
+  late final _psr_database_read_element_time_series_group =
+      _psr_database_read_element_time_series_groupPtr.asFunction<
+          psr_read_result_t Function(
+              ffi.Pointer<psr_database_t>,
+              ffi.Pointer<ffi.Char>,
+              int,
+              ffi.Pointer<ffi.Char>,
+              ffi.Pointer<ffi.Pointer<ffi.Char>>,
+              int)>();
+
   ffi.Pointer<psr_element_t1> psr_element_create() {
     return _psr_element_create();
   }

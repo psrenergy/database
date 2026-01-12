@@ -596,7 +596,7 @@ int64_t Database::create_element(const std::string& collection, const Element& e
                     if (fk.from_column == col_name && std::holds_alternative<std::string>(val)) {
                         const std::string& label = std::get<std::string>(val);
                         // Look up the ID by label
-                        auto id_result = read_scalar_parameter(fk.to_table, "id", label);
+                        auto id_result = read_scalar_by_label(fk.to_table, "id", label);
                         if (!std::holds_alternative<int64_t>(id_result)) {
                             throw std::runtime_error("Failed to resolve label '" + label + "' to ID in table '" +
                                                      fk.to_table + "'");
@@ -618,8 +618,8 @@ int64_t Database::create_element(const std::string& collection, const Element& e
     return element_id;
 }
 
-std::vector<Value> Database::read_scalar_parameters(const std::string& collection, const std::string& attribute) const {
-    impl_->logger->debug("Reading scalar parameters: {}.{}", collection, attribute);
+std::vector<Value> Database::read_scalar(const std::string& collection, const std::string& attribute) const {
+    impl_->logger->debug("Reading scalar: {}.{}", collection, attribute);
 
     if (!impl_->schema) {
         throw std::runtime_error("Cannot read parameters: no schema loaded");
@@ -909,6 +909,276 @@ std::vector<Value> Database::read_set_parameter(const std::string& collection,
 
     impl_->logger->debug("Read {} set values for {}.{} label '{}'", values.size(), collection, attribute, label);
     return values;
+}
+
+std::vector<int64_t> Database::get_element_ids(const std::string& collection) const {
+    impl_->logger->debug("Getting element IDs from collection '{}'", collection);
+
+    if (!impl_->schema) {
+        throw std::runtime_error("Cannot get element IDs: no schema loaded");
+    }
+
+    if (!impl_->schema->is_collection(collection)) {
+        throw std::runtime_error("'" + collection + "' is not a valid collection");
+    }
+
+    auto sql = "SELECT id FROM " + collection + " ORDER BY id";
+    auto result = const_cast<Database*>(this)->execute(sql);
+
+    std::vector<int64_t> ids;
+    ids.reserve(result.row_count());
+    for (const auto& row : result) {
+        ids.push_back(std::get<int64_t>(row.at(0)));
+    }
+
+    impl_->logger->debug("Found {} element IDs in '{}'", ids.size(), collection);
+    return ids;
+}
+
+std::vector<std::pair<std::string, Value>> Database::read_element_scalar_attributes(const std::string& collection,
+                                                                                     int64_t element_id) const {
+    impl_->logger->debug("Reading scalar attributes for element {} in '{}'", element_id, collection);
+
+    if (!impl_->schema) {
+        throw std::runtime_error("Cannot read element: no schema loaded");
+    }
+
+    if (!impl_->schema->is_collection(collection)) {
+        throw std::runtime_error("'" + collection + "' is not a valid collection");
+    }
+
+    const auto* table_def = impl_->schema->get_table(collection);
+    if (!table_def) {
+        throw std::runtime_error("Collection not found in schema: " + collection);
+    }
+
+    // Build column list (excluding 'id')
+    std::vector<std::string> column_names;
+    for (const auto& [col_name, col_def] : table_def->columns) {
+        if (col_name != "id") {
+            column_names.push_back(col_name);
+        }
+    }
+
+    if (column_names.empty()) {
+        return {};
+    }
+
+    // Build SELECT query
+    std::string columns_str;
+    for (size_t i = 0; i < column_names.size(); ++i) {
+        if (i > 0)
+            columns_str += ", ";
+        columns_str += column_names[i];
+    }
+
+    auto sql = "SELECT " + columns_str + " FROM " + collection + " WHERE id = ?";
+    auto result = const_cast<Database*>(this)->execute(sql, {element_id});
+
+    if (result.empty()) {
+        throw std::runtime_error("Element with id " + std::to_string(element_id) + " not found in collection '" +
+                                 collection + "'");
+    }
+
+    std::vector<std::pair<std::string, Value>> attributes;
+    attributes.reserve(column_names.size());
+    const auto& row = result.at(0);
+    for (size_t i = 0; i < column_names.size(); ++i) {
+        attributes.emplace_back(column_names[i], row.at(i));
+    }
+
+    impl_->logger->debug("Read {} scalar attributes for element {} in '{}'", attributes.size(), element_id, collection);
+    return attributes;
+}
+
+std::vector<std::pair<std::string, std::vector<Value>>>
+Database::read_element_vector_group(const std::string& collection, int64_t element_id, const std::string& group) const {
+    impl_->logger->debug("Reading vector group '{}' for element {} in '{}'", group, element_id, collection);
+
+    if (!impl_->schema) {
+        throw std::runtime_error("Cannot read vector group: no schema loaded");
+    }
+
+    if (!impl_->schema->is_collection(collection)) {
+        throw std::runtime_error("'" + collection + "' is not a valid collection");
+    }
+
+    auto table_name = Schema::vector_table_name(collection, group);
+    const auto* table_def = impl_->schema->get_table(table_name);
+    if (!table_def) {
+        throw std::runtime_error("Vector group '" + group + "' not found for collection '" + collection + "'");
+    }
+
+    // Get column names (excluding 'id' and 'vector_index')
+    std::vector<std::string> column_names;
+    for (const auto& [col_name, col_def] : table_def->columns) {
+        if (col_name != "id" && col_name != "vector_index") {
+            column_names.push_back(col_name);
+        }
+    }
+
+    if (column_names.empty()) {
+        return {};
+    }
+
+    // Build SELECT query
+    std::string columns_str;
+    for (size_t i = 0; i < column_names.size(); ++i) {
+        if (i > 0)
+            columns_str += ", ";
+        columns_str += column_names[i];
+    }
+
+    auto sql = "SELECT " + columns_str + " FROM " + table_name + " WHERE id = ? ORDER BY vector_index";
+    auto result = const_cast<Database*>(this)->execute(sql, {element_id});
+
+    // Build result: each column becomes a name -> vector of values
+    std::vector<std::pair<std::string, std::vector<Value>>> attributes;
+    attributes.reserve(column_names.size());
+
+    for (size_t col_idx = 0; col_idx < column_names.size(); ++col_idx) {
+        std::vector<Value> values;
+        values.reserve(result.row_count());
+        for (const auto& row : result) {
+            values.push_back(row.at(col_idx));
+        }
+        attributes.emplace_back(column_names[col_idx], std::move(values));
+    }
+
+    impl_->logger->debug("Read {} vector attributes for element {} in '{}'", attributes.size(), element_id, collection);
+    return attributes;
+}
+
+std::vector<std::pair<std::string, std::vector<Value>>>
+Database::read_element_set_group(const std::string& collection, int64_t element_id, const std::string& group) const {
+    impl_->logger->debug("Reading set group '{}' for element {} in '{}'", group, element_id, collection);
+
+    if (!impl_->schema) {
+        throw std::runtime_error("Cannot read set group: no schema loaded");
+    }
+
+    if (!impl_->schema->is_collection(collection)) {
+        throw std::runtime_error("'" + collection + "' is not a valid collection");
+    }
+
+    auto table_name = Schema::set_table_name(collection, group);
+    const auto* table_def = impl_->schema->get_table(table_name);
+    if (!table_def) {
+        throw std::runtime_error("Set group '" + group + "' not found for collection '" + collection + "'");
+    }
+
+    // Get column names (excluding 'id')
+    std::vector<std::string> column_names;
+    for (const auto& [col_name, col_def] : table_def->columns) {
+        if (col_name != "id") {
+            column_names.push_back(col_name);
+        }
+    }
+
+    if (column_names.empty()) {
+        return {};
+    }
+
+    // Build SELECT query
+    std::string columns_str;
+    for (size_t i = 0; i < column_names.size(); ++i) {
+        if (i > 0)
+            columns_str += ", ";
+        columns_str += column_names[i];
+    }
+
+    auto sql = "SELECT " + columns_str + " FROM " + table_name + " WHERE id = ?";
+    auto result = const_cast<Database*>(this)->execute(sql, {element_id});
+
+    // Build result: each column becomes a name -> vector of values
+    std::vector<std::pair<std::string, std::vector<Value>>> attributes;
+    attributes.reserve(column_names.size());
+
+    for (size_t col_idx = 0; col_idx < column_names.size(); ++col_idx) {
+        std::vector<Value> values;
+        values.reserve(result.row_count());
+        for (const auto& row : result) {
+            values.push_back(row.at(col_idx));
+        }
+        attributes.emplace_back(column_names[col_idx], std::move(values));
+    }
+
+    impl_->logger->debug("Read {} set attributes for element {} in '{}'", attributes.size(), element_id, collection);
+    return attributes;
+}
+
+std::vector<std::map<std::string, Value>>
+Database::read_element_time_series_group(const std::string& collection,
+                                         int64_t element_id,
+                                         const std::string& group,
+                                         const std::vector<std::string>& dimension_keys) const {
+    impl_->logger->debug("Reading time series group '{}' for element {} in '{}'", group, element_id, collection);
+
+    if (!impl_->schema) {
+        throw std::runtime_error("Cannot read time series group: no schema loaded");
+    }
+
+    if (!impl_->schema->is_collection(collection)) {
+        throw std::runtime_error("'" + collection + "' is not a valid collection");
+    }
+
+    // Time series table naming: Collection_time_series_group
+    auto table_name = collection + "_time_series_" + group;
+    const auto* table_def = impl_->schema->get_table(table_name);
+    if (!table_def) {
+        throw std::runtime_error("Time series group '" + group + "' not found for collection '" + collection + "'");
+    }
+
+    // Build column list based on dimension_keys
+    std::vector<std::string> column_names;
+    if (dimension_keys.empty()) {
+        // If no dimension keys specified, get all columns except 'id'
+        for (const auto& [col_name, col_def] : table_def->columns) {
+            if (col_name != "id") {
+                column_names.push_back(col_name);
+            }
+        }
+    } else {
+        // Use specified dimension keys plus date_time
+        column_names.push_back("date_time");
+        for (const auto& key : dimension_keys) {
+            if (table_def->has_column(key)) {
+                column_names.push_back(key);
+            } else {
+                throw std::runtime_error("Dimension key '" + key + "' not found in time series group '" + group + "'");
+            }
+        }
+    }
+
+    if (column_names.empty()) {
+        return {};
+    }
+
+    // Build SELECT query
+    std::string columns_str;
+    for (size_t i = 0; i < column_names.size(); ++i) {
+        if (i > 0)
+            columns_str += ", ";
+        columns_str += column_names[i];
+    }
+
+    auto sql = "SELECT " + columns_str + " FROM " + table_name + " WHERE id = ? ORDER BY date_time";
+    auto result = const_cast<Database*>(this)->execute(sql, {element_id});
+
+    // Build result: list of maps, each map is a row
+    std::vector<std::map<std::string, Value>> rows;
+    rows.reserve(result.row_count());
+
+    for (const auto& row : result) {
+        std::map<std::string, Value> row_map;
+        for (size_t i = 0; i < column_names.size(); ++i) {
+            row_map[column_names[i]] = row.at(i);
+        }
+        rows.push_back(std::move(row_map));
+    }
+
+    impl_->logger->debug("Read {} time series rows for element {} in '{}'", rows.size(), element_id, collection);
+    return rows;
 }
 
 }  // namespace psr

@@ -275,4 +275,149 @@ class Database {
       arena.releaseAll();
     }
   }
+
+  // ============================================================
+  // Element Reading by ID
+  // ============================================================
+
+  /// Gets all element IDs from a collection.
+  List<int> getElementIds(String collection) {
+    _ensureNotClosed();
+    final arena = Arena();
+    try {
+      final result = bindings.psr_database_get_element_ids(
+        _ptr,
+        collection.toNativeUtf8(allocator: arena).cast(),
+      );
+      _checkResult(result, "Failed to get element IDs from '$collection'");
+      return _extractResults(result, null).cast<int>();
+    } finally {
+      arena.releaseAll();
+    }
+  }
+
+  /// Reads all scalar attributes for an element by ID.
+  Map<String, dynamic> readElementScalarAttributes(String collection, int elementId) {
+    _ensureNotClosed();
+    final arena = Arena();
+    try {
+      final result = bindings.psr_database_read_element_scalars(
+        _ptr,
+        collection.toNativeUtf8(allocator: arena).cast(),
+        elementId,
+      );
+      _checkResult(result, "Failed to read scalars for element $elementId in '$collection'");
+      return _extractMapResult(result);
+    } finally {
+      arena.releaseAll();
+    }
+  }
+
+  /// Reads all attributes from a vector group for an element.
+  Map<String, List<dynamic>> readElementVectorGroup(String collection, int elementId, String group) {
+    _ensureNotClosed();
+    final arena = Arena();
+    try {
+      final result = bindings.psr_database_read_element_vector_group(
+        _ptr,
+        collection.toNativeUtf8(allocator: arena).cast(),
+        elementId,
+        group.toNativeUtf8(allocator: arena).cast(),
+      );
+      _checkResult(result, "Failed to read vector group '$group' for element $elementId in '$collection'");
+      return _extractMapOfListsResult(result);
+    } finally {
+      arena.releaseAll();
+    }
+  }
+
+  /// Reads all attributes from a set group for an element.
+  Map<String, List<dynamic>> readElementSetGroup(String collection, int elementId, String group) {
+    _ensureNotClosed();
+    final arena = Arena();
+    try {
+      final result = bindings.psr_database_read_element_set_group(
+        _ptr,
+        collection.toNativeUtf8(allocator: arena).cast(),
+        elementId,
+        group.toNativeUtf8(allocator: arena).cast(),
+      );
+      _checkResult(result, "Failed to read set group '$group' for element $elementId in '$collection'");
+      return _extractMapOfListsResult(result);
+    } finally {
+      arena.releaseAll();
+    }
+  }
+
+  /// Reads time series group for an element.
+  List<Map<String, dynamic>> readElementTimeSeriesGroup(
+      String collection, int elementId, String group, List<String> dimensionKeys) {
+    _ensureNotClosed();
+    final arena = Arena();
+    try {
+      final keysPtr = arena<Pointer<Char>>(dimensionKeys.length);
+      for (var i = 0; i < dimensionKeys.length; i++) {
+        keysPtr[i] = dimensionKeys[i].toNativeUtf8(allocator: arena).cast();
+      }
+      final result = bindings.psr_database_read_element_time_series_group(
+        _ptr,
+        collection.toNativeUtf8(allocator: arena).cast(),
+        elementId,
+        group.toNativeUtf8(allocator: arena).cast(),
+        keysPtr,
+        dimensionKeys.length,
+      );
+      _checkResult(result, "Failed to read time series group '$group' for element $elementId in '$collection'");
+      return _extractListOfMapsResult(result);
+    } finally {
+      arena.releaseAll();
+    }
+  }
+
+  /// Extracts [[name, value], ...] to Map<String, dynamic>.
+  Map<String, dynamic> _extractMapResult(psr_read_result_t result) {
+    try {
+      final map = <String, dynamic>{};
+      for (var i = 0; i < result.count; i++) {
+        final pair = _extractValueAtIndex(result.values, i) as List;
+        map[pair[0] as String] = pair[1];
+      }
+      return map;
+    } finally {
+      _freeResult(result);
+    }
+  }
+
+  /// Extracts [[name, [values]], ...] to Map<String, List<dynamic>>.
+  Map<String, List<dynamic>> _extractMapOfListsResult(psr_read_result_t result) {
+    try {
+      final map = <String, List<dynamic>>{};
+      for (var i = 0; i < result.count; i++) {
+        final pair = _extractValueAtIndex(result.values, i) as List;
+        map[pair[0] as String] = (pair[1] as List).cast<dynamic>();
+      }
+      return map;
+    } finally {
+      _freeResult(result);
+    }
+  }
+
+  /// Extracts [[[name, value], ...], ...] to List<Map<String, dynamic>>.
+  List<Map<String, dynamic>> _extractListOfMapsResult(psr_read_result_t result) {
+    try {
+      final list = <Map<String, dynamic>>[];
+      for (var i = 0; i < result.count; i++) {
+        final row = _extractValueAtIndex(result.values, i) as List;
+        final map = <String, dynamic>{};
+        for (final pair in row) {
+          final p = pair as List;
+          map[p[0] as String] = p[1];
+        }
+        list.add(map);
+      }
+      return list;
+    } finally {
+      _freeResult(result);
+    }
+  }
 }
