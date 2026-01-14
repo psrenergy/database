@@ -87,7 +87,95 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           files: coverage.info
+          flags: cpp
           fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  julia-coverage:
+    name: Julia Coverage
+    runs-on: ubuntu-latest
+    needs: [coverage]
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: '1.10'
+
+      - name: Install lcov
+        run: sudo apt-get update && sudo apt-get install -y lcov
+
+      - name: Build C++ (for shared library)
+        run: |
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DPSR_BUILD_TESTS=ON \
+            -DPSR_BUILD_C_API=ON
+          cmake --build build
+
+      - name: Install Julia dependencies
+        run: julia --project=bindings/julia -e "import Pkg; Pkg.instantiate()"
+
+      - name: Run tests with coverage
+        working-directory: bindings/julia
+        run: |
+          export LD_LIBRARY_PATH=$PWD/../../build/bin:$LD_LIBRARY_PATH
+          bash test/coverage.sh
+
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: bindings/julia/coverage/lcov.info
+          flags: julia
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  dart-coverage:
+    name: Dart Coverage
+    runs-on: ubuntu-latest
+    needs: [coverage]
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Install lcov
+        run: sudo apt-get update && sudo apt-get install -y lcov
+
+      - name: Build C++ (for shared library)
+        run: |
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DPSR_BUILD_TESTS=ON \
+            -DPSR_BUILD_C_API=ON
+          cmake --build build
+
+      - name: Install Dart dependencies
+        working-directory: bindings/dart
+        run: dart pub get
+
+      - name: Run tests with coverage
+        working-directory: bindings/dart
+        run: |
+          export LD_LIBRARY_PATH=$PWD/../../build/bin:$LD_LIBRARY_PATH
+          bash test/coverage.sh
+
+      - name: Filter coverage (exclude generated FFI bindings)
+        working-directory: bindings/dart
+        run: |
+          lcov --remove coverage/lcov.info 'lib/src/ffi/bindings.dart' -o coverage/lcov.info || true
+          lcov --list coverage/lcov.info || true
+
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: bindings/dart/coverage/lcov.info
+          flags: dart
+          fail_ci_if_error: false
           token: ${{ secrets.CODECOV_TOKEN }}
 
   clang-format:
