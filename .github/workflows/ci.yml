@@ -94,7 +94,6 @@ jobs:
   julia-coverage:
     name: Julia Coverage
     runs-on: ubuntu-latest
-    needs: [coverage]
 
     steps:
       - uses: actions/checkout@v6
@@ -134,7 +133,6 @@ jobs:
   dart-coverage:
     name: Dart Coverage
     runs-on: ubuntu-latest
-    needs: [coverage]
 
     steps:
       - uses: actions/checkout@v6
