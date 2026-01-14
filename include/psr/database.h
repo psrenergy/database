@@ -62,34 +62,6 @@ public:
     // Schema access for introspection
     const class Schema* schema() const;
 
-    // Scalar reading
-    std::vector<Value> read_scalar(const std::string& collection, const std::string& attribute) const;
-    Value read_scalar_by_label(const std::string& collection, const std::string& attribute, const std::string& label) const;
-
-    // Vector reading (from vector tables - ordered by vector_index)
-    std::vector<std::vector<Value>> read_vector(const std::string& collection, const std::string& attribute) const;
-    std::vector<Value>
-    read_vector_by_label(const std::string& collection, const std::string& attribute, const std::string& label) const;
-
-    // Set reading (from set tables - unordered)
-    std::vector<std::vector<Value>> read_set(const std::string& collection, const std::string& attribute) const;
-    std::vector<Value>
-    read_set_by_label(const std::string& collection, const std::string& attribute, const std::string& label) const;
-
-    // Element reading by ID
-    std::vector<int64_t> get_element_ids(const std::string& collection) const;
-    std::vector<std::pair<std::string, Value>> read_element_scalar_attributes(const std::string& collection,
-                                                                               int64_t element_id) const;
-    std::vector<std::pair<std::string, std::vector<Value>>>
-    read_element_vector_group(const std::string& collection, int64_t element_id, const std::string& group) const;
-    std::vector<std::pair<std::string, std::vector<Value>>>
-    read_element_set_group(const std::string& collection, int64_t element_id, const std::string& group) const;
-    std::vector<std::map<std::string, Value>>
-    read_element_time_series_group(const std::string& collection,
-                                   int64_t element_id,
-                                   const std::string& group,
-                                   const std::vector<std::string>& dimension_keys) const;
-
 private:
     struct Impl;
     std::unique_ptr<Impl> impl_;
