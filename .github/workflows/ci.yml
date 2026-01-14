@@ -51,8 +51,8 @@ jobs:
             build/lib/*
             build/bin/*
 
-  coverage:
-    name: Code Coverage
+  cpp-coverage:
+    name: C++ Coverage
     runs-on: ubuntu-latest
 
     steps:
@@ -156,11 +156,16 @@ jobs:
         working-directory: bindings/dart
         run: dart pub get
 
+      - name: Copy shared libraries
+        run: |
+          cp build/bin/libpsr_database.so bindings/dart/
+          cp build/bin/libpsr_database_c.so bindings/dart/
+
       - name: Run tests with coverage
         working-directory: bindings/dart
         run: |
-          export LD_LIBRARY_PATH=$PWD/../../build/bin:$LD_LIBRARY_PATH
-          bash test/coverage.sh
+          dart pub global activate coverage
+          dart pub global run coverage:test_with_coverage --out=coverage
 
       - name: Filter coverage (exclude generated FFI bindings)
         working-directory: bindings/dart
