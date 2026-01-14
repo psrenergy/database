@@ -119,7 +119,7 @@ jobs:
       - name: Run tests with coverage
         working-directory: bindings/julia
         run: |
-          export LD_LIBRARY_PATH=$PWD/../../build/bin:$LD_LIBRARY_PATH
+          export LD_LIBRARY_PATH=$PWD/../../build/lib:$LD_LIBRARY_PATH
           bash test/coverage.sh
 
       - name: Upload to Codecov
@@ -158,8 +158,8 @@ jobs:
 
       - name: Copy shared libraries
         run: |
-          cp build/bin/libpsr_database.so bindings/dart/
-          cp build/bin/libpsr_database_c.so bindings/dart/
+          cp build/lib/libpsr_database.so bindings/dart/
+          cp build/lib/libpsr_database_c.so bindings/dart/
 
       - name: Run tests with coverage
         working-directory: bindings/dart

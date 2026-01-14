@@ -15,7 +15,16 @@ function _library_name()
     end
 end
 
-const libpsr_database_c = joinpath(@__DIR__, "..", "..", "..", "build", "bin", _library_name())  
+function _library_dir()
+    # On Windows, DLLs go to bin/; on Linux/macOS, shared libs go to lib/
+    if Sys.iswindows()
+        return "bin"
+    else
+        return "lib"
+    end
+end
+
+const libpsr_database_c = joinpath(@__DIR__, "..", "..", "..", "build", _library_dir(), _library_name())  
 
 
 @cenum psr_error_t::Int32 begin
