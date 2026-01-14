@@ -6,7 +6,7 @@ using Test
 include("fixture.jl")
 
 @testset "Read Scalar Attributes" begin
-    path_schema = joinpath(tests_path(), "schema_basic.sql")
+    path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
     db = PSRDatabase.create_empty_db_from_schema(":memory:", path_schema; force = true)
 
     PSRDatabase.create_element!(db, "Configuration";
@@ -31,7 +31,7 @@ include("fixture.jl")
 end
 
 @testset "Read From Collections" begin
-    path_schema = joinpath(tests_path(), "schema_collections.sql")
+    path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.create_empty_db_from_schema(":memory:", path_schema; force = true)
 
     PSRDatabase.create_element!(db, "Configuration"; label = "Test Config")
@@ -55,7 +55,7 @@ end
 end
 
 @testset "Read Empty Result" begin
-    path_schema = joinpath(tests_path(), "schema_collections.sql")
+    path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.create_empty_db_from_schema(":memory:", path_schema; force = true)
 
     PSRDatabase.create_element!(db, "Configuration"; label = "Test Config")
