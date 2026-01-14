@@ -52,67 +52,6 @@ PSR_C_API psr_error_t psr_database_rollback(psr_database_t* db);
 typedef struct psr_element psr_element_t;
 PSR_C_API int64_t psr_database_create_element(psr_database_t* db, const char* collection, psr_element_t* element);
 
-// Parameter reading - generic tagged union API
-// Returns psr_read_result_t with type-tagged values
-
-// Scalar - all elements
-PSR_C_API psr_read_result_t psr_database_read_scalar(psr_database_t* db,
-                                                     const char* collection,
-                                                     const char* attribute);
-
-// Scalar - single element by label
-PSR_C_API psr_read_result_t psr_database_read_scalar_by_label(psr_database_t* db,
-                                                              const char* collection,
-                                                              const char* attribute,
-                                                              const char* label);
-
-// Vector - all elements (each value is PSR_VALUE_ARRAY)
-PSR_C_API psr_read_result_t psr_database_read_vector(psr_database_t* db,
-                                                     const char* collection,
-                                                     const char* attribute);
-
-// Vector - single element by label (returns flat array)
-PSR_C_API psr_read_result_t psr_database_read_vector_by_label(psr_database_t* db,
-                                                              const char* collection,
-                                                              const char* attribute,
-                                                              const char* label);
-
-// Set - all elements (each value is PSR_VALUE_ARRAY)
-PSR_C_API psr_read_result_t psr_database_read_set(psr_database_t* db,
-                                                  const char* collection,
-                                                  const char* attribute);
-
-// Set - single element by label (returns flat array)
-PSR_C_API psr_read_result_t psr_database_read_set_by_label(psr_database_t* db,
-                                                           const char* collection,
-                                                           const char* attribute,
-                                                           const char* label);
-
-// Memory management for tagged union values
-PSR_C_API void psr_value_free(psr_value_t* value);
-PSR_C_API void psr_read_result_free(psr_read_result_t* result);
-
-// Element reading by ID
-PSR_C_API psr_read_result_t psr_database_get_element_ids(psr_database_t* db, const char* collection);
-
-PSR_C_API psr_read_result_t
-psr_database_read_element_scalars(psr_database_t* db, const char* collection, int64_t element_id);
-
-PSR_C_API psr_read_result_t psr_database_read_element_vector_group(psr_database_t* db,
-                                                                    const char* collection,
-                                                                    int64_t element_id,
-                                                                    const char* group);
-
-PSR_C_API psr_read_result_t
-psr_database_read_element_set_group(psr_database_t* db, const char* collection, int64_t element_id, const char* group);
-
-PSR_C_API psr_read_result_t psr_database_read_element_time_series_group(psr_database_t* db,
-                                                                         const char* collection,
-                                                                         int64_t element_id,
-                                                                         const char* group,
-                                                                         const char** dimension_keys,
-                                                                         int32_t dimension_count);
-
 #ifdef __cplusplus
 }
 #endif
