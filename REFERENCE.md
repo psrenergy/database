@@ -1,5 +1,9 @@
 # PSRDatabase
 
+# Principles
+
+- Use `CPP Core Guidelines` as style guide: https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines
+
 ## SQL Schema Conventions
 
 SQL schemas for the `PSRDatabase` framework should follow the conventions described in this document. Note that this is a tool for creating and developing some kinds of applications. Not all tools will need to use this framework.
@@ -45,6 +49,7 @@ CREATE TABLE Configuration (
 - If the attribute's name is `label`, it should be stored as a `TEXT` and have the `UNIQUE` and `NOT NULL` constraints.
 
 Example:
+
 ```sql
 CREATE TABLE ThermalPlant(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -57,6 +62,7 @@ CREATE TABLE ThermalPlant(
 If an attribute name starts with `date` it should be stored as a `TEXT` and indicates a date that will be mapped to a DateTime object.
 
 Example:
+
 ```sql
 CREATE TABLE ThermalPlant(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -69,6 +75,7 @@ CREATE TABLE ThermalPlant(
 A relation with another collection should be stored as an attribute whose name is the name of the target collection followed by the relation type defined as `_relation_type`, i.e. `collectionname_relation_type`. The relation attribute name starts with the name of another collection it should be stored as a `INTEGER` and indicates a relation with another collection. It should never have the `NOT NULL` constraint. All references should always declare the `ON UPDATE CASCADE ON DELETE CASCADE` constraint. In the example below the attribute `gaugingstation_id` indicates that the collection Plant has an `id` relation with the collection GaugingStation and the attribute `plant_spill_to` indicates that the collection Plant has a `spill_to` relation with itself.
 
 Example:
+
 ```sql
 CREATE TABLE Plant(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -84,13 +91,13 @@ CREATE TABLE Plant(
 ### Vector Attributes
 
 - In case of a vector attribute, a table should be created with its name indicating the name of the Collection and the name of a group of the attribute, separated by `_vector_`, such as `COLLECTION_vector_GROUP_OF_ATTRIBUTES`.
-
 - The table must contain a Column named `id` and another named `vector_index`. These two columns together should form the Primary Key of the table.
 - There must be a Column named after the attributes names, which will store the value of the attribute for the specified element `id` and index `vector_index`.
 
 These groups are used to store vectors that should have the same size. If two vectors don't necessarily have the same size, they should be stored in different groups.
 
 Example:
+
 ```sql
 CREATE TABLE ThermalPlant_vector_some_group(
     id INTEGER,
@@ -120,7 +127,6 @@ CREATE TABLE HydroPlant_vector_gaugingstations(
 A set is a collection of unique values associated with an element from a Collection. Sets are similar to vectors, but they do not have a specific order and have to be unique.
 
 - In case of a set attribute, a table should be created with its name indicating the name of the Collection and the name of a group of the attribute, separated by `_set_`, such as `COLLECTION_set_GROUP_OF_ATTRIBUTES`.
-
 - The table must contain a Column named `id`.
 - The table must not have any primary keys.
 - The table must have an unique constraint on the combination of all columns.
