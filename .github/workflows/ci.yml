@@ -100,7 +100,7 @@ jobs:
 
       - uses: julia-actions/setup-julia@v2
         with:
-          version: '1.10'
+          version: '1.12'
 
       - name: Install lcov
         run: sudo apt-get update && sudo apt-get install -y lcov
