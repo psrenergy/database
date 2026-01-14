@@ -102,9 +102,6 @@ jobs:
         with:
           version: '1.12'
 
-      - name: Install lcov
-        run: sudo apt-get update && sudo apt-get install -y lcov
-
       - name: Build C++ (for shared library)
         run: |
           cmake -B build \
@@ -113,19 +110,25 @@ jobs:
             -DPSR_BUILD_C_API=ON
           cmake --build build
 
-      - name: Install Julia dependencies
-        run: julia --project=bindings/julia -e "import Pkg; Pkg.instantiate()"
+      - uses: julia-actions/julia-buildpkg@v1
+        with:
+          project: bindings/julia
 
-      - name: Run tests with coverage
-        working-directory: bindings/julia
-        run: |
-          export LD_LIBRARY_PATH=$PWD/../../build/lib:$LD_LIBRARY_PATH
-          bash test/coverage.sh
+      - uses: julia-actions/julia-runtest@v1
+        with:
+          project: bindings/julia
+          coverage: true
+        env:
+          LD_LIBRARY_PATH: ${{ github.workspace }}/build/lib
+
+      - uses: julia-actions/julia-processcoverage@v1
+        with:
+          directories: bindings/julia/src
 
       - name: Upload to Codecov
         uses: codecov/codecov-action@v5
         with:
-          files: bindings/julia/coverage/lcov.info
+          files: lcov.info
           flags: julia
           fail_ci_if_error: false
           token: ${{ secrets.CODECOV_TOKEN }}
