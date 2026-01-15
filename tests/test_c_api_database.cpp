@@ -258,3 +258,298 @@ TEST_F(DatabaseFixture, CreateElementNullElement) {
 
     psr_database_close(db);
 }
+
+TEST_F(DatabaseFixture, ReadScalarInts) {
+    auto options = psr_database_options_default();
+    options.console_level = PSR_LOG_OFF;
+    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    ASSERT_NE(db, nullptr);
+
+    auto e1 = psr_element_create();
+    psr_element_set_string(e1, "label", "Config 1");
+    psr_element_set_int(e1, "integer_attribute", 42);
+    psr_database_create_element(db, "Configuration", e1);
+    psr_element_destroy(e1);
+
+    auto e2 = psr_element_create();
+    psr_element_set_string(e2, "label", "Config 2");
+    psr_element_set_int(e2, "integer_attribute", 100);
+    psr_database_create_element(db, "Configuration", e2);
+    psr_element_destroy(e2);
+
+    int64_t* values = nullptr;
+    size_t count = 0;
+    auto err = psr_database_read_scalar_ints(db, "Configuration", "integer_attribute", &values, &count);
+
+    EXPECT_EQ(err, PSR_OK);
+    EXPECT_EQ(count, 2);
+    EXPECT_EQ(values[0], 42);
+    EXPECT_EQ(values[1], 100);
+
+    psr_free_int_array(values);
+    psr_database_close(db);
+}
+
+TEST_F(DatabaseFixture, ReadScalarDoubles) {
+    auto options = psr_database_options_default();
+    options.console_level = PSR_LOG_OFF;
+    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    ASSERT_NE(db, nullptr);
+
+    auto e1 = psr_element_create();
+    psr_element_set_string(e1, "label", "Config 1");
+    psr_element_set_double(e1, "float_attribute", 3.14);
+    psr_database_create_element(db, "Configuration", e1);
+    psr_element_destroy(e1);
+
+    auto e2 = psr_element_create();
+    psr_element_set_string(e2, "label", "Config 2");
+    psr_element_set_double(e2, "float_attribute", 2.71);
+    psr_database_create_element(db, "Configuration", e2);
+    psr_element_destroy(e2);
+
+    double* values = nullptr;
+    size_t count = 0;
+    auto err = psr_database_read_scalar_doubles(db, "Configuration", "float_attribute", &values, &count);
+
+    EXPECT_EQ(err, PSR_OK);
+    EXPECT_EQ(count, 2);
+    EXPECT_DOUBLE_EQ(values[0], 3.14);
+    EXPECT_DOUBLE_EQ(values[1], 2.71);
+
+    psr_free_double_array(values);
+    psr_database_close(db);
+}
+
+TEST_F(DatabaseFixture, ReadScalarStrings) {
+    auto options = psr_database_options_default();
+    options.console_level = PSR_LOG_OFF;
+    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    ASSERT_NE(db, nullptr);
+
+    auto e1 = psr_element_create();
+    psr_element_set_string(e1, "label", "Config 1");
+    psr_element_set_string(e1, "string_attribute", "hello");
+    psr_database_create_element(db, "Configuration", e1);
+    psr_element_destroy(e1);
+
+    auto e2 = psr_element_create();
+    psr_element_set_string(e2, "label", "Config 2");
+    psr_element_set_string(e2, "string_attribute", "world");
+    psr_database_create_element(db, "Configuration", e2);
+    psr_element_destroy(e2);
+
+    char** values = nullptr;
+    size_t count = 0;
+    auto err = psr_database_read_scalar_strings(db, "Configuration", "string_attribute", &values, &count);
+
+    EXPECT_EQ(err, PSR_OK);
+    EXPECT_EQ(count, 2);
+    EXPECT_STREQ(values[0], "hello");
+    EXPECT_STREQ(values[1], "world");
+
+    psr_free_string_array(values, count);
+    psr_database_close(db);
+}
+
+TEST_F(DatabaseFixture, ReadScalarEmpty) {
+    auto options = psr_database_options_default();
+    options.console_level = PSR_LOG_OFF;
+    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    ASSERT_NE(db, nullptr);
+
+    auto config = psr_element_create();
+    psr_element_set_string(config, "label", "Test Config");
+    psr_database_create_element(db, "Configuration", config);
+    psr_element_destroy(config);
+
+    int64_t* int_values = nullptr;
+    size_t int_count = 0;
+    auto err = psr_database_read_scalar_ints(db, "Collection", "some_integer", &int_values, &int_count);
+    EXPECT_EQ(err, PSR_OK);
+    EXPECT_EQ(int_count, 0);
+    EXPECT_EQ(int_values, nullptr);
+
+    double* double_values = nullptr;
+    size_t double_count = 0;
+    err = psr_database_read_scalar_doubles(db, "Collection", "some_float", &double_values, &double_count);
+    EXPECT_EQ(err, PSR_OK);
+    EXPECT_EQ(double_count, 0);
+    EXPECT_EQ(double_values, nullptr);
+
+    psr_database_close(db);
+}
+
+TEST_F(DatabaseFixture, ReadVectorInts) {
+    auto options = psr_database_options_default();
+    options.console_level = PSR_LOG_OFF;
+    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    ASSERT_NE(db, nullptr);
+
+    auto config = psr_element_create();
+    psr_element_set_string(config, "label", "Test Config");
+    psr_database_create_element(db, "Configuration", config);
+    psr_element_destroy(config);
+
+    auto e1 = psr_element_create();
+    psr_element_set_string(e1, "label", "Item 1");
+    int64_t values1[] = {1, 2, 3};
+    psr_element_set_array_int(e1, "value_int", values1, 3);
+    psr_database_create_element(db, "Collection", e1);
+    psr_element_destroy(e1);
+
+    auto e2 = psr_element_create();
+    psr_element_set_string(e2, "label", "Item 2");
+    int64_t values2[] = {10, 20};
+    psr_element_set_array_int(e2, "value_int", values2, 2);
+    psr_database_create_element(db, "Collection", e2);
+    psr_element_destroy(e2);
+
+    int64_t** vectors = nullptr;
+    size_t* sizes = nullptr;
+    size_t count = 0;
+    auto err = psr_database_read_vector_ints(db, "Collection", "value_int", &vectors, &sizes, &count);
+
+    EXPECT_EQ(err, PSR_OK);
+    EXPECT_EQ(count, 2);
+    EXPECT_EQ(sizes[0], 3);
+    EXPECT_EQ(sizes[1], 2);
+    EXPECT_EQ(vectors[0][0], 1);
+    EXPECT_EQ(vectors[0][1], 2);
+    EXPECT_EQ(vectors[0][2], 3);
+    EXPECT_EQ(vectors[1][0], 10);
+    EXPECT_EQ(vectors[1][1], 20);
+
+    psr_free_int_vectors(vectors, sizes, count);
+    psr_database_close(db);
+}
+
+TEST_F(DatabaseFixture, ReadVectorDoubles) {
+    auto options = psr_database_options_default();
+    options.console_level = PSR_LOG_OFF;
+    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    ASSERT_NE(db, nullptr);
+
+    auto config = psr_element_create();
+    psr_element_set_string(config, "label", "Test Config");
+    psr_database_create_element(db, "Configuration", config);
+    psr_element_destroy(config);
+
+    auto e1 = psr_element_create();
+    psr_element_set_string(e1, "label", "Item 1");
+    double values1[] = {1.5, 2.5, 3.5};
+    psr_element_set_array_double(e1, "value_float", values1, 3);
+    psr_database_create_element(db, "Collection", e1);
+    psr_element_destroy(e1);
+
+    auto e2 = psr_element_create();
+    psr_element_set_string(e2, "label", "Item 2");
+    double values2[] = {10.5, 20.5};
+    psr_element_set_array_double(e2, "value_float", values2, 2);
+    psr_database_create_element(db, "Collection", e2);
+    psr_element_destroy(e2);
+
+    double** vectors = nullptr;
+    size_t* sizes = nullptr;
+    size_t count = 0;
+    auto err = psr_database_read_vector_doubles(db, "Collection", "value_float", &vectors, &sizes, &count);
+
+    EXPECT_EQ(err, PSR_OK);
+    EXPECT_EQ(count, 2);
+    EXPECT_EQ(sizes[0], 3);
+    EXPECT_EQ(sizes[1], 2);
+    EXPECT_DOUBLE_EQ(vectors[0][0], 1.5);
+    EXPECT_DOUBLE_EQ(vectors[0][1], 2.5);
+    EXPECT_DOUBLE_EQ(vectors[0][2], 3.5);
+    EXPECT_DOUBLE_EQ(vectors[1][0], 10.5);
+    EXPECT_DOUBLE_EQ(vectors[1][1], 20.5);
+
+    psr_free_double_vectors(vectors, sizes, count);
+    psr_database_close(db);
+}
+
+TEST_F(DatabaseFixture, ReadVectorEmpty) {
+    auto options = psr_database_options_default();
+    options.console_level = PSR_LOG_OFF;
+    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    ASSERT_NE(db, nullptr);
+
+    auto config = psr_element_create();
+    psr_element_set_string(config, "label", "Test Config");
+    psr_database_create_element(db, "Configuration", config);
+    psr_element_destroy(config);
+
+    int64_t** int_vectors = nullptr;
+    size_t* int_sizes = nullptr;
+    size_t int_count = 0;
+    auto err = psr_database_read_vector_ints(db, "Collection", "value_int", &int_vectors, &int_sizes, &int_count);
+    EXPECT_EQ(err, PSR_OK);
+    EXPECT_EQ(int_count, 0);
+    EXPECT_EQ(int_vectors, nullptr);
+    EXPECT_EQ(int_sizes, nullptr);
+
+    double** double_vectors = nullptr;
+    size_t* double_sizes = nullptr;
+    size_t double_count = 0;
+    err = psr_database_read_vector_doubles(
+        db, "Collection", "value_float", &double_vectors, &double_sizes, &double_count);
+    EXPECT_EQ(err, PSR_OK);
+    EXPECT_EQ(double_count, 0);
+    EXPECT_EQ(double_vectors, nullptr);
+    EXPECT_EQ(double_sizes, nullptr);
+
+    psr_database_close(db);
+}
+
+TEST_F(DatabaseFixture, ReadVectorOnlyReturnsElementsWithData) {
+    auto options = psr_database_options_default();
+    options.console_level = PSR_LOG_OFF;
+    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    ASSERT_NE(db, nullptr);
+
+    auto config = psr_element_create();
+    psr_element_set_string(config, "label", "Test Config");
+    psr_database_create_element(db, "Configuration", config);
+    psr_element_destroy(config);
+
+    // Element with vector data
+    auto e1 = psr_element_create();
+    psr_element_set_string(e1, "label", "Item 1");
+    int64_t values1[] = {1, 2, 3};
+    psr_element_set_array_int(e1, "value_int", values1, 3);
+    psr_database_create_element(db, "Collection", e1);
+    psr_element_destroy(e1);
+
+    // Element without vector data
+    auto e2 = psr_element_create();
+    psr_element_set_string(e2, "label", "Item 2");
+    psr_database_create_element(db, "Collection", e2);
+    psr_element_destroy(e2);
+
+    // Another element with vector data
+    auto e3 = psr_element_create();
+    psr_element_set_string(e3, "label", "Item 3");
+    int64_t values3[] = {4, 5};
+    psr_element_set_array_int(e3, "value_int", values3, 2);
+    psr_database_create_element(db, "Collection", e3);
+    psr_element_destroy(e3);
+
+    int64_t** vectors = nullptr;
+    size_t* sizes = nullptr;
+    size_t count = 0;
+    auto err = psr_database_read_vector_ints(db, "Collection", "value_int", &vectors, &sizes, &count);
+
+    // Only elements with vector data are returned
+    EXPECT_EQ(err, PSR_OK);
+    EXPECT_EQ(count, 2);
+    EXPECT_EQ(sizes[0], 3);
+    EXPECT_EQ(sizes[1], 2);
+    EXPECT_EQ(vectors[0][0], 1);
+    EXPECT_EQ(vectors[0][1], 2);
+    EXPECT_EQ(vectors[0][2], 3);
+    EXPECT_EQ(vectors[1][0], 4);
+    EXPECT_EQ(vectors[1][1], 5);
+
+    psr_free_int_vectors(vectors, sizes, count);
+    psr_database_close(db);
+}

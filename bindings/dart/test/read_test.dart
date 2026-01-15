@@ -143,4 +143,111 @@ void main() {
       }
     });
   });
+
+  group('Read Vector Attributes', () {
+    test('reads int vectors from Collection', () {
+      final db = Database.fromSchema(
+        ':memory:',
+        path.join(testsPath, 'schemas', 'valid', 'collections.sql'),
+      );
+      try {
+        db.createElement('Configuration', {'label': 'Test Config'});
+        db.createElement('Collection', {
+          'label': 'Item 1',
+          'value_int': [1, 2, 3],
+        });
+        db.createElement('Collection', {
+          'label': 'Item 2',
+          'value_int': [10, 20],
+        });
+
+        expect(
+          db.readVectorInts('Collection', 'value_int'),
+          equals([
+            [1, 2, 3],
+            [10, 20],
+          ]),
+        );
+      } finally {
+        db.close();
+      }
+    });
+
+    test('reads double vectors from Collection', () {
+      final db = Database.fromSchema(
+        ':memory:',
+        path.join(testsPath, 'schemas', 'valid', 'collections.sql'),
+      );
+      try {
+        db.createElement('Configuration', {'label': 'Test Config'});
+        db.createElement('Collection', {
+          'label': 'Item 1',
+          'value_float': [1.5, 2.5, 3.5],
+        });
+        db.createElement('Collection', {
+          'label': 'Item 2',
+          'value_float': [10.5, 20.5],
+        });
+
+        expect(
+          db.readVectorDoubles('Collection', 'value_float'),
+          equals([
+            [1.5, 2.5, 3.5],
+            [10.5, 20.5],
+          ]),
+        );
+      } finally {
+        db.close();
+      }
+    });
+  });
+
+  group('Read Vector Empty Result', () {
+    test('returns empty list when no elements', () {
+      final db = Database.fromSchema(
+        ':memory:',
+        path.join(testsPath, 'schemas', 'valid', 'collections.sql'),
+      );
+      try {
+        db.createElement('Configuration', {'label': 'Test Config'});
+
+        expect(db.readVectorInts('Collection', 'value_int'), isEmpty);
+        expect(db.readVectorDoubles('Collection', 'value_float'), isEmpty);
+      } finally {
+        db.close();
+      }
+    });
+  });
+
+  group('Read Vector Only Returns Elements With Data', () {
+    test('only returns vectors for elements with data', () {
+      final db = Database.fromSchema(
+        ':memory:',
+        path.join(testsPath, 'schemas', 'valid', 'collections.sql'),
+      );
+      try {
+        db.createElement('Configuration', {'label': 'Test Config'});
+        db.createElement('Collection', {
+          'label': 'Item 1',
+          'value_int': [1, 2, 3],
+        });
+        db.createElement('Collection', {
+          'label': 'Item 2',
+          // No vector data
+        });
+        db.createElement('Collection', {
+          'label': 'Item 3',
+          'value_int': [4, 5],
+        });
+
+        // Only elements with vector data are returned
+        final result = db.readVectorInts('Collection', 'value_int');
+        expect(result.length, equals(2));
+        expect(result[0], equals([1, 2, 3]));
+        expect(result[1], equals([4, 5]));
+      } finally {
+        db.close();
+      }
+    });
+  });
 }

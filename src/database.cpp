@@ -189,7 +189,7 @@ Result Database::execute(const std::string& sql, const std::vector<Value>& param
         values.reserve(col_count);
 
         for (int i = 0; i < col_count; ++i) {
-            int type = sqlite3_column_type(stmt, i);
+            auto type = sqlite3_column_type(stmt, i);
             switch (type) {
             case SQLITE_INTEGER:
                 values.emplace_back(sqlite3_column_int64(stmt, i));
@@ -202,10 +202,13 @@ Result Database::execute(const std::string& sql, const std::vector<Value>& param
                 values.emplace_back(std::string(text ? text : ""));
                 break;
             }
-            case SQLITE_BLOB:
             case SQLITE_NULL:
-            default:
                 values.emplace_back(nullptr);
+                break;
+            case SQLITE_BLOB:
+                throw std::runtime_error("Blob not implemented");
+            default:
+                throw std::runtime_error("Type not implemented");
                 break;
             }
         }
@@ -655,6 +658,115 @@ std::vector<std::string> Database::read_scalar_strings(const std::string& collec
         }
     }
     return values;
+}
+
+// Helper to find vector table for an attribute
+static std::string
+find_vector_table(const Schema* schema, const std::string& collection, const std::string& attribute) {
+    // First try: Collection_vector_attribute
+    auto vector_table = Schema::vector_table_name(collection, attribute);
+    if (schema->has_table(vector_table)) {
+        return vector_table;
+    }
+
+    // Second try: search all vector tables for the collection
+    for (const auto& table_name : schema->table_names()) {
+        if (!schema->is_vector_table(table_name))
+            continue;
+        if (schema->get_parent_collection(table_name) != collection)
+            continue;
+
+        const auto* table_def = schema->get_table(table_name);
+        if (table_def && table_def->has_column(attribute)) {
+            return table_name;
+        }
+    }
+
+    throw std::runtime_error("Vector attribute '" + attribute + "' not found for collection '" + collection + "'");
+}
+
+std::vector<std::vector<int64_t>> Database::read_vector_ints(const std::string& collection,
+                                                             const std::string& attribute) {
+    auto vector_table = find_vector_table(impl_->schema.get(), collection, attribute);
+    auto sql = "SELECT id, " + attribute + " FROM " + vector_table + " ORDER BY id, vector_index";
+    auto result = execute(sql);
+
+    std::vector<std::vector<int64_t>> vectors;
+    int64_t current_id = -1;
+
+    for (size_t i = 0; i < result.row_count(); ++i) {
+        auto id = result[i].get_int(0);
+        auto val = result[i].get_int(1);
+
+        if (!id)
+            continue;
+
+        if (*id != current_id) {
+            vectors.emplace_back();
+            current_id = *id;
+        }
+
+        if (val) {
+            vectors.back().push_back(*val);
+        }
+    }
+    return vectors;
+}
+
+std::vector<std::vector<double>> Database::read_vector_doubles(const std::string& collection,
+                                                               const std::string& attribute) {
+    auto vector_table = find_vector_table(impl_->schema.get(), collection, attribute);
+    auto sql = "SELECT id, " + attribute + " FROM " + vector_table + " ORDER BY id, vector_index";
+    auto result = execute(sql);
+
+    std::vector<std::vector<double>> vectors;
+    int64_t current_id = -1;
+
+    for (size_t i = 0; i < result.row_count(); ++i) {
+        auto id = result[i].get_int(0);
+        auto val = result[i].get_double(1);
+
+        if (!id)
+            continue;
+
+        if (*id != current_id) {
+            vectors.emplace_back();
+            current_id = *id;
+        }
+
+        if (val) {
+            vectors.back().push_back(*val);
+        }
+    }
+    return vectors;
+}
+
+std::vector<std::vector<std::string>> Database::read_vector_strings(const std::string& collection,
+                                                                    const std::string& attribute) {
+    auto vector_table = find_vector_table(impl_->schema.get(), collection, attribute);
+    auto sql = "SELECT id, " + attribute + " FROM " + vector_table + " ORDER BY id, vector_index";
+    auto result = execute(sql);
+
+    std::vector<std::vector<std::string>> vectors;
+    int64_t current_id = -1;
+
+    for (size_t i = 0; i < result.row_count(); ++i) {
+        auto id = result[i].get_int(0);
+        auto val = result[i].get_string(1);
+
+        if (!id)
+            continue;
+
+        if (*id != current_id) {
+            vectors.emplace_back();
+            current_id = *id;
+        }
+
+        if (val) {
+            vectors.back().push_back(*val);
+        }
+    }
+    return vectors;
 }
 
 }  // namespace psr

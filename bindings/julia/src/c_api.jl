@@ -5,7 +5,7 @@ module C
 using CEnum
 using Libdl
 
-function _library_name()
+function library_name()
     if Sys.iswindows()
         return "libpsr_database_c.dll"
     elseif Sys.isapple()
@@ -15,8 +15,8 @@ function _library_name()
     end
 end
 
-function _library_dir()
-    # On Windows, DLLs go to bin/; on Linux/macOS, shared libs go to lib/
+# On Windows, DLLs go to bin/; on Linux/macOS, shared libs go to lib/
+function library_dir()
     if Sys.iswindows()
         return "bin"
     else
@@ -24,7 +24,7 @@ function _library_dir()
     end
 end
 
-const libpsr_database_c = joinpath(@__DIR__, "..", "..", "..", "build", _library_dir(), _library_name())  
+const libpsr_database_c = joinpath(@__DIR__, "..", "..", "..", "build", library_dir(), library_name())
 
 
 @cenum psr_error_t::Int32 begin
@@ -134,6 +134,18 @@ function psr_database_read_scalar_strings(db, collection, attribute, out_values,
     @ccall libpsr_database_c.psr_database_read_scalar_strings(db::Ptr{psr_database_t}, collection::Ptr{Cchar}, attribute::Ptr{Cchar}, out_values::Ptr{Ptr{Ptr{Cchar}}}, out_count::Ptr{Csize_t})::psr_error_t
 end
 
+function psr_database_read_vector_ints(db, collection, attribute, out_vectors, out_sizes, out_count)
+    @ccall libpsr_database_c.psr_database_read_vector_ints(db::Ptr{psr_database_t}, collection::Ptr{Cchar}, attribute::Ptr{Cchar}, out_vectors::Ptr{Ptr{Ptr{Int64}}}, out_sizes::Ptr{Ptr{Csize_t}}, out_count::Ptr{Csize_t})::psr_error_t
+end
+
+function psr_database_read_vector_doubles(db, collection, attribute, out_vectors, out_sizes, out_count)
+    @ccall libpsr_database_c.psr_database_read_vector_doubles(db::Ptr{psr_database_t}, collection::Ptr{Cchar}, attribute::Ptr{Cchar}, out_vectors::Ptr{Ptr{Ptr{Cdouble}}}, out_sizes::Ptr{Ptr{Csize_t}}, out_count::Ptr{Csize_t})::psr_error_t
+end
+
+function psr_database_read_vector_strings(db, collection, attribute, out_vectors, out_sizes, out_count)
+    @ccall libpsr_database_c.psr_database_read_vector_strings(db::Ptr{psr_database_t}, collection::Ptr{Cchar}, attribute::Ptr{Cchar}, out_vectors::Ptr{Ptr{Ptr{Ptr{Cchar}}}}, out_sizes::Ptr{Ptr{Csize_t}}, out_count::Ptr{Csize_t})::psr_error_t
+end
+
 function psr_free_int_array(values)
     @ccall libpsr_database_c.psr_free_int_array(values::Ptr{Int64})::Cvoid
 end
@@ -144,6 +156,18 @@ end
 
 function psr_free_string_array(values, count)
     @ccall libpsr_database_c.psr_free_string_array(values::Ptr{Ptr{Cchar}}, count::Csize_t)::Cvoid
+end
+
+function psr_free_int_vectors(vectors, sizes, count)
+    @ccall libpsr_database_c.psr_free_int_vectors(vectors::Ptr{Ptr{Int64}}, sizes::Ptr{Csize_t}, count::Csize_t)::Cvoid
+end
+
+function psr_free_double_vectors(vectors, sizes, count)
+    @ccall libpsr_database_c.psr_free_double_vectors(vectors::Ptr{Ptr{Cdouble}}, sizes::Ptr{Csize_t}, count::Csize_t)::Cvoid
+end
+
+function psr_free_string_vectors(vectors, sizes, count)
+    @ccall libpsr_database_c.psr_free_string_vectors(vectors::Ptr{Ptr{Ptr{Cchar}}}, sizes::Ptr{Csize_t}, count::Csize_t)::Cvoid
 end
 
 function psr_element_create()
