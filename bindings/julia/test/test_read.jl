@@ -68,4 +68,64 @@ end
     PSRDatabase.close!(db)
 end
 
+@testset "Read Vector Attributes" begin
+    path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
+    db = PSRDatabase.create_empty_db_from_schema(":memory:", path_schema; force = true)
+
+    PSRDatabase.create_element!(db, "Configuration"; label = "Test Config")
+
+    PSRDatabase.create_element!(db, "Collection";
+        label = "Item 1",
+        value_int = [1, 2, 3],
+        value_float = [1.5, 2.5, 3.5],
+    )
+    PSRDatabase.create_element!(db, "Collection";
+        label = "Item 2",
+        value_int = [10, 20],
+        value_float = [10.5, 20.5],
+    )
+
+    @test PSRDatabase.read_vector_ints(db, "Collection", "value_int") == [[1, 2, 3], [10, 20]]
+    @test PSRDatabase.read_vector_doubles(db, "Collection", "value_float") == [[1.5, 2.5, 3.5], [10.5, 20.5]]
+
+    PSRDatabase.close!(db)
+end
+
+@testset "Read Vector Empty Result" begin
+    path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
+    db = PSRDatabase.create_empty_db_from_schema(":memory:", path_schema; force = true)
+
+    PSRDatabase.create_element!(db, "Configuration"; label = "Test Config")
+
+    # No Collection elements created
+    @test PSRDatabase.read_vector_ints(db, "Collection", "value_int") == Vector{Int64}[]
+    @test PSRDatabase.read_vector_doubles(db, "Collection", "value_float") == Vector{Float64}[]
+
+    PSRDatabase.close!(db)
+end
+
+@testset "Read Vector With Empty Vectors" begin
+    path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
+    db = PSRDatabase.create_empty_db_from_schema(":memory:", path_schema; force = true)
+
+    PSRDatabase.create_element!(db, "Configuration"; label = "Test Config")
+
+    # Create element with vectors
+    PSRDatabase.create_element!(db, "Collection";
+        label = "Item 1",
+        value_int = [1, 2, 3],
+    )
+    # Create element without vectors (empty)
+    PSRDatabase.create_element!(db, "Collection";
+        label = "Item 2",
+    )
+
+    result = PSRDatabase.read_vector_ints(db, "Collection", "value_int")
+    @test length(result) == 2
+    @test result[1] == [1, 2, 3]
+    @test result[2] == Int64[]
+
+    PSRDatabase.close!(db)
+end
+
 end
