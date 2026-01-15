@@ -773,7 +773,7 @@ std::vector<std::vector<int64_t>> Database::read_set_ints(const std::string& col
 
 std::vector<std::vector<double>> Database::read_set_doubles(const std::string& collection,
                                                             const std::string& attribute) {
-    auto set_table = find_set_table(impl_->schema.get(), collection, attribute);
+    auto set_table = impl_->schema->find_set_table(collection, attribute);
     auto sql = "SELECT id, " + attribute + " FROM " + set_table + " ORDER BY id";
     auto result = execute(sql);
 
@@ -801,7 +801,7 @@ std::vector<std::vector<double>> Database::read_set_doubles(const std::string& c
 
 std::vector<std::vector<std::string>> Database::read_set_strings(const std::string& collection,
                                                                  const std::string& attribute) {
-    auto set_table = find_set_table(impl_->schema.get(), collection, attribute);
+    auto set_table = impl_->schema->find_set_table(collection, attribute);
     auto sql = "SELECT id, " + attribute + " FROM " + set_table + " ORDER BY id";
     auto result = execute(sql);
 
