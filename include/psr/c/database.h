@@ -73,25 +73,25 @@ PSR_C_API psr_error_t psr_database_read_scalar_strings(psr_database_t* db,
 
 // Read vector attributes
 PSR_C_API psr_error_t psr_database_read_vector_ints(psr_database_t* db,
-                                                     const char* collection,
-                                                     const char* attribute,
-                                                     int64_t*** out_vectors,
-                                                     size_t** out_sizes,
-                                                     size_t* out_count);
+                                                    const char* collection,
+                                                    const char* attribute,
+                                                    int64_t*** out_vectors,
+                                                    size_t** out_sizes,
+                                                    size_t* out_count);
 
 PSR_C_API psr_error_t psr_database_read_vector_doubles(psr_database_t* db,
-                                                        const char* collection,
-                                                        const char* attribute,
-                                                        double*** out_vectors,
-                                                        size_t** out_sizes,
-                                                        size_t* out_count);
+                                                       const char* collection,
+                                                       const char* attribute,
+                                                       double*** out_vectors,
+                                                       size_t** out_sizes,
+                                                       size_t* out_count);
 
 PSR_C_API psr_error_t psr_database_read_vector_strings(psr_database_t* db,
-                                                        const char* collection,
-                                                        const char* attribute,
-                                                        char**** out_vectors,
-                                                        size_t** out_sizes,
-                                                        size_t* out_count);
+                                                       const char* collection,
+                                                       const char* attribute,
+                                                       char**** out_vectors,
+                                                       size_t** out_sizes,
+                                                       size_t* out_count);
 
 // Memory cleanup for read results
 PSR_C_API void psr_free_int_array(int64_t* values);

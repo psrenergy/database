@@ -53,10 +53,8 @@ psr_error_t read_scalars_impl(const std::vector<T>& values, T** out_values, size
 
 // Helper template for reading numeric vectors
 template <typename T>
-psr_error_t read_vectors_impl(const std::vector<std::vector<T>>& vectors,
-                              T*** out_vectors,
-                              size_t** out_sizes,
-                              size_t* out_count) {
+psr_error_t
+read_vectors_impl(const std::vector<std::vector<T>>& vectors, T*** out_vectors, size_t** out_sizes, size_t* out_count) {
     *out_count = vectors.size();
     if (vectors.empty()) {
         *out_vectors = nullptr;
@@ -315,9 +313,13 @@ PSR_C_API psr_error_t psr_database_read_scalar_strings(psr_database_t* db,
     }
 }
 
-PSR_C_API void psr_free_int_array(int64_t* values) { delete[] values; }
+PSR_C_API void psr_free_int_array(int64_t* values) {
+    delete[] values;
+}
 
-PSR_C_API void psr_free_double_array(double* values) { delete[] values; }
+PSR_C_API void psr_free_double_array(double* values) {
+    delete[] values;
+}
 
 PSR_C_API void psr_free_string_array(char** values, size_t count) {
     if (!values) {
@@ -330,11 +332,11 @@ PSR_C_API void psr_free_string_array(char** values, size_t count) {
 }
 
 PSR_C_API psr_error_t psr_database_read_vector_ints(psr_database_t* db,
-                                                     const char* collection,
-                                                     const char* attribute,
-                                                     int64_t*** out_vectors,
-                                                     size_t** out_sizes,
-                                                     size_t* out_count) {
+                                                    const char* collection,
+                                                    const char* attribute,
+                                                    int64_t*** out_vectors,
+                                                    size_t** out_sizes,
+                                                    size_t* out_count) {
     if (!db || !collection || !attribute || !out_vectors || !out_sizes || !out_count) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }
@@ -346,11 +348,11 @@ PSR_C_API psr_error_t psr_database_read_vector_ints(psr_database_t* db,
 }
 
 PSR_C_API psr_error_t psr_database_read_vector_doubles(psr_database_t* db,
-                                                        const char* collection,
-                                                        const char* attribute,
-                                                        double*** out_vectors,
-                                                        size_t** out_sizes,
-                                                        size_t* out_count) {
+                                                       const char* collection,
+                                                       const char* attribute,
+                                                       double*** out_vectors,
+                                                       size_t** out_sizes,
+                                                       size_t* out_count) {
     if (!db || !collection || !attribute || !out_vectors || !out_sizes || !out_count) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }
@@ -362,11 +364,11 @@ PSR_C_API psr_error_t psr_database_read_vector_doubles(psr_database_t* db,
 }
 
 PSR_C_API psr_error_t psr_database_read_vector_strings(psr_database_t* db,
-                                                        const char* collection,
-                                                        const char* attribute,
-                                                        char**** out_vectors,
-                                                        size_t** out_sizes,
-                                                        size_t* out_count) {
+                                                       const char* collection,
+                                                       const char* attribute,
+                                                       char**** out_vectors,
+                                                       size_t** out_sizes,
+                                                       size_t* out_count) {
     if (!db || !collection || !attribute || !out_vectors || !out_sizes || !out_count) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }

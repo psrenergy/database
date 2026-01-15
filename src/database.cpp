@@ -658,8 +658,8 @@ std::vector<std::string> Database::read_scalar_strings(const std::string& collec
 }
 
 // Helper to find vector table for an attribute
-static std::string find_vector_table(const Schema* schema, const std::string& collection,
-                                     const std::string& attribute) {
+static std::string
+find_vector_table(const Schema* schema, const std::string& collection, const std::string& attribute) {
     // First try: Collection_vector_attribute
     auto vector_table = Schema::vector_table_name(collection, attribute);
     if (schema->has_table(vector_table)) {
@@ -683,7 +683,7 @@ static std::string find_vector_table(const Schema* schema, const std::string& co
 }
 
 std::vector<std::vector<int64_t>> Database::read_vector_ints(const std::string& collection,
-                                                              const std::string& attribute) {
+                                                             const std::string& attribute) {
     auto vector_table = find_vector_table(impl_->schema.get(), collection, attribute);
     auto sql = "SELECT id, " + attribute + " FROM " + vector_table + " ORDER BY id, vector_index";
     auto result = execute(sql);
@@ -711,7 +711,7 @@ std::vector<std::vector<int64_t>> Database::read_vector_ints(const std::string& 
 }
 
 std::vector<std::vector<double>> Database::read_vector_doubles(const std::string& collection,
-                                                                const std::string& attribute) {
+                                                               const std::string& attribute) {
     auto vector_table = find_vector_table(impl_->schema.get(), collection, attribute);
     auto sql = "SELECT id, " + attribute + " FROM " + vector_table + " ORDER BY id, vector_index";
     auto result = execute(sql);
@@ -739,7 +739,7 @@ std::vector<std::vector<double>> Database::read_vector_doubles(const std::string
 }
 
 std::vector<std::vector<std::string>> Database::read_vector_strings(const std::string& collection,
-                                                                     const std::string& attribute) {
+                                                                    const std::string& attribute) {
     auto vector_table = find_vector_table(impl_->schema.get(), collection, attribute);
     auto sql = "SELECT id, " + attribute + " FROM " + vector_table + " ORDER BY id, vector_index";
     auto result = execute(sql);
