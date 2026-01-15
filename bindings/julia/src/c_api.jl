@@ -134,18 +134,6 @@ function psr_database_read_scalar_strings(db, collection, attribute, out_values,
     @ccall libpsr_database_c.psr_database_read_scalar_strings(db::Ptr{psr_database_t}, collection::Ptr{Cchar}, attribute::Ptr{Cchar}, out_values::Ptr{Ptr{Ptr{Cchar}}}, out_count::Ptr{Csize_t})::psr_error_t
 end
 
-function psr_free_int_array(values)
-    @ccall libpsr_database_c.psr_free_int_array(values::Ptr{Int64})::Cvoid
-end
-
-function psr_free_double_array(values)
-    @ccall libpsr_database_c.psr_free_double_array(values::Ptr{Cdouble})::Cvoid
-end
-
-function psr_free_string_array(values, count)
-    @ccall libpsr_database_c.psr_free_string_array(values::Ptr{Ptr{Cchar}}, count::Csize_t)::Cvoid
-end
-
 function psr_database_read_vector_ints(db, collection, attribute, out_vectors, out_sizes, out_count)
     @ccall libpsr_database_c.psr_database_read_vector_ints(db::Ptr{psr_database_t}, collection::Ptr{Cchar}, attribute::Ptr{Cchar}, out_vectors::Ptr{Ptr{Ptr{Int64}}}, out_sizes::Ptr{Ptr{Csize_t}}, out_count::Ptr{Csize_t})::psr_error_t
 end
@@ -156,6 +144,18 @@ end
 
 function psr_database_read_vector_strings(db, collection, attribute, out_vectors, out_sizes, out_count)
     @ccall libpsr_database_c.psr_database_read_vector_strings(db::Ptr{psr_database_t}, collection::Ptr{Cchar}, attribute::Ptr{Cchar}, out_vectors::Ptr{Ptr{Ptr{Ptr{Cchar}}}}, out_sizes::Ptr{Ptr{Csize_t}}, out_count::Ptr{Csize_t})::psr_error_t
+end
+
+function psr_free_int_array(values)
+    @ccall libpsr_database_c.psr_free_int_array(values::Ptr{Int64})::Cvoid
+end
+
+function psr_free_double_array(values)
+    @ccall libpsr_database_c.psr_free_double_array(values::Ptr{Cdouble})::Cvoid
+end
+
+function psr_free_string_array(values, count)
+    @ccall libpsr_database_c.psr_free_string_array(values::Ptr{Ptr{Cchar}}, count::Csize_t)::Cvoid
 end
 
 function psr_free_int_vectors(vectors, sizes, count)
