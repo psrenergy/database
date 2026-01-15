@@ -189,7 +189,7 @@ Result Database::execute(const std::string& sql, const std::vector<Value>& param
         values.reserve(col_count);
 
         for (int i = 0; i < col_count; ++i) {
-            int type = sqlite3_column_type(stmt, i);
+            auto type = sqlite3_column_type(stmt, i);
             switch (type) {
             case SQLITE_INTEGER:
                 values.emplace_back(sqlite3_column_int64(stmt, i));
@@ -201,11 +201,14 @@ Result Database::execute(const std::string& sql, const std::vector<Value>& param
                 const char* text = reinterpret_cast<const char*>(sqlite3_column_text(stmt, i));
                 values.emplace_back(std::string(text ? text : ""));
                 break;
-            }
-            case SQLITE_BLOB:
+            }    
             case SQLITE_NULL:
-            default:
                 values.emplace_back(nullptr);
+                break;
+            case SQLITE_BLOB:
+                throw std::runtime_error("Blob not implemented");
+            default:
+                throw std::runtime_error("Type not implemented");
                 break;
             }
         }

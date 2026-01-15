@@ -6,17 +6,15 @@
 
 namespace psr {
 
-enum class ColumnType { Integer, Real, Text, Blob };
+enum class ColumnType { Integer, Real, Text };
 
 inline ColumnType column_type_from_string(const std::string& type_str) {
     if (type_str == "INTEGER")
         return ColumnType::Integer;
-    if (type_str == "REAL")
+    else if (type_str == "REAL")
         return ColumnType::Real;
-    if (type_str == "TEXT")
+    else if (type_str == "TEXT")
         return ColumnType::Text;
-    if (type_str == "BLOB")
-        return ColumnType::Blob;
     throw std::runtime_error("Unknown column type: " + type_str);
 }
 
@@ -28,8 +26,6 @@ inline const char* column_type_to_string(ColumnType type) {
         return "REAL";
     case ColumnType::Text:
         return "TEXT";
-    case ColumnType::Blob:
-        return "BLOB";
     }
     return "UNKNOWN";
 }
