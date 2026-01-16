@@ -144,48 +144,6 @@ TEST_F(MigrationFixture, DatabaseCurrentVersion) {
     EXPECT_EQ(db.current_version(), 0);
 }
 
-TEST_F(MigrationFixture, DatabaseSetVersion) {
-    psr::Database db(":memory:");
-    db.set_version(42);
-    EXPECT_EQ(db.current_version(), 42);
-}
-
-TEST_F(MigrationFixture, DatabaseMigrateUp) {
-    psr::Database db(path);
-
-    EXPECT_EQ(db.current_version(), 0);
-
-    db.migrate_up(migrations_path);
-
-    EXPECT_EQ(db.current_version(), 3);
-
-    // Verify tables exist
-    auto result = db.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name");
-    std::vector<std::string> tables;
-    for (const auto& row : result) {
-        auto name = row.get_string(0);
-        if (name) {
-            tables.push_back(*name);
-        }
-    }
-
-    EXPECT_NE(std::find(tables.begin(), tables.end(), "Test1"), tables.end());
-    EXPECT_NE(std::find(tables.begin(), tables.end(), "Test3"), tables.end());
-    // Test2 should not exist (dropped in migration 2)
-    EXPECT_EQ(std::find(tables.begin(), tables.end(), "Test2"), tables.end());
-}
-
-TEST_F(MigrationFixture, DatabaseMigrateUpIdempotent) {
-    psr::Database db(path);
-
-    db.migrate_up(migrations_path);
-    EXPECT_EQ(db.current_version(), 3);
-
-    // Running again should be a no-op
-    db.migrate_up(migrations_path);
-    EXPECT_EQ(db.current_version(), 3);
-}
-
 TEST_F(MigrationFixture, DatabaseFromMigrations) {
     auto db = psr::Database::from_migrations(path, migrations_path);
 

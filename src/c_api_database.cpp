@@ -146,9 +146,8 @@ psr_database_from_migrations(const char* db_path, const char* migrations_path, c
 
     try {
         auto cpp_options = to_cpp_options(options);
-        auto* wrapper = new psr_database(db_path, cpp_options);
-        wrapper->db.migrate_up(migrations_path);
-        return wrapper;
+        auto db = psr::Database::from_migrations(db_path, migrations_path, cpp_options);
+        return new psr_database(std::move(db));
     } catch (const std::bad_alloc&) {
         return nullptr;
     } catch (const std::exception&) {
