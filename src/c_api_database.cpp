@@ -166,6 +166,21 @@ PSR_C_API int64_t psr_database_create_element(psr_database_t* db, const char* co
     }
 }
 
+PSR_C_API psr_error_t psr_database_update_element(psr_database_t* db,
+                                                  const char* collection,
+                                                  int64_t id,
+                                                  const psr_element_t* element) {
+    if (!db || !collection || !element) {
+        return PSR_ERROR_INVALID_ARGUMENT;
+    }
+    try {
+        db->db.update_element(collection, id, element->element);
+        return PSR_OK;
+    } catch (const std::exception&) {
+        return PSR_ERROR_DATABASE;
+    }
+}
+
 PSR_C_API psr_error_t psr_database_set_scalar_relation(psr_database_t* db,
                                                        const char* collection,
                                                        const char* attribute,

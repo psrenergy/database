@@ -611,6 +611,48 @@ int64_t Database::create_element(const std::string& collection, const Element& e
     return element_id;
 }
 
+void Database::update_element(const std::string& collection, int64_t id, const Element& element) {
+    impl_->logger->debug("Updating element {} in collection: {}", id, collection);
+
+    // Require schema to be loaded
+    if (!impl_->schema) {
+        throw std::runtime_error("Cannot update element: no schema loaded");
+    }
+    if (!impl_->schema->has_table(collection)) {
+        throw std::runtime_error("Collection not found in schema: " + collection);
+    }
+
+    const auto& scalars = element.scalars();
+    if (scalars.empty()) {
+        throw std::runtime_error("Element must have at least one scalar attribute to update");
+    }
+
+    // Validate scalar types
+    for (const auto& [name, value] : scalars) {
+        impl_->type_validator->validate_scalar(collection, name, value);
+    }
+
+    // Build UPDATE SQL
+    auto sql = "UPDATE " + collection + " SET ";
+    std::vector<Value> params;
+
+    auto first = true;
+    for (const auto& [name, value] : scalars) {
+        if (!first) {
+            sql += ", ";
+        }
+        sql += name + " = ?";
+        params.push_back(value);
+        first = false;
+    }
+    sql += " WHERE id = ?";
+    params.push_back(id);
+
+    execute(sql, params);
+
+    impl_->logger->info("Updated element {} in {}", id, collection);
+}
+
 void Database::set_scalar_relation(const std::string& collection,
                                    const std::string& attribute,
                                    const std::string& from_label,

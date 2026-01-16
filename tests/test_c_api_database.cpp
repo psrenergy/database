@@ -1299,3 +1299,166 @@ TEST_F(DatabaseFixture, UpdateSetToEmpty) {
 
     psr_database_close(db);
 }
+
+// ============================================================================
+// update_element tests
+// ============================================================================
+
+TEST_F(DatabaseFixture, UpdateElementSingleScalar) {
+    auto options = psr_database_options_default();
+    options.console_level = PSR_LOG_OFF;
+    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    ASSERT_NE(db, nullptr);
+
+    auto e = psr_element_create();
+    psr_element_set_string(e, "label", "Config 1");
+    psr_element_set_integer(e, "integer_attribute", 42);
+    int64_t id = psr_database_create_element(db, "Configuration", e);
+    psr_element_destroy(e);
+
+    // Update single scalar attribute
+    auto update = psr_element_create();
+    psr_element_set_integer(update, "integer_attribute", 100);
+    auto err = psr_database_update_element(db, "Configuration", id, update);
+    psr_element_destroy(update);
+    EXPECT_EQ(err, PSR_OK);
+
+    int64_t value;
+    int has_value;
+    err = psr_database_read_scalar_integers_by_id(db, "Configuration", "integer_attribute", id, &value, &has_value);
+    EXPECT_EQ(err, PSR_OK);
+    EXPECT_EQ(has_value, 1);
+    EXPECT_EQ(value, 100);
+
+    // Verify label unchanged
+    char* label = nullptr;
+    err = psr_database_read_scalar_strings_by_id(db, "Configuration", "label", id, &label, &has_value);
+    EXPECT_EQ(err, PSR_OK);
+    EXPECT_EQ(has_value, 1);
+    EXPECT_STREQ(label, "Config 1");
+    delete[] label;
+
+    psr_database_close(db);
+}
+
+TEST_F(DatabaseFixture, UpdateElementMultipleScalars) {
+    auto options = psr_database_options_default();
+    options.console_level = PSR_LOG_OFF;
+    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    ASSERT_NE(db, nullptr);
+
+    auto e = psr_element_create();
+    psr_element_set_string(e, "label", "Config 1");
+    psr_element_set_integer(e, "integer_attribute", 42);
+    psr_element_set_double(e, "float_attribute", 3.14);
+    psr_element_set_string(e, "string_attribute", "hello");
+    int64_t id = psr_database_create_element(db, "Configuration", e);
+    psr_element_destroy(e);
+
+    // Update multiple scalar attributes at once
+    auto update = psr_element_create();
+    psr_element_set_integer(update, "integer_attribute", 100);
+    psr_element_set_double(update, "float_attribute", 2.71);
+    psr_element_set_string(update, "string_attribute", "world");
+    auto err = psr_database_update_element(db, "Configuration", id, update);
+    psr_element_destroy(update);
+    EXPECT_EQ(err, PSR_OK);
+
+    int64_t int_value;
+    int has_value;
+    err = psr_database_read_scalar_integers_by_id(db, "Configuration", "integer_attribute", id, &int_value, &has_value);
+    EXPECT_EQ(err, PSR_OK);
+    EXPECT_EQ(has_value, 1);
+    EXPECT_EQ(int_value, 100);
+
+    double double_value;
+    err = psr_database_read_scalar_doubles_by_id(db, "Configuration", "float_attribute", id, &double_value, &has_value);
+    EXPECT_EQ(err, PSR_OK);
+    EXPECT_EQ(has_value, 1);
+    EXPECT_DOUBLE_EQ(double_value, 2.71);
+
+    char* str_value = nullptr;
+    err = psr_database_read_scalar_strings_by_id(db, "Configuration", "string_attribute", id, &str_value, &has_value);
+    EXPECT_EQ(err, PSR_OK);
+    EXPECT_EQ(has_value, 1);
+    EXPECT_STREQ(str_value, "world");
+    delete[] str_value;
+
+    // Verify label unchanged
+    char* label = nullptr;
+    err = psr_database_read_scalar_strings_by_id(db, "Configuration", "label", id, &label, &has_value);
+    EXPECT_EQ(err, PSR_OK);
+    EXPECT_EQ(has_value, 1);
+    EXPECT_STREQ(label, "Config 1");
+    delete[] label;
+
+    psr_database_close(db);
+}
+
+TEST_F(DatabaseFixture, UpdateElementOtherElementsUnchanged) {
+    auto options = psr_database_options_default();
+    options.console_level = PSR_LOG_OFF;
+    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    ASSERT_NE(db, nullptr);
+
+    auto e1 = psr_element_create();
+    psr_element_set_string(e1, "label", "Config 1");
+    psr_element_set_integer(e1, "integer_attribute", 42);
+    int64_t id1 = psr_database_create_element(db, "Configuration", e1);
+    psr_element_destroy(e1);
+
+    auto e2 = psr_element_create();
+    psr_element_set_string(e2, "label", "Config 2");
+    psr_element_set_integer(e2, "integer_attribute", 100);
+    int64_t id2 = psr_database_create_element(db, "Configuration", e2);
+    psr_element_destroy(e2);
+
+    // Update only first element
+    auto update = psr_element_create();
+    psr_element_set_integer(update, "integer_attribute", 999);
+    auto err = psr_database_update_element(db, "Configuration", id1, update);
+    psr_element_destroy(update);
+    EXPECT_EQ(err, PSR_OK);
+
+    int64_t value;
+    int has_value;
+
+    // Verify first element changed
+    err = psr_database_read_scalar_integers_by_id(db, "Configuration", "integer_attribute", id1, &value, &has_value);
+    EXPECT_EQ(err, PSR_OK);
+    EXPECT_EQ(has_value, 1);
+    EXPECT_EQ(value, 999);
+
+    // Verify second element unchanged
+    err = psr_database_read_scalar_integers_by_id(db, "Configuration", "integer_attribute", id2, &value, &has_value);
+    EXPECT_EQ(err, PSR_OK);
+    EXPECT_EQ(has_value, 1);
+    EXPECT_EQ(value, 100);
+
+    psr_database_close(db);
+}
+
+TEST_F(DatabaseFixture, UpdateElementNullArguments) {
+    auto options = psr_database_options_default();
+    options.console_level = PSR_LOG_OFF;
+    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    ASSERT_NE(db, nullptr);
+
+    auto element = psr_element_create();
+    psr_element_set_integer(element, "integer_attribute", 42);
+
+    // Null db
+    auto err = psr_database_update_element(nullptr, "Configuration", 1, element);
+    EXPECT_EQ(err, PSR_ERROR_INVALID_ARGUMENT);
+
+    // Null collection
+    err = psr_database_update_element(db, nullptr, 1, element);
+    EXPECT_EQ(err, PSR_ERROR_INVALID_ARGUMENT);
+
+    // Null element
+    err = psr_database_update_element(db, "Configuration", 1, nullptr);
+    EXPECT_EQ(err, PSR_ERROR_INVALID_ARGUMENT);
+
+    psr_element_destroy(element);
+    psr_database_close(db);
+}

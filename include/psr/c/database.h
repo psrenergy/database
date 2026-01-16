@@ -44,6 +44,10 @@ PSR_C_API int64_t psr_database_current_version(psr_database_t* db);
 // Element operations (requires psr_element_t from element.h)
 typedef struct psr_element psr_element_t;
 PSR_C_API int64_t psr_database_create_element(psr_database_t* db, const char* collection, psr_element_t* element);
+PSR_C_API psr_error_t psr_database_update_element(psr_database_t* db,
+                                                  const char* collection,
+                                                  int64_t id,
+                                                  const psr_element_t* element);
 
 // Relation operations
 PSR_C_API psr_error_t psr_database_set_scalar_relation(psr_database_t* db,

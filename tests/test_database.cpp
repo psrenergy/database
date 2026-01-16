@@ -945,3 +945,121 @@ TEST_F(DatabaseFixture, UpdateSetMultipleElements) {
     std::sort(set2.begin(), set2.end());
     EXPECT_EQ(set2, (std::vector<std::string>{"review", "urgent"}));
 }
+
+// ============================================================================
+// update_element tests
+// ============================================================================
+
+TEST_F(DatabaseFixture, UpdateElementSingleScalar) {
+    auto db = psr::Database::from_schema(
+        ":memory:", schema_path("schemas/valid/basic.sql"), {.console_level = psr::LogLevel::off});
+
+    psr::Element e;
+    e.set("label", std::string("Config 1")).set("integer_attribute", int64_t{42});
+    int64_t id = db.create_element("Configuration", e);
+
+    // Update single scalar attribute
+    psr::Element update;
+    update.set("integer_attribute", int64_t{100});
+    db.update_element("Configuration", id, update);
+
+    auto val = db.read_scalar_integers_by_id("Configuration", "integer_attribute", id);
+    EXPECT_TRUE(val.has_value());
+    EXPECT_EQ(*val, 100);
+
+    // Verify label unchanged
+    auto label = db.read_scalar_strings_by_id("Configuration", "label", id);
+    EXPECT_TRUE(label.has_value());
+    EXPECT_EQ(*label, "Config 1");
+}
+
+TEST_F(DatabaseFixture, UpdateElementMultipleScalars) {
+    auto db = psr::Database::from_schema(
+        ":memory:", schema_path("schemas/valid/basic.sql"), {.console_level = psr::LogLevel::off});
+
+    psr::Element e;
+    e.set("label", std::string("Config 1"))
+        .set("integer_attribute", int64_t{42})
+        .set("float_attribute", 3.14)
+        .set("string_attribute", std::string("hello"));
+    int64_t id = db.create_element("Configuration", e);
+
+    // Update multiple scalar attributes at once
+    psr::Element update;
+    update.set("integer_attribute", int64_t{100})
+        .set("float_attribute", 2.71)
+        .set("string_attribute", std::string("world"));
+    db.update_element("Configuration", id, update);
+
+    auto int_val = db.read_scalar_integers_by_id("Configuration", "integer_attribute", id);
+    EXPECT_TRUE(int_val.has_value());
+    EXPECT_EQ(*int_val, 100);
+
+    auto float_val = db.read_scalar_doubles_by_id("Configuration", "float_attribute", id);
+    EXPECT_TRUE(float_val.has_value());
+    EXPECT_DOUBLE_EQ(*float_val, 2.71);
+
+    auto str_val = db.read_scalar_strings_by_id("Configuration", "string_attribute", id);
+    EXPECT_TRUE(str_val.has_value());
+    EXPECT_EQ(*str_val, "world");
+
+    // Verify label unchanged
+    auto label = db.read_scalar_strings_by_id("Configuration", "label", id);
+    EXPECT_TRUE(label.has_value());
+    EXPECT_EQ(*label, "Config 1");
+}
+
+TEST_F(DatabaseFixture, UpdateElementOtherElementsUnchanged) {
+    auto db = psr::Database::from_schema(
+        ":memory:", schema_path("schemas/valid/basic.sql"), {.console_level = psr::LogLevel::off});
+
+    psr::Element e1;
+    e1.set("label", std::string("Config 1")).set("integer_attribute", int64_t{42});
+    int64_t id1 = db.create_element("Configuration", e1);
+
+    psr::Element e2;
+    e2.set("label", std::string("Config 2")).set("integer_attribute", int64_t{100});
+    int64_t id2 = db.create_element("Configuration", e2);
+
+    // Update only first element
+    psr::Element update;
+    update.set("integer_attribute", int64_t{999});
+    db.update_element("Configuration", id1, update);
+
+    // Verify first element changed
+    auto val1 = db.read_scalar_integers_by_id("Configuration", "integer_attribute", id1);
+    EXPECT_TRUE(val1.has_value());
+    EXPECT_EQ(*val1, 999);
+
+    // Verify second element unchanged
+    auto val2 = db.read_scalar_integers_by_id("Configuration", "integer_attribute", id2);
+    EXPECT_TRUE(val2.has_value());
+    EXPECT_EQ(*val2, 100);
+}
+
+TEST_F(DatabaseFixture, UpdateElementIgnoresArrays) {
+    auto db = psr::Database::from_schema(
+        ":memory:", schema_path("schemas/valid/collections.sql"), {.console_level = psr::LogLevel::off});
+
+    psr::Element config;
+    config.set("label", std::string("Test Config"));
+    db.create_element("Configuration", config);
+
+    psr::Element e;
+    e.set("label", std::string("Item 1")).set("value_int", std::vector<int64_t>{1, 2, 3});
+    int64_t id = db.create_element("Collection", e);
+
+    // Update with element that has arrays - arrays should be ignored
+    psr::Element update;
+    update.set("some_integer", int64_t{42}).set("value_int", std::vector<int64_t>{10, 20, 30});
+    db.update_element("Collection", id, update);
+
+    // Verify scalar was updated
+    auto int_val = db.read_scalar_integers_by_id("Collection", "some_integer", id);
+    EXPECT_TRUE(int_val.has_value());
+    EXPECT_EQ(*int_val, 42);
+
+    // Verify vector was NOT updated (arrays should be ignored)
+    auto vec = db.read_vector_integers_by_id("Collection", "value_int", id);
+    EXPECT_EQ(vec, (std::vector<int64_t>{1, 2, 3}));
+}
