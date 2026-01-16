@@ -177,6 +177,22 @@ PSR_C_API int64_t psr_database_create_element(psr_database_t* db, const char* co
     }
 }
 
+PSR_C_API psr_error_t psr_database_set_scalar_relation(psr_database_t* db,
+                                                        const char* collection,
+                                                        const char* attribute,
+                                                        const char* from_label,
+                                                        const char* to_label) {
+    if (!db || !collection || !attribute || !from_label || !to_label) {
+        return PSR_ERROR_INVALID_ARGUMENT;
+    }
+    try {
+        db->db.set_scalar_relation(collection, attribute, from_label, to_label);
+        return PSR_OK;
+    } catch (const std::exception&) {
+        return PSR_ERROR_DATABASE;
+    }
+}
+
 PSR_C_API psr_database_t*
 psr_database_from_schema(const char* db_path, const char* schema_path, const psr_database_options_t* options) {
     if (!db_path || !schema_path) {
