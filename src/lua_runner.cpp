@@ -28,6 +28,14 @@ struct LuaRunner::Impl {
             "read_scalar_strings",
             [](Database& self, const std::string& collection, const std::string& attribute, sol::this_state s) {
                 return read_scalar_strings_to_lua(self, collection, attribute, s);
+            },
+            "read_scalar_integers",
+            [](Database& self, const std::string& collection, const std::string& attribute, sol::this_state s) {
+                return read_scalar_integers_to_lua(self, collection, attribute, s);
+            },
+            "read_scalar_doubles",
+            [](Database& self, const std::string& collection, const std::string& attribute, sol::this_state s) {
+                return read_scalar_doubles_to_lua(self, collection, attribute, s);
             });
     }
 
@@ -78,6 +86,32 @@ struct LuaRunner::Impl {
                                                  sol::this_state s) {
         sol::state_view lua(s);
         auto result = db.read_scalar_strings(collection, attribute);
+        sol::table t = lua.create_table();
+        for (size_t i = 0; i < result.size(); ++i) {
+            t[i + 1] = result[i];
+        }
+        return t;
+    }
+
+    static sol::table read_scalar_integers_to_lua(Database& db,
+                                                  const std::string& collection,
+                                                  const std::string& attribute,
+                                                  sol::this_state s) {
+        sol::state_view lua(s);
+        auto result = db.read_scalar_integers(collection, attribute);
+        sol::table t = lua.create_table();
+        for (size_t i = 0; i < result.size(); ++i) {
+            t[i + 1] = result[i];
+        }
+        return t;
+    }
+
+    static sol::table read_scalar_doubles_to_lua(Database& db,
+                                                 const std::string& collection,
+                                                 const std::string& attribute,
+                                                 sol::this_state s) {
+        sol::state_view lua(s);
+        auto result = db.read_scalar_doubles(collection, attribute);
         sol::table t = lua.create_table();
         for (size_t i = 0; i < result.size(); ++i) {
             t[i + 1] = result[i];
