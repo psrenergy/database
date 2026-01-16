@@ -640,7 +640,8 @@ void Database::set_scalar_relation(const std::string& collection,
     }
 
     if (to_table.empty()) {
-        throw std::runtime_error("Attribute '" + attribute + "' is not a foreign key in collection '" + collection + "'");
+        throw std::runtime_error("Attribute '" + attribute + "' is not a foreign key in collection '" + collection +
+                                 "'");
     }
 
     // Look up the target ID by label
@@ -655,7 +656,8 @@ void Database::set_scalar_relation(const std::string& collection,
     auto update_sql = "UPDATE " + collection + " SET " + attribute + " = ? WHERE label = ?";
     execute(update_sql, {to_id, from_label});
 
-    impl_->logger->info("Set relation {}.{} for '{}' to '{}' (id: {})", collection, attribute, from_label, to_label, to_id);
+    impl_->logger->info(
+        "Set relation {}.{} for '{}' to '{}' (id: {})", collection, attribute, from_label, to_label, to_id);
 }
 
 std::vector<int64_t> Database::read_scalar_integers(const std::string& collection, const std::string& attribute) {

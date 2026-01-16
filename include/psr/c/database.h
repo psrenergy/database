@@ -47,10 +47,10 @@ PSR_C_API int64_t psr_database_create_element(psr_database_t* db, const char* co
 
 // Relation operations
 PSR_C_API psr_error_t psr_database_set_scalar_relation(psr_database_t* db,
-                                                        const char* collection,
-                                                        const char* attribute,
-                                                        const char* from_label,
-                                                        const char* to_label);
+                                                       const char* collection,
+                                                       const char* attribute,
+                                                       const char* from_label,
+                                                       const char* to_label);
 
 // Read scalar attributes
 PSR_C_API psr_error_t psr_database_read_scalar_integers(psr_database_t* db,
