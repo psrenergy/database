@@ -87,8 +87,7 @@ class Database {
   }
 
   /// Sets a scalar relation (foreign key) between two elements by their labels.
-  void setScalarRelation(String collection, String attribute,
-      String fromLabel, String toLabel) {
+  void setScalarRelation(String collection, String attribute, String fromLabel, String toLabel) {
     _ensureNotClosed();
 
     final arena = Arena();
