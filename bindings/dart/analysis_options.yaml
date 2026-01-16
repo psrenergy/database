@@ -3,3 +3,7 @@ include: package:lints/recommended.yaml
 analyzer:
   exclude:
     - lib/src/ffi/bindings.dart
+
+formatter:
+  page_width: 120
+  trailing_commas: preserve  
