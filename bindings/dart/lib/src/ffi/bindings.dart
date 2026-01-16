@@ -768,6 +768,30 @@ class PsrDatabaseBindings {
       int Function(ffi.Pointer<psr_database_t>, ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>, int,
           ffi.Pointer<ffi.Pointer<ffi.Pointer<ffi.Char>>>, ffi.Pointer<ffi.Size>)>();
 
+  // Read element IDs
+
+  int psr_database_read_element_ids(
+    ffi.Pointer<psr_database_t> db,
+    ffi.Pointer<ffi.Char> collection,
+    ffi.Pointer<ffi.Pointer<ffi.Int64>> out_ids,
+    ffi.Pointer<ffi.Size> out_count,
+  ) {
+    return _psr_database_read_element_ids(
+      db,
+      collection,
+      out_ids,
+      out_count,
+    );
+  }
+
+  late final _psr_database_read_element_idsPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int32 Function(ffi.Pointer<psr_database_t>, ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Pointer<ffi.Int64>>,
+              ffi.Pointer<ffi.Size>)>>('psr_database_read_element_ids');
+  late final _psr_database_read_element_ids = _psr_database_read_element_idsPtr.asFunction<
+      int Function(
+          ffi.Pointer<psr_database_t>, ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Pointer<ffi.Int64>>, ffi.Pointer<ffi.Size>)>();
+
   void psr_free_int_array(
     ffi.Pointer<ffi.Int64> values,
   ) {
