@@ -42,7 +42,7 @@ function close!(db::Database)
 end
 
 function set_scalar_relation!(db::Database, collection::String, attribute::String,
-                              from_label::String, to_label::String)
+    from_label::String, to_label::String)
     err = C.psr_database_set_scalar_relation(db.ptr, collection, attribute, from_label, to_label)
     if err != C.PSR_OK
         throw(DatabaseException("Failed to set scalar relation '$attribute' in '$collection'"))
