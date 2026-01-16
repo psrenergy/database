@@ -50,41 +50,59 @@ struct LuaRunner::Impl {
                 return read_vector_strings_to_lua(self, collection, attribute, s);
             },
             "read_scalar_strings_by_id",
-            [](Database& self, const std::string& collection, const std::string& attribute, int64_t id, sol::this_state s) {
-                return read_scalar_strings_by_id_to_lua(self, collection, attribute, id, s);
-            },
+            [](Database& self,
+               const std::string& collection,
+               const std::string& attribute,
+               int64_t id,
+               sol::this_state s) { return read_scalar_strings_by_id_to_lua(self, collection, attribute, id, s); },
             "read_scalar_integers_by_id",
-            [](Database& self, const std::string& collection, const std::string& attribute, int64_t id, sol::this_state s) {
-                return read_scalar_integers_by_id_to_lua(self, collection, attribute, id, s);
-            },
+            [](Database& self,
+               const std::string& collection,
+               const std::string& attribute,
+               int64_t id,
+               sol::this_state s) { return read_scalar_integers_by_id_to_lua(self, collection, attribute, id, s); },
             "read_scalar_doubles_by_id",
-            [](Database& self, const std::string& collection, const std::string& attribute, int64_t id, sol::this_state s) {
-                return read_scalar_doubles_by_id_to_lua(self, collection, attribute, id, s);
-            },
+            [](Database& self,
+               const std::string& collection,
+               const std::string& attribute,
+               int64_t id,
+               sol::this_state s) { return read_scalar_doubles_by_id_to_lua(self, collection, attribute, id, s); },
             "read_vector_integers_by_id",
-            [](Database& self, const std::string& collection, const std::string& attribute, int64_t id, sol::this_state s) {
-                return read_vector_integers_by_id_to_lua(self, collection, attribute, id, s);
-            },
+            [](Database& self,
+               const std::string& collection,
+               const std::string& attribute,
+               int64_t id,
+               sol::this_state s) { return read_vector_integers_by_id_to_lua(self, collection, attribute, id, s); },
             "read_vector_doubles_by_id",
-            [](Database& self, const std::string& collection, const std::string& attribute, int64_t id, sol::this_state s) {
-                return read_vector_doubles_by_id_to_lua(self, collection, attribute, id, s);
-            },
+            [](Database& self,
+               const std::string& collection,
+               const std::string& attribute,
+               int64_t id,
+               sol::this_state s) { return read_vector_doubles_by_id_to_lua(self, collection, attribute, id, s); },
             "read_vector_strings_by_id",
-            [](Database& self, const std::string& collection, const std::string& attribute, int64_t id, sol::this_state s) {
-                return read_vector_strings_by_id_to_lua(self, collection, attribute, id, s);
-            },
+            [](Database& self,
+               const std::string& collection,
+               const std::string& attribute,
+               int64_t id,
+               sol::this_state s) { return read_vector_strings_by_id_to_lua(self, collection, attribute, id, s); },
             "read_set_integers_by_id",
-            [](Database& self, const std::string& collection, const std::string& attribute, int64_t id, sol::this_state s) {
-                return read_set_integers_by_id_to_lua(self, collection, attribute, id, s);
-            },
+            [](Database& self,
+               const std::string& collection,
+               const std::string& attribute,
+               int64_t id,
+               sol::this_state s) { return read_set_integers_by_id_to_lua(self, collection, attribute, id, s); },
             "read_set_doubles_by_id",
-            [](Database& self, const std::string& collection, const std::string& attribute, int64_t id, sol::this_state s) {
-                return read_set_doubles_by_id_to_lua(self, collection, attribute, id, s);
-            },
+            [](Database& self,
+               const std::string& collection,
+               const std::string& attribute,
+               int64_t id,
+               sol::this_state s) { return read_set_doubles_by_id_to_lua(self, collection, attribute, id, s); },
             "read_set_strings_by_id",
-            [](Database& self, const std::string& collection, const std::string& attribute, int64_t id, sol::this_state s) {
-                return read_set_strings_by_id_to_lua(self, collection, attribute, id, s);
-            });
+            [](Database& self,
+               const std::string& collection,
+               const std::string& attribute,
+               int64_t id,
+               sol::this_state s) { return read_set_strings_by_id_to_lua(self, collection, attribute, id, s); });
     }
 
     static int64_t

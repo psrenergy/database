@@ -738,9 +738,8 @@ std::vector<std::string> Database::read_scalar_strings(const std::string& collec
     return values;
 }
 
-std::optional<int64_t> Database::read_scalar_integers_by_id(const std::string& collection,
-                                                            const std::string& attribute,
-                                                            int64_t id) {
+std::optional<int64_t>
+Database::read_scalar_integers_by_id(const std::string& collection, const std::string& attribute, int64_t id) {
     auto sql = "SELECT " + attribute + " FROM " + collection + " WHERE id = ?";
     auto result = execute(sql, {id});
 
@@ -750,9 +749,8 @@ std::optional<int64_t> Database::read_scalar_integers_by_id(const std::string& c
     return result[0].get_int(0);
 }
 
-std::optional<double> Database::read_scalar_doubles_by_id(const std::string& collection,
-                                                          const std::string& attribute,
-                                                          int64_t id) {
+std::optional<double>
+Database::read_scalar_doubles_by_id(const std::string& collection, const std::string& attribute, int64_t id) {
     auto sql = "SELECT " + attribute + " FROM " + collection + " WHERE id = ?";
     auto result = execute(sql, {id});
 
@@ -762,9 +760,8 @@ std::optional<double> Database::read_scalar_doubles_by_id(const std::string& col
     return result[0].get_double(0);
 }
 
-std::optional<std::string> Database::read_scalar_strings_by_id(const std::string& collection,
-                                                               const std::string& attribute,
-                                                               int64_t id) {
+std::optional<std::string>
+Database::read_scalar_strings_by_id(const std::string& collection, const std::string& attribute, int64_t id) {
     auto sql = "SELECT " + attribute + " FROM " + collection + " WHERE id = ?";
     auto result = execute(sql, {id});
 
@@ -858,9 +855,8 @@ std::vector<std::vector<std::string>> Database::read_vector_strings(const std::s
     return vectors;
 }
 
-std::vector<int64_t> Database::read_vector_integers_by_id(const std::string& collection,
-                                                          const std::string& attribute,
-                                                          int64_t id) {
+std::vector<int64_t>
+Database::read_vector_integers_by_id(const std::string& collection, const std::string& attribute, int64_t id) {
     auto vector_table = impl_->schema->find_vector_table(collection, attribute);
     auto sql = "SELECT " + attribute + " FROM " + vector_table + " WHERE id = ? ORDER BY vector_index";
     auto result = execute(sql, {id});
@@ -876,9 +872,8 @@ std::vector<int64_t> Database::read_vector_integers_by_id(const std::string& col
     return values;
 }
 
-std::vector<double> Database::read_vector_doubles_by_id(const std::string& collection,
-                                                        const std::string& attribute,
-                                                        int64_t id) {
+std::vector<double>
+Database::read_vector_doubles_by_id(const std::string& collection, const std::string& attribute, int64_t id) {
     auto vector_table = impl_->schema->find_vector_table(collection, attribute);
     auto sql = "SELECT " + attribute + " FROM " + vector_table + " WHERE id = ? ORDER BY vector_index";
     auto result = execute(sql, {id});
@@ -894,9 +889,8 @@ std::vector<double> Database::read_vector_doubles_by_id(const std::string& colle
     return values;
 }
 
-std::vector<std::string> Database::read_vector_strings_by_id(const std::string& collection,
-                                                             const std::string& attribute,
-                                                             int64_t id) {
+std::vector<std::string>
+Database::read_vector_strings_by_id(const std::string& collection, const std::string& attribute, int64_t id) {
     auto vector_table = impl_->schema->find_vector_table(collection, attribute);
     auto sql = "SELECT " + attribute + " FROM " + vector_table + " WHERE id = ? ORDER BY vector_index";
     auto result = execute(sql, {id});
@@ -996,9 +990,8 @@ std::vector<std::vector<std::string>> Database::read_set_strings(const std::stri
     return sets;
 }
 
-std::vector<int64_t> Database::read_set_integers_by_id(const std::string& collection,
-                                                       const std::string& attribute,
-                                                       int64_t id) {
+std::vector<int64_t>
+Database::read_set_integers_by_id(const std::string& collection, const std::string& attribute, int64_t id) {
     auto set_table = impl_->schema->find_set_table(collection, attribute);
     auto sql = "SELECT " + attribute + " FROM " + set_table + " WHERE id = ?";
     auto result = execute(sql, {id});
@@ -1014,9 +1007,8 @@ std::vector<int64_t> Database::read_set_integers_by_id(const std::string& collec
     return values;
 }
 
-std::vector<double> Database::read_set_doubles_by_id(const std::string& collection,
-                                                     const std::string& attribute,
-                                                     int64_t id) {
+std::vector<double>
+Database::read_set_doubles_by_id(const std::string& collection, const std::string& attribute, int64_t id) {
     auto set_table = impl_->schema->find_set_table(collection, attribute);
     auto sql = "SELECT " + attribute + " FROM " + set_table + " WHERE id = ?";
     auto result = execute(sql, {id});
@@ -1032,9 +1024,8 @@ std::vector<double> Database::read_set_doubles_by_id(const std::string& collecti
     return values;
 }
 
-std::vector<std::string> Database::read_set_strings_by_id(const std::string& collection,
-                                                          const std::string& attribute,
-                                                          int64_t id) {
+std::vector<std::string>
+Database::read_set_strings_by_id(const std::string& collection, const std::string& attribute, int64_t id) {
     auto set_table = impl_->schema->find_set_table(collection, attribute);
     auto sql = "SELECT " + attribute + " FROM " + set_table + " WHERE id = ?";
     auto result = execute(sql, {id});

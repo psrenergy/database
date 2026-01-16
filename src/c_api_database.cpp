@@ -471,11 +471,11 @@ PSR_C_API psr_error_t psr_database_read_set_strings(psr_database_t* db,
 // Read scalar by ID functions
 
 PSR_C_API psr_error_t psr_database_read_scalar_integers_by_id(psr_database_t* db,
-                                                               const char* collection,
-                                                               const char* attribute,
-                                                               int64_t id,
-                                                               int64_t* out_value,
-                                                               int* out_has_value) {
+                                                              const char* collection,
+                                                              const char* attribute,
+                                                              int64_t id,
+                                                              int64_t* out_value,
+                                                              int* out_has_value) {
     if (!db || !collection || !attribute || !out_value || !out_has_value) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }
@@ -494,11 +494,11 @@ PSR_C_API psr_error_t psr_database_read_scalar_integers_by_id(psr_database_t* db
 }
 
 PSR_C_API psr_error_t psr_database_read_scalar_doubles_by_id(psr_database_t* db,
-                                                              const char* collection,
-                                                              const char* attribute,
-                                                              int64_t id,
-                                                              double* out_value,
-                                                              int* out_has_value) {
+                                                             const char* collection,
+                                                             const char* attribute,
+                                                             int64_t id,
+                                                             double* out_value,
+                                                             int* out_has_value) {
     if (!db || !collection || !attribute || !out_value || !out_has_value) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }
@@ -517,11 +517,11 @@ PSR_C_API psr_error_t psr_database_read_scalar_doubles_by_id(psr_database_t* db,
 }
 
 PSR_C_API psr_error_t psr_database_read_scalar_strings_by_id(psr_database_t* db,
-                                                              const char* collection,
-                                                              const char* attribute,
-                                                              int64_t id,
-                                                              char** out_value,
-                                                              int* out_has_value) {
+                                                             const char* collection,
+                                                             const char* attribute,
+                                                             int64_t id,
+                                                             char** out_value,
+                                                             int* out_has_value) {
     if (!db || !collection || !attribute || !out_value || !out_has_value) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }
@@ -545,11 +545,11 @@ PSR_C_API psr_error_t psr_database_read_scalar_strings_by_id(psr_database_t* db,
 // Read vector by ID functions
 
 PSR_C_API psr_error_t psr_database_read_vector_integers_by_id(psr_database_t* db,
-                                                               const char* collection,
-                                                               const char* attribute,
-                                                               int64_t id,
-                                                               int64_t** out_values,
-                                                               size_t* out_count) {
+                                                              const char* collection,
+                                                              const char* attribute,
+                                                              int64_t id,
+                                                              int64_t** out_values,
+                                                              size_t* out_count) {
     if (!db || !collection || !attribute || !out_values || !out_count) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }
@@ -562,11 +562,11 @@ PSR_C_API psr_error_t psr_database_read_vector_integers_by_id(psr_database_t* db
 }
 
 PSR_C_API psr_error_t psr_database_read_vector_doubles_by_id(psr_database_t* db,
-                                                              const char* collection,
-                                                              const char* attribute,
-                                                              int64_t id,
-                                                              double** out_values,
-                                                              size_t* out_count) {
+                                                             const char* collection,
+                                                             const char* attribute,
+                                                             int64_t id,
+                                                             double** out_values,
+                                                             size_t* out_count) {
     if (!db || !collection || !attribute || !out_values || !out_count) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }
@@ -579,11 +579,11 @@ PSR_C_API psr_error_t psr_database_read_vector_doubles_by_id(psr_database_t* db,
 }
 
 PSR_C_API psr_error_t psr_database_read_vector_strings_by_id(psr_database_t* db,
-                                                              const char* collection,
-                                                              const char* attribute,
-                                                              int64_t id,
-                                                              char*** out_values,
-                                                              size_t* out_count) {
+                                                             const char* collection,
+                                                             const char* attribute,
+                                                             int64_t id,
+                                                             char*** out_values,
+                                                             size_t* out_count) {
     if (!db || !collection || !attribute || !out_values || !out_count) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }
@@ -609,11 +609,11 @@ PSR_C_API psr_error_t psr_database_read_vector_strings_by_id(psr_database_t* db,
 // Read set by ID functions
 
 PSR_C_API psr_error_t psr_database_read_set_integers_by_id(psr_database_t* db,
-                                                            const char* collection,
-                                                            const char* attribute,
-                                                            int64_t id,
-                                                            int64_t** out_values,
-                                                            size_t* out_count) {
+                                                           const char* collection,
+                                                           const char* attribute,
+                                                           int64_t id,
+                                                           int64_t** out_values,
+                                                           size_t* out_count) {
     if (!db || !collection || !attribute || !out_values || !out_count) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }
@@ -626,11 +626,11 @@ PSR_C_API psr_error_t psr_database_read_set_integers_by_id(psr_database_t* db,
 }
 
 PSR_C_API psr_error_t psr_database_read_set_doubles_by_id(psr_database_t* db,
-                                                           const char* collection,
-                                                           const char* attribute,
-                                                           int64_t id,
-                                                           double** out_values,
-                                                           size_t* out_count) {
+                                                          const char* collection,
+                                                          const char* attribute,
+                                                          int64_t id,
+                                                          double** out_values,
+                                                          size_t* out_count) {
     if (!db || !collection || !attribute || !out_values || !out_count) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }
@@ -643,11 +643,11 @@ PSR_C_API psr_error_t psr_database_read_set_doubles_by_id(psr_database_t* db,
 }
 
 PSR_C_API psr_error_t psr_database_read_set_strings_by_id(psr_database_t* db,
-                                                           const char* collection,
-                                                           const char* attribute,
-                                                           int64_t id,
-                                                           char*** out_values,
-                                                           size_t* out_count) {
+                                                          const char* collection,
+                                                          const char* attribute,
+                                                          int64_t id,
+                                                          char*** out_values,
+                                                          size_t* out_count) {
     if (!db || !collection || !attribute || !out_values || !out_count) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }

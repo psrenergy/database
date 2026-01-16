@@ -700,7 +700,8 @@ TEST_F(DatabaseFixture, ReadScalarIntegerById) {
 
     int64_t value;
     int has_value;
-    auto err = psr_database_read_scalar_integers_by_id(db, "Configuration", "integer_attribute", id1, &value, &has_value);
+    auto err =
+        psr_database_read_scalar_integers_by_id(db, "Configuration", "integer_attribute", id1, &value, &has_value);
 
     EXPECT_EQ(err, PSR_OK);
     EXPECT_EQ(has_value, 1);
@@ -775,7 +776,8 @@ TEST_F(DatabaseFixture, ReadScalarByIdNotFound) {
 
     int64_t value;
     int has_value;
-    auto err = psr_database_read_scalar_integers_by_id(db, "Configuration", "integer_attribute", 999, &value, &has_value);
+    auto err =
+        psr_database_read_scalar_integers_by_id(db, "Configuration", "integer_attribute", 999, &value, &has_value);
 
     EXPECT_EQ(err, PSR_OK);
     EXPECT_EQ(has_value, 0);
