@@ -52,9 +52,11 @@ struct LuaRunner::Impl {
     }
 
     static int64_t
-    create_element_from_lua(Database& db, const std::string& collection, sol::table values, sol::this_state s) {
+    create_element_from_lua(Database& db, const std::string& collection, sol::table values, sol::this_state) {
         Element element;
-        for (auto& [key, val] : values) {
+        for (auto pair : values) {
+            sol::object key = pair.first;
+            sol::object val = pair.second;
             std::string k = key.as<std::string>();
 
             if (val.is<sol::table>()) {
