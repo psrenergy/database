@@ -52,8 +52,7 @@ public:
                              const std::string& from_label,
                              const std::string& to_label);
 
-    std::vector<std::string> read_scalar_relation(const std::string& collection,
-                                                   const std::string& attribute);
+    std::vector<std::string> read_scalar_relation(const std::string& collection, const std::string& attribute);
 
     // Read scalar attributes
     std::vector<int64_t> read_scalar_integers(const std::string& collection, const std::string& attribute);

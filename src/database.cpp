@@ -680,7 +680,8 @@ std::vector<std::string> Database::read_scalar_relation(const std::string& colle
     }
 
     if (to_table.empty()) {
-        throw std::runtime_error("Attribute '" + attribute + "' is not a foreign key in collection '" + collection + "'");
+        throw std::runtime_error("Attribute '" + attribute + "' is not a foreign key in collection '" + collection +
+                                 "'");
     }
 
     // LEFT JOIN to get target labels (NULL for unset relations)

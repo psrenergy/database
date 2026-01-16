@@ -194,10 +194,10 @@ PSR_C_API psr_error_t psr_database_set_scalar_relation(psr_database_t* db,
 }
 
 PSR_C_API psr_error_t psr_database_read_scalar_relation(psr_database_t* db,
-                                                         const char* collection,
-                                                         const char* attribute,
-                                                         char*** out_values,
-                                                         size_t* out_count) {
+                                                        const char* collection,
+                                                        const char* attribute,
+                                                        char*** out_values,
+                                                        size_t* out_count) {
     if (!db || !collection || !attribute || !out_values || !out_count) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }

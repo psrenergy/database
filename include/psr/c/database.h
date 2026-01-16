@@ -53,10 +53,10 @@ PSR_C_API psr_error_t psr_database_set_scalar_relation(psr_database_t* db,
                                                        const char* to_label);
 
 PSR_C_API psr_error_t psr_database_read_scalar_relation(psr_database_t* db,
-                                                         const char* collection,
-                                                         const char* attribute,
-                                                         char*** out_values,
-                                                         size_t* out_count);
+                                                        const char* collection,
+                                                        const char* attribute,
+                                                        char*** out_values,
+                                                        size_t* out_count);
 
 // Read scalar attributes
 PSR_C_API psr_error_t psr_database_read_scalar_integers(psr_database_t* db,
