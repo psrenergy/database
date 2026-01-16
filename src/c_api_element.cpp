@@ -1,13 +1,9 @@
 #include "psr/c/element.h"
-#include "psr/element.h"
+#include "c_api_internal.h"
 
 #include <cstring>
 #include <new>
 #include <string>
-
-struct psr_element {
-    psr::Element element;
-};
 
 extern "C" {
 

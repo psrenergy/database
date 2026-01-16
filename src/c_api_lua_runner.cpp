@@ -1,16 +1,9 @@
 #include "psr/c/lua_runner.h"
-#include "psr/database.h"
 #include "psr/lua_runner.h"
+#include "c_api_internal.h"
 
 #include <new>
 #include <string>
-
-// psr_database struct (must match definition in c_api_database.cpp)
-struct psr_database {
-    psr::Database db;
-    psr_database(const std::string& path, const psr::DatabaseOptions& options) : db(path, options) {}
-    psr_database(psr::Database&& database) : db(std::move(database)) {}
-};
 
 struct psr_lua_runner {
     psr::LuaRunner runner;
