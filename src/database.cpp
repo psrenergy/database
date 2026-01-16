@@ -660,6 +660,42 @@ void Database::set_scalar_relation(const std::string& collection,
         "Set relation {}.{} for '{}' to '{}' (id: {})", collection, attribute, from_label, to_label, to_id);
 }
 
+std::vector<std::string> Database::read_scalar_relation(const std::string& collection, const std::string& attribute) {
+    if (!impl_->schema) {
+        throw std::runtime_error("Cannot read relation: no schema loaded");
+    }
+
+    const auto* table_def = impl_->schema->get_table(collection);
+    if (!table_def) {
+        throw std::runtime_error("Collection not found in schema: " + collection);
+    }
+
+    // Find the foreign key with the given attribute name
+    std::string to_table;
+    for (const auto& fk : table_def->foreign_keys) {
+        if (fk.from_column == attribute) {
+            to_table = fk.to_table;
+            break;
+        }
+    }
+
+    if (to_table.empty()) {
+        throw std::runtime_error("Attribute '" + attribute + "' is not a foreign key in collection '" + collection + "'");
+    }
+
+    // LEFT JOIN to get target labels (NULL for unset relations)
+    auto sql = "SELECT t.label FROM " + collection + " c LEFT JOIN " + to_table + " t ON c." + attribute + " = t.id";
+    auto result = execute(sql);
+
+    std::vector<std::string> labels;
+    labels.reserve(result.row_count());
+    for (size_t i = 0; i < result.row_count(); ++i) {
+        auto val = result[i].get_string(0);
+        labels.push_back(val.value_or(""));
+    }
+    return labels;
+}
+
 std::vector<int64_t> Database::read_scalar_integers(const std::string& collection, const std::string& attribute) {
     auto sql = "SELECT " + attribute + " FROM " + collection;
     auto result = execute(sql);
