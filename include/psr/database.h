@@ -46,6 +46,14 @@ public:
     // Element operations
     int64_t create_element(const std::string& collection, const Element& element);
 
+    // Relation operations
+    void set_scalar_relation(const std::string& collection,
+                             const std::string& attribute,
+                             const std::string& from_label,
+                             const std::string& to_label);
+
+    std::vector<std::string> read_scalar_relation(const std::string& collection, const std::string& attribute);
+
     // Read scalar attributes
     std::vector<int64_t> read_scalar_integers(const std::string& collection, const std::string& attribute);
     std::vector<double> read_scalar_doubles(const std::string& collection, const std::string& attribute);

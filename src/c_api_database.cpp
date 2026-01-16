@@ -177,6 +177,49 @@ PSR_C_API int64_t psr_database_create_element(psr_database_t* db, const char* co
     }
 }
 
+PSR_C_API psr_error_t psr_database_set_scalar_relation(psr_database_t* db,
+                                                       const char* collection,
+                                                       const char* attribute,
+                                                       const char* from_label,
+                                                       const char* to_label) {
+    if (!db || !collection || !attribute || !from_label || !to_label) {
+        return PSR_ERROR_INVALID_ARGUMENT;
+    }
+    try {
+        db->db.set_scalar_relation(collection, attribute, from_label, to_label);
+        return PSR_OK;
+    } catch (const std::exception&) {
+        return PSR_ERROR_DATABASE;
+    }
+}
+
+PSR_C_API psr_error_t psr_database_read_scalar_relation(psr_database_t* db,
+                                                        const char* collection,
+                                                        const char* attribute,
+                                                        char*** out_values,
+                                                        size_t* out_count) {
+    if (!db || !collection || !attribute || !out_values || !out_count) {
+        return PSR_ERROR_INVALID_ARGUMENT;
+    }
+    try {
+        auto values = db->db.read_scalar_relation(collection, attribute);
+        *out_count = values.size();
+        if (values.empty()) {
+            *out_values = nullptr;
+            return PSR_OK;
+        }
+        *out_values = new char*[values.size()];
+        for (size_t i = 0; i < values.size(); ++i) {
+            (*out_values)[i] = new char[values[i].size() + 1];
+            std::copy(values[i].begin(), values[i].end(), (*out_values)[i]);
+            (*out_values)[i][values[i].size()] = '\0';
+        }
+        return PSR_OK;
+    } catch (const std::exception&) {
+        return PSR_ERROR_DATABASE;
+    }
+}
+
 PSR_C_API psr_database_t*
 psr_database_from_schema(const char* db_path, const char* schema_path, const psr_database_options_t* options) {
     if (!db_path || !schema_path) {

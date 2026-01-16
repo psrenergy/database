@@ -83,6 +83,73 @@ class Database {
     }
   }
 
+  /// Sets a scalar relation (foreign key) between two elements by their labels.
+  void setScalarRelation(String collection, String attribute,
+      String fromLabel, String toLabel) {
+    _ensureNotClosed();
+
+    final arena = Arena();
+    try {
+      final err = bindings.psr_database_set_scalar_relation(
+        _ptr,
+        collection.toNativeUtf8(allocator: arena).cast(),
+        attribute.toNativeUtf8(allocator: arena).cast(),
+        fromLabel.toNativeUtf8(allocator: arena).cast(),
+        toLabel.toNativeUtf8(allocator: arena).cast(),
+      );
+
+      if (err != psr_error_t.PSR_OK) {
+        throw DatabaseException.fromError(err, "Failed to set scalar relation '$attribute' in '$collection'");
+      }
+    } finally {
+      arena.releaseAll();
+    }
+  }
+
+  /// Reads scalar relation values (target labels) for a FK attribute.
+  /// Returns null for elements with no relation set.
+  List<String?> readScalarRelation(String collection, String attribute) {
+    _ensureNotClosed();
+
+    final arena = Arena();
+    try {
+      final outValues = arena<Pointer<Pointer<Char>>>();
+      final outCount = arena<Size>();
+
+      final err = bindings.psr_database_read_scalar_relation(
+        _ptr,
+        collection.toNativeUtf8(allocator: arena).cast(),
+        attribute.toNativeUtf8(allocator: arena).cast(),
+        outValues,
+        outCount,
+      );
+
+      if (err != psr_error_t.PSR_OK) {
+        throw DatabaseException.fromError(err, "Failed to read scalar relation '$attribute' from '$collection'");
+      }
+
+      final count = outCount.value;
+      if (count == 0 || outValues.value == nullptr) {
+        return [];
+      }
+
+      final result = <String?>[];
+      for (var i = 0; i < count; i++) {
+        final ptr = outValues.value[i];
+        if (ptr == nullptr) {
+          result.add(null);
+        } else {
+          final s = ptr.cast<Utf8>().toDartString();
+          result.add(s.isEmpty ? null : s);
+        }
+      }
+      bindings.psr_free_string_array(outValues.value, count);
+      return result;
+    } finally {
+      arena.releaseAll();
+    }
+  }
+
   /// Reads all integer values for a scalar attribute from a collection.
   List<int> readScalarIntegers(String collection, String attribute) {
     _ensureNotClosed();
