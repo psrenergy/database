@@ -653,6 +653,22 @@ void Database::update_element(const std::string& collection, int64_t id, const E
     impl_->logger->info("Updated element {} in {}", id, collection);
 }
 
+void Database::delete_element_by_id(const std::string& collection, int64_t id) {
+    impl_->logger->debug("Deleting element {} from collection: {}", id, collection);
+
+    if (!impl_->schema) {
+        throw std::runtime_error("Cannot delete element: no schema loaded");
+    }
+    if (!impl_->schema->has_table(collection)) {
+        throw std::runtime_error("Collection not found in schema: " + collection);
+    }
+
+    auto sql = "DELETE FROM " + collection + " WHERE id = ?";
+    execute(sql, {id});
+
+    impl_->logger->info("Deleted element {} from {}", id, collection);
+}
+
 void Database::set_scalar_relation(const std::string& collection,
                                    const std::string& attribute,
                                    const std::string& from_label,

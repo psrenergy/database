@@ -45,6 +45,7 @@ public:
     // Element operations
     int64_t create_element(const std::string& collection, const Element& element);
     void update_element(const std::string& collection, int64_t id, const Element& element);
+    void delete_element_by_id(const std::string& collection, int64_t id);
 
     // Relation operations
     void set_scalar_relation(const std::string& collection,
