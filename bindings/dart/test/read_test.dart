@@ -56,7 +56,7 @@ void main() {
         });
 
         expect(
-          db.readScalarInts('Configuration', 'integer_attribute'),
+          db.readScalarIntegers('Configuration', 'integer_attribute'),
           equals([42, 100]),
         );
       } finally {
@@ -113,7 +113,7 @@ void main() {
           equals(['Item 1', 'Item 2']),
         );
         expect(
-          db.readScalarInts('Collection', 'some_integer'),
+          db.readScalarIntegers('Collection', 'some_integer'),
           equals([10, 20]),
         );
         expect(
@@ -136,7 +136,7 @@ void main() {
         db.createElement('Configuration', {'label': 'Test Config'});
 
         expect(db.readScalarStrings('Collection', 'label'), isEmpty);
-        expect(db.readScalarInts('Collection', 'some_integer'), isEmpty);
+        expect(db.readScalarIntegers('Collection', 'some_integer'), isEmpty);
         expect(db.readScalarDoubles('Collection', 'some_float'), isEmpty);
       } finally {
         db.close();
@@ -162,7 +162,7 @@ void main() {
         });
 
         expect(
-          db.readVectorInts('Collection', 'value_int'),
+          db.readVectorIntegers('Collection', 'value_int'),
           equals([
             [1, 2, 3],
             [10, 20],
@@ -211,7 +211,7 @@ void main() {
       try {
         db.createElement('Configuration', {'label': 'Test Config'});
 
-        expect(db.readVectorInts('Collection', 'value_int'), isEmpty);
+        expect(db.readVectorIntegers('Collection', 'value_int'), isEmpty);
         expect(db.readVectorDoubles('Collection', 'value_float'), isEmpty);
       } finally {
         db.close();
@@ -241,7 +241,7 @@ void main() {
         });
 
         // Only elements with vector data are returned
-        final result = db.readVectorInts('Collection', 'value_int');
+        final result = db.readVectorIntegers('Collection', 'value_int');
         expect(result.length, equals(2));
         expect(result[0], equals([1, 2, 3]));
         expect(result[1], equals([4, 5]));

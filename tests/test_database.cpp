@@ -221,7 +221,7 @@ TEST_F(DatabaseFixture, CurrentVersion) {
     EXPECT_EQ(db.current_version(), 0);
 }
 
-TEST_F(DatabaseFixture, ReadScalarInts) {
+TEST_F(DatabaseFixture, ReadScalarIntegers) {
     auto db = psr::Database::from_schema(
         ":memory:", schema_path("schemas/valid/basic.sql"), {.console_level = psr::LogLevel::off});
 
@@ -233,7 +233,7 @@ TEST_F(DatabaseFixture, ReadScalarInts) {
     e2.set("label", std::string("Config 2")).set("integer_attribute", int64_t{100});
     db.create_element("Configuration", e2);
 
-    auto values = db.read_scalar_ints("Configuration", "integer_attribute");
+    auto values = db.read_scalar_integers("Configuration", "integer_attribute");
     EXPECT_EQ(values.size(), 2);
     EXPECT_EQ(values[0], 42);
     EXPECT_EQ(values[1], 100);
@@ -284,16 +284,16 @@ TEST_F(DatabaseFixture, ReadScalarEmpty) {
     db.create_element("Configuration", config);
 
     // No Collection elements created
-    auto ints = db.read_scalar_ints("Collection", "some_integer");
+    auto integers = db.read_scalar_integers("Collection", "some_integer");
     auto doubles = db.read_scalar_doubles("Collection", "some_float");
     auto strings = db.read_scalar_strings("Collection", "label");
 
-    EXPECT_TRUE(ints.empty());
+    EXPECT_TRUE(integers.empty());
     EXPECT_TRUE(doubles.empty());
     EXPECT_TRUE(strings.empty());
 }
 
-TEST_F(DatabaseFixture, ReadVectorInts) {
+TEST_F(DatabaseFixture, ReadVectorIntegers) {
     auto db = psr::Database::from_schema(
         ":memory:", schema_path("schemas/valid/collections.sql"), {.console_level = psr::LogLevel::off});
 
@@ -309,7 +309,7 @@ TEST_F(DatabaseFixture, ReadVectorInts) {
     e2.set("label", std::string("Item 2")).set("value_int", std::vector<int64_t>{10, 20});
     db.create_element("Collection", e2);
 
-    auto vectors = db.read_vector_ints("Collection", "value_int");
+    auto vectors = db.read_vector_integers("Collection", "value_int");
     EXPECT_EQ(vectors.size(), 2);
     EXPECT_EQ(vectors[0], (std::vector<int64_t>{1, 2, 3}));
     EXPECT_EQ(vectors[1], (std::vector<int64_t>{10, 20}));
@@ -346,7 +346,7 @@ TEST_F(DatabaseFixture, ReadVectorEmpty) {
     db.create_element("Configuration", config);
 
     // No Collection elements created
-    auto int_vectors = db.read_vector_ints("Collection", "value_int");
+    auto int_vectors = db.read_vector_integers("Collection", "value_int");
     auto double_vectors = db.read_vector_doubles("Collection", "value_float");
 
     EXPECT_TRUE(int_vectors.empty());
@@ -377,7 +377,7 @@ TEST_F(DatabaseFixture, ReadVectorOnlyReturnsElementsWithData) {
     db.create_element("Collection", e3);
 
     // Only elements with vector data are returned
-    auto vectors = db.read_vector_ints("Collection", "value_int");
+    auto vectors = db.read_vector_integers("Collection", "value_int");
     EXPECT_EQ(vectors.size(), 2);
     EXPECT_EQ(vectors[0], (std::vector<int64_t>{1, 2, 3}));
     EXPECT_EQ(vectors[1], (std::vector<int64_t>{4, 5}));

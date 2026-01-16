@@ -23,7 +23,7 @@ include("fixture.jl")
     )
 
     @test PSRDatabase.read_scalar_strings(db, "Configuration", "label") == ["Config 1", "Config 2"]
-    @test PSRDatabase.read_scalar_ints(db, "Configuration", "integer_attribute") == [42, 100]
+    @test PSRDatabase.read_scalar_integers(db, "Configuration", "integer_attribute") == [42, 100]
     @test PSRDatabase.read_scalar_doubles(db, "Configuration", "float_attribute") == [3.14, 2.71]
     @test PSRDatabase.read_scalar_strings(db, "Configuration", "string_attribute") == ["hello", "world"]
 
@@ -48,7 +48,7 @@ end
     )
 
     @test PSRDatabase.read_scalar_strings(db, "Collection", "label") == ["Item 1", "Item 2"]
-    @test PSRDatabase.read_scalar_ints(db, "Collection", "some_integer") == [10, 20]
+    @test PSRDatabase.read_scalar_integers(db, "Collection", "some_integer") == [10, 20]
     @test PSRDatabase.read_scalar_doubles(db, "Collection", "some_float") == [1.5, 2.5]
 
     PSRDatabase.close!(db)
@@ -62,7 +62,7 @@ end
 
     # No Collection elements created
     @test PSRDatabase.read_scalar_strings(db, "Collection", "label") == String[]
-    @test PSRDatabase.read_scalar_ints(db, "Collection", "some_integer") == Int64[]
+    @test PSRDatabase.read_scalar_integers(db, "Collection", "some_integer") == Int64[]
     @test PSRDatabase.read_scalar_doubles(db, "Collection", "some_float") == Float64[]
 
     PSRDatabase.close!(db)
@@ -85,7 +85,7 @@ end
         value_float = [10.5, 20.5],
     )
 
-    @test PSRDatabase.read_vector_ints(db, "Collection", "value_int") == [[1, 2, 3], [10, 20]]
+    @test PSRDatabase.read_vector_integers(db, "Collection", "value_int") == [[1, 2, 3], [10, 20]]
     @test PSRDatabase.read_vector_doubles(db, "Collection", "value_float") == [[1.5, 2.5, 3.5], [10.5, 20.5]]
 
     PSRDatabase.close!(db)
@@ -98,7 +98,7 @@ end
     PSRDatabase.create_element!(db, "Configuration"; label = "Test Config")
 
     # No Collection elements created
-    @test PSRDatabase.read_vector_ints(db, "Collection", "value_int") == Vector{Int64}[]
+    @test PSRDatabase.read_vector_integers(db, "Collection", "value_int") == Vector{Int64}[]
     @test PSRDatabase.read_vector_doubles(db, "Collection", "value_float") == Vector{Float64}[]
 
     PSRDatabase.close!(db)
@@ -126,7 +126,7 @@ end
     )
 
     # Only elements with vector data are returned
-    result = PSRDatabase.read_vector_ints(db, "Collection", "value_int")
+    result = PSRDatabase.read_vector_integers(db, "Collection", "value_int")
     @test length(result) == 2
     @test result[1] == [1, 2, 3]
     @test result[2] == [4, 5]

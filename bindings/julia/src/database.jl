@@ -32,13 +32,13 @@ function close!(db::Database)
     return nothing
 end
 
-function read_scalar_ints(db::Database, collection::String, attribute::String)
+function read_scalar_integers(db::Database, collection::String, attribute::String)
     out_values = Ref{Ptr{Int64}}(C_NULL)
     out_count = Ref{Csize_t}(0)
 
-    err = C.psr_database_read_scalar_ints(db.ptr, collection, attribute, out_values, out_count)
+    err = C.psr_database_read_scalar_integers(db.ptr, collection, attribute, out_values, out_count)
     if err != C.PSR_OK
-        throw(DatabaseException("Failed to read scalar ints from '$collection.$attribute'"))
+        throw(DatabaseException("Failed to read scalar integers from '$collection.$attribute'"))
     end
 
     count = out_count[]
@@ -90,14 +90,14 @@ function read_scalar_strings(db::Database, collection::String, attribute::String
     return result
 end
 
-function read_vector_ints(db::Database, collection::String, attribute::String)
+function read_vector_integers(db::Database, collection::String, attribute::String)
     out_vectors = Ref{Ptr{Ptr{Int64}}}(C_NULL)
     out_sizes = Ref{Ptr{Csize_t}}(C_NULL)
     out_count = Ref{Csize_t}(0)
 
-    err = C.psr_database_read_vector_ints(db.ptr, collection, attribute, out_vectors, out_sizes, out_count)
+    err = C.psr_database_read_vector_integers(db.ptr, collection, attribute, out_vectors, out_sizes, out_count)
     if err != C.PSR_OK
-        throw(DatabaseException("Failed to read vector ints from '$collection.$attribute'"))
+        throw(DatabaseException("Failed to read vector integers from '$collection.$attribute'"))
     end
 
     count = out_count[]
@@ -178,14 +178,14 @@ function read_vector_strings(db::Database, collection::String, attribute::String
     return result
 end
 
-function read_set_ints(db::Database, collection::String, attribute::String)
+function read_set_integers(db::Database, collection::String, attribute::String)
     out_sets = Ref{Ptr{Ptr{Int64}}}(C_NULL)
     out_sizes = Ref{Ptr{Csize_t}}(C_NULL)
     out_count = Ref{Csize_t}(0)
 
-    err = C.psr_database_read_set_ints(db.ptr, collection, attribute, out_sets, out_sizes, out_count)
+    err = C.psr_database_read_set_integers(db.ptr, collection, attribute, out_sets, out_sizes, out_count)
     if err != C.PSR_OK
-        throw(DatabaseException("Failed to read set ints from '$collection.$attribute'"))
+        throw(DatabaseException("Failed to read set integers from '$collection.$attribute'"))
     end
 
     count = out_count[]

@@ -84,7 +84,7 @@ class Database {
   }
 
   /// Reads all integer values for a scalar attribute from a collection.
-  List<int> readScalarInts(String collection, String attribute) {
+  List<int> readScalarIntegers(String collection, String attribute) {
     _ensureNotClosed();
 
     final arena = Arena();
@@ -92,7 +92,7 @@ class Database {
       final outValues = arena<Pointer<Int64>>();
       final outCount = arena<Size>();
 
-      final err = bindings.psr_database_read_scalar_ints(
+      final err = bindings.psr_database_read_scalar_integers(
         _ptr,
         collection.toNativeUtf8(allocator: arena).cast(),
         attribute.toNativeUtf8(allocator: arena).cast(),
@@ -101,7 +101,7 @@ class Database {
       );
 
       if (err != psr_error_t.PSR_OK) {
-        throw DatabaseException.fromError(err, "Failed to read scalar ints from '$collection.$attribute'");
+        throw DatabaseException.fromError(err, "Failed to read scalar integers from '$collection.$attribute'");
       }
 
       final count = outCount.value;
@@ -186,7 +186,7 @@ class Database {
   }
 
   /// Reads all int vectors for a vector attribute from a collection.
-  List<List<int>> readVectorInts(String collection, String attribute) {
+  List<List<int>> readVectorIntegers(String collection, String attribute) {
     _ensureNotClosed();
 
     final arena = Arena();
@@ -195,7 +195,7 @@ class Database {
       final outSizes = arena<Pointer<Size>>();
       final outCount = arena<Size>();
 
-      final err = bindings.psr_database_read_vector_ints(
+      final err = bindings.psr_database_read_vector_integers(
         _ptr,
         collection.toNativeUtf8(allocator: arena).cast(),
         attribute.toNativeUtf8(allocator: arena).cast(),
@@ -205,7 +205,7 @@ class Database {
       );
 
       if (err != psr_error_t.PSR_OK) {
-        throw DatabaseException.fromError(err, "Failed to read vector ints from '$collection.$attribute'");
+        throw DatabaseException.fromError(err, "Failed to read vector integers from '$collection.$attribute'");
       }
 
       final count = outCount.value;
@@ -318,7 +318,7 @@ class Database {
   }
 
   /// Reads all int sets for a set attribute from a collection.
-  List<List<int>> readSetInts(String collection, String attribute) {
+  List<List<int>> readSetIntegers(String collection, String attribute) {
     _ensureNotClosed();
 
     final arena = Arena();
@@ -327,7 +327,7 @@ class Database {
       final outSizes = arena<Pointer<Size>>();
       final outCount = arena<Size>();
 
-      final err = bindings.psr_database_read_set_ints(
+      final err = bindings.psr_database_read_set_integers(
         _ptr,
         collection.toNativeUtf8(allocator: arena).cast(),
         attribute.toNativeUtf8(allocator: arena).cast(),
@@ -337,7 +337,7 @@ class Database {
       );
 
       if (err != psr_error_t.PSR_OK) {
-        throw DatabaseException.fromError(err, "Failed to read set ints from '$collection.$attribute'");
+        throw DatabaseException.fromError(err, "Failed to read set integers from '$collection.$attribute'");
       }
 
       final count = outCount.value;

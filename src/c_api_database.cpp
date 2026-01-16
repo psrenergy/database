@@ -194,7 +194,7 @@ psr_database_from_schema(const char* db_path, const char* schema_path, const psr
     }
 }
 
-PSR_C_API psr_error_t psr_database_read_scalar_ints(psr_database_t* db,
+PSR_C_API psr_error_t psr_database_read_scalar_integers(psr_database_t* db,
                                                     const char* collection,
                                                     const char* attribute,
                                                     int64_t** out_values,
@@ -203,7 +203,7 @@ PSR_C_API psr_error_t psr_database_read_scalar_ints(psr_database_t* db,
         return PSR_ERROR_INVALID_ARGUMENT;
     }
     try {
-        return read_scalars_impl(db->db.read_scalar_ints(collection, attribute), out_values, out_count);
+        return read_scalars_impl(db->db.read_scalar_integers(collection, attribute), out_values, out_count);
     } catch (const std::exception&) {
         return PSR_ERROR_DATABASE;
     }
@@ -270,7 +270,7 @@ PSR_C_API void psr_free_string_array(char** values, size_t count) {
     delete[] values;
 }
 
-PSR_C_API psr_error_t psr_database_read_vector_ints(psr_database_t* db,
+PSR_C_API psr_error_t psr_database_read_vector_integers(psr_database_t* db,
                                                     const char* collection,
                                                     const char* attribute,
                                                     int64_t*** out_vectors,
@@ -280,7 +280,7 @@ PSR_C_API psr_error_t psr_database_read_vector_ints(psr_database_t* db,
         return PSR_ERROR_INVALID_ARGUMENT;
     }
     try {
-        return read_vectors_impl(db->db.read_vector_ints(collection, attribute), out_vectors, out_sizes, out_count);
+        return read_vectors_impl(db->db.read_vector_integers(collection, attribute), out_vectors, out_sizes, out_count);
     } catch (const std::exception&) {
         return PSR_ERROR_DATABASE;
     }
@@ -366,7 +366,7 @@ PSR_C_API void psr_free_string_vectors(char*** vectors, size_t* sizes, size_t co
 
 // Set read functions (reuse vector helpers since sets have same return structure)
 
-PSR_C_API psr_error_t psr_database_read_set_ints(psr_database_t* db,
+PSR_C_API psr_error_t psr_database_read_set_integers(psr_database_t* db,
                                                  const char* collection,
                                                  const char* attribute,
                                                  int64_t*** out_sets,
@@ -376,7 +376,7 @@ PSR_C_API psr_error_t psr_database_read_set_ints(psr_database_t* db,
         return PSR_ERROR_INVALID_ARGUMENT;
     }
     try {
-        return read_vectors_impl(db->db.read_set_ints(collection, attribute), out_sets, out_sizes, out_count);
+        return read_vectors_impl(db->db.read_set_integers(collection, attribute), out_sets, out_sizes, out_count);
     } catch (const std::exception&) {
         return PSR_ERROR_DATABASE;
     }

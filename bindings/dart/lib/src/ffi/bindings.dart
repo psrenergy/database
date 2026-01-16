@@ -197,14 +197,14 @@ class PsrDatabaseBindings {
           int Function(ffi.Pointer<psr_database_t>, ffi.Pointer<ffi.Char>,
               ffi.Pointer<psr_element_t>)>();
 
-  int psr_database_read_scalar_ints(
+  int psr_database_read_scalar_integers(
     ffi.Pointer<psr_database_t> db,
     ffi.Pointer<ffi.Char> collection,
     ffi.Pointer<ffi.Char> attribute,
     ffi.Pointer<ffi.Pointer<ffi.Int64>> out_values,
     ffi.Pointer<ffi.Size> out_count,
   ) {
-    return _psr_database_read_scalar_ints(
+    return _psr_database_read_scalar_integers(
       db,
       collection,
       attribute,
@@ -213,16 +213,16 @@ class PsrDatabaseBindings {
     );
   }
 
-  late final _psr_database_read_scalar_intsPtr = _lookup<
+  late final _psr_database_read_scalar_integersPtr = _lookup<
       ffi.NativeFunction<
           ffi.Int32 Function(
               ffi.Pointer<psr_database_t>,
               ffi.Pointer<ffi.Char>,
               ffi.Pointer<ffi.Char>,
               ffi.Pointer<ffi.Pointer<ffi.Int64>>,
-              ffi.Pointer<ffi.Size>)>>('psr_database_read_scalar_ints');
-  late final _psr_database_read_scalar_ints =
-      _psr_database_read_scalar_intsPtr.asFunction<
+              ffi.Pointer<ffi.Size>)>>('psr_database_read_scalar_integers');
+  late final _psr_database_read_scalar_integers =
+      _psr_database_read_scalar_integersPtr.asFunction<
           int Function(
               ffi.Pointer<psr_database_t>,
               ffi.Pointer<ffi.Char>,
@@ -296,7 +296,7 @@ class PsrDatabaseBindings {
               ffi.Pointer<ffi.Pointer<ffi.Pointer<ffi.Char>>>,
               ffi.Pointer<ffi.Size>)>();
 
-  int psr_database_read_vector_ints(
+  int psr_database_read_vector_integers(
     ffi.Pointer<psr_database_t> db,
     ffi.Pointer<ffi.Char> collection,
     ffi.Pointer<ffi.Char> attribute,
@@ -304,7 +304,7 @@ class PsrDatabaseBindings {
     ffi.Pointer<ffi.Pointer<ffi.Size>> out_sizes,
     ffi.Pointer<ffi.Size> out_count,
   ) {
-    return _psr_database_read_vector_ints(
+    return _psr_database_read_vector_integers(
       db,
       collection,
       attribute,
@@ -314,7 +314,7 @@ class PsrDatabaseBindings {
     );
   }
 
-  late final _psr_database_read_vector_intsPtr = _lookup<
+  late final _psr_database_read_vector_integersPtr = _lookup<
       ffi.NativeFunction<
           ffi.Int32 Function(
               ffi.Pointer<psr_database_t>,
@@ -322,9 +322,9 @@ class PsrDatabaseBindings {
               ffi.Pointer<ffi.Char>,
               ffi.Pointer<ffi.Pointer<ffi.Pointer<ffi.Int64>>>,
               ffi.Pointer<ffi.Pointer<ffi.Size>>,
-              ffi.Pointer<ffi.Size>)>>('psr_database_read_vector_ints');
-  late final _psr_database_read_vector_ints =
-      _psr_database_read_vector_intsPtr.asFunction<
+              ffi.Pointer<ffi.Size>)>>('psr_database_read_vector_integers');
+  late final _psr_database_read_vector_integers =
+      _psr_database_read_vector_integersPtr.asFunction<
           int Function(
               ffi.Pointer<psr_database_t>,
               ffi.Pointer<ffi.Char>,
@@ -407,7 +407,7 @@ class PsrDatabaseBindings {
               ffi.Pointer<ffi.Pointer<ffi.Size>>,
               ffi.Pointer<ffi.Size>)>();
 
-  int psr_database_read_set_ints(
+  int psr_database_read_set_integers(
     ffi.Pointer<psr_database_t> db,
     ffi.Pointer<ffi.Char> collection,
     ffi.Pointer<ffi.Char> attribute,
@@ -415,7 +415,7 @@ class PsrDatabaseBindings {
     ffi.Pointer<ffi.Pointer<ffi.Size>> out_sizes,
     ffi.Pointer<ffi.Size> out_count,
   ) {
-    return _psr_database_read_set_ints(
+    return _psr_database_read_set_integers(
       db,
       collection,
       attribute,
@@ -425,7 +425,7 @@ class PsrDatabaseBindings {
     );
   }
 
-  late final _psr_database_read_set_intsPtr = _lookup<
+  late final _psr_database_read_set_integersPtr = _lookup<
       ffi.NativeFunction<
           ffi.Int32 Function(
               ffi.Pointer<psr_database_t>,
@@ -433,9 +433,9 @@ class PsrDatabaseBindings {
               ffi.Pointer<ffi.Char>,
               ffi.Pointer<ffi.Pointer<ffi.Pointer<ffi.Int64>>>,
               ffi.Pointer<ffi.Pointer<ffi.Size>>,
-              ffi.Pointer<ffi.Size>)>>('psr_database_read_set_ints');
-  late final _psr_database_read_set_ints =
-      _psr_database_read_set_intsPtr.asFunction<
+              ffi.Pointer<ffi.Size>)>>('psr_database_read_set_integers');
+  late final _psr_database_read_set_integers =
+      _psr_database_read_set_integersPtr.asFunction<
           int Function(
               ffi.Pointer<psr_database_t>,
               ffi.Pointer<ffi.Char>,

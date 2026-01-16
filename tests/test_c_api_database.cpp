@@ -259,7 +259,7 @@ TEST_F(DatabaseFixture, CreateElementNullElement) {
     psr_database_close(db);
 }
 
-TEST_F(DatabaseFixture, ReadScalarInts) {
+TEST_F(DatabaseFixture, ReadScalarIntegers) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
@@ -279,7 +279,7 @@ TEST_F(DatabaseFixture, ReadScalarInts) {
 
     int64_t* values = nullptr;
     size_t count = 0;
-    auto err = psr_database_read_scalar_ints(db, "Configuration", "integer_attribute", &values, &count);
+    auto err = psr_database_read_scalar_integers(db, "Configuration", "integer_attribute", &values, &count);
 
     EXPECT_EQ(err, PSR_OK);
     EXPECT_EQ(count, 2);
@@ -365,7 +365,7 @@ TEST_F(DatabaseFixture, ReadScalarEmpty) {
 
     int64_t* int_values = nullptr;
     size_t int_count = 0;
-    auto err = psr_database_read_scalar_ints(db, "Collection", "some_integer", &int_values, &int_count);
+    auto err = psr_database_read_scalar_integers(db, "Collection", "some_integer", &int_values, &int_count);
     EXPECT_EQ(err, PSR_OK);
     EXPECT_EQ(int_count, 0);
     EXPECT_EQ(int_values, nullptr);
@@ -380,7 +380,7 @@ TEST_F(DatabaseFixture, ReadScalarEmpty) {
     psr_database_close(db);
 }
 
-TEST_F(DatabaseFixture, ReadVectorInts) {
+TEST_F(DatabaseFixture, ReadVectorIntegers) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
@@ -408,7 +408,7 @@ TEST_F(DatabaseFixture, ReadVectorInts) {
     int64_t** vectors = nullptr;
     size_t* sizes = nullptr;
     size_t count = 0;
-    auto err = psr_database_read_vector_ints(db, "Collection", "value_int", &vectors, &sizes, &count);
+    auto err = psr_database_read_vector_integers(db, "Collection", "value_int", &vectors, &sizes, &count);
 
     EXPECT_EQ(err, PSR_OK);
     EXPECT_EQ(count, 2);
@@ -482,7 +482,7 @@ TEST_F(DatabaseFixture, ReadVectorEmpty) {
     int64_t** int_vectors = nullptr;
     size_t* int_sizes = nullptr;
     size_t int_count = 0;
-    auto err = psr_database_read_vector_ints(db, "Collection", "value_int", &int_vectors, &int_sizes, &int_count);
+    auto err = psr_database_read_vector_integers(db, "Collection", "value_int", &int_vectors, &int_sizes, &int_count);
     EXPECT_EQ(err, PSR_OK);
     EXPECT_EQ(int_count, 0);
     EXPECT_EQ(int_vectors, nullptr);
@@ -537,7 +537,7 @@ TEST_F(DatabaseFixture, ReadVectorOnlyReturnsElementsWithData) {
     int64_t** vectors = nullptr;
     size_t* sizes = nullptr;
     size_t count = 0;
-    auto err = psr_database_read_vector_ints(db, "Collection", "value_int", &vectors, &sizes, &count);
+    auto err = psr_database_read_vector_integers(db, "Collection", "value_int", &vectors, &sizes, &count);
 
     // Only elements with vector data are returned
     EXPECT_EQ(err, PSR_OK);

@@ -46,7 +46,7 @@ typedef struct psr_element psr_element_t;
 PSR_C_API int64_t psr_database_create_element(psr_database_t* db, const char* collection, psr_element_t* element);
 
 // Read scalar attributes
-PSR_C_API psr_error_t psr_database_read_scalar_ints(psr_database_t* db,
+PSR_C_API psr_error_t psr_database_read_scalar_integers(psr_database_t* db,
                                                     const char* collection,
                                                     const char* attribute,
                                                     int64_t** out_values,
@@ -65,7 +65,7 @@ PSR_C_API psr_error_t psr_database_read_scalar_strings(psr_database_t* db,
                                                        size_t* out_count);
 
 // Read vector attributes
-PSR_C_API psr_error_t psr_database_read_vector_ints(psr_database_t* db,
+PSR_C_API psr_error_t psr_database_read_vector_integers(psr_database_t* db,
                                                     const char* collection,
                                                     const char* attribute,
                                                     int64_t*** out_vectors,
@@ -87,7 +87,7 @@ PSR_C_API psr_error_t psr_database_read_vector_strings(psr_database_t* db,
                                                        size_t* out_count);
 
 // Read set attributes (same structure as vectors, uses same free functions)
-PSR_C_API psr_error_t psr_database_read_set_ints(psr_database_t* db,
+PSR_C_API psr_error_t psr_database_read_set_integers(psr_database_t* db,
                                                  const char* collection,
                                                  const char* attribute,
                                                  int64_t*** out_sets,
