@@ -106,6 +106,10 @@ struct LuaRunner::Impl {
             "read_element_ids",
             [](Database& self, const std::string& collection, sol::this_state s) {
                 return read_element_ids_to_lua(self, collection, s);
+            },
+            "delete_element_by_id",
+            [](Database& self, const std::string& collection, int64_t id) {
+                self.delete_element_by_id(collection, id);
             });
     }
 

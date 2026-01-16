@@ -867,6 +867,27 @@ class Database {
     }
   }
 
+  /// Deletes an element by ID from a collection.
+  /// CASCADE DELETE handles cleanup of related vector/set tables.
+  void deleteElementById(String collection, int id) {
+    _ensureNotClosed();
+
+    final arena = Arena();
+    try {
+      final err = bindings.psr_database_delete_element_by_id(
+        _ptr,
+        collection.toNativeUtf8(allocator: arena).cast(),
+        id,
+      );
+
+      if (err != psr_error_t.PSR_OK) {
+        throw DatabaseException.fromError(err, "Failed to delete element $id from '$collection'");
+      }
+    } finally {
+      arena.releaseAll();
+    }
+  }
+
   /// Closes the database and frees native resources.
   void close() {
     if (_isClosed) return;
