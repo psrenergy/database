@@ -1022,9 +1022,9 @@ class PsrDatabaseBindings {
     );
   }
 
-  late final _psr_database_delete_element_by_idPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Int32 Function(ffi.Pointer<psr_database_t>, ffi.Pointer<ffi.Char>, ffi.Int64)>>('psr_database_delete_element_by_id');
+  late final _psr_database_delete_element_by_idPtr =
+      _lookup<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<psr_database_t>, ffi.Pointer<ffi.Char>, ffi.Int64)>>(
+          'psr_database_delete_element_by_id');
   late final _psr_database_delete_element_by_id = _psr_database_delete_element_by_idPtr
       .asFunction<int Function(ffi.Pointer<psr_database_t>, ffi.Pointer<ffi.Char>, int)>();
 
