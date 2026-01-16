@@ -180,7 +180,7 @@ TEST_F(DatabaseFixture, CreateElementWithScalars) {
     auto element = psr_element_create();
     ASSERT_NE(element, nullptr);
     psr_element_set_string(element, "label", "Config 1");
-    psr_element_set_int(element, "integer_attribute", 42);
+    psr_element_set_integer(element, "integer_attribute", 42);
     psr_element_set_double(element, "float_attribute", 3.14);
 
     int64_t id = psr_database_create_element(db, "Configuration", element);
@@ -267,13 +267,13 @@ TEST_F(DatabaseFixture, ReadScalarIntegers) {
 
     auto e1 = psr_element_create();
     psr_element_set_string(e1, "label", "Config 1");
-    psr_element_set_int(e1, "integer_attribute", 42);
+    psr_element_set_integer(e1, "integer_attribute", 42);
     psr_database_create_element(db, "Configuration", e1);
     psr_element_destroy(e1);
 
     auto e2 = psr_element_create();
     psr_element_set_string(e2, "label", "Config 2");
-    psr_element_set_int(e2, "integer_attribute", 100);
+    psr_element_set_integer(e2, "integer_attribute", 100);
     psr_database_create_element(db, "Configuration", e2);
     psr_element_destroy(e2);
 
@@ -688,13 +688,13 @@ TEST_F(DatabaseFixture, ReadScalarIntegerById) {
 
     auto e1 = psr_element_create();
     psr_element_set_string(e1, "label", "Config 1");
-    psr_element_set_int(e1, "integer_attribute", 42);
+    psr_element_set_integer(e1, "integer_attribute", 42);
     int64_t id1 = psr_database_create_element(db, "Configuration", e1);
     psr_element_destroy(e1);
 
     auto e2 = psr_element_create();
     psr_element_set_string(e2, "label", "Config 2");
-    psr_element_set_int(e2, "integer_attribute", 100);
+    psr_element_set_integer(e2, "integer_attribute", 100);
     int64_t id2 = psr_database_create_element(db, "Configuration", e2);
     psr_element_destroy(e2);
 
@@ -770,7 +770,7 @@ TEST_F(DatabaseFixture, ReadScalarByIdNotFound) {
 
     auto e = psr_element_create();
     psr_element_set_string(e, "label", "Config 1");
-    psr_element_set_int(e, "integer_attribute", 42);
+    psr_element_set_integer(e, "integer_attribute", 42);
     psr_database_create_element(db, "Configuration", e);
     psr_element_destroy(e);
 

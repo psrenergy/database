@@ -226,8 +226,8 @@ function psr_element_clear(element)
     @ccall libpsr_database_c.psr_element_clear(element::Ptr{psr_element_t})::Cvoid
 end
 
-function psr_element_set_int(element, name, value)
-    @ccall libpsr_database_c.psr_element_set_int(element::Ptr{psr_element_t}, name::Ptr{Cchar}, value::Int64)::psr_error_t
+function psr_element_set_integer(element, name, value)
+    @ccall libpsr_database_c.psr_element_set_integer(element::Ptr{psr_element_t}, name::Ptr{Cchar}, value::Int64)::psr_error_t
 end
 
 function psr_element_set_double(element, name, value)

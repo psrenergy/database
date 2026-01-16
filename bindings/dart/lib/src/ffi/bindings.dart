@@ -919,23 +919,23 @@ class PsrDatabaseBindings {
       _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<psr_element_t1>)>>('psr_element_clear');
   late final _psr_element_clear = _psr_element_clearPtr.asFunction<void Function(ffi.Pointer<psr_element_t1>)>();
 
-  int psr_element_set_int(
+  int psr_element_set_integer(
     ffi.Pointer<psr_element_t1> element,
     ffi.Pointer<ffi.Char> name,
     int value,
   ) {
-    return _psr_element_set_int(
+    return _psr_element_set_integer(
       element,
       name,
       value,
     );
   }
 
-  late final _psr_element_set_intPtr =
+  late final _psr_element_set_integerPtr =
       _lookup<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<psr_element_t1>, ffi.Pointer<ffi.Char>, ffi.Int64)>>(
-          'psr_element_set_int');
-  late final _psr_element_set_int =
-      _psr_element_set_intPtr.asFunction<int Function(ffi.Pointer<psr_element_t1>, ffi.Pointer<ffi.Char>, int)>();
+          'psr_element_set_integer');
+  late final _psr_element_set_integer =
+      _psr_element_set_integerPtr.asFunction<int Function(ffi.Pointer<psr_element_t1>, ffi.Pointer<ffi.Char>, int)>();
 
   int psr_element_set_double(
     ffi.Pointer<psr_element_t1> element,
