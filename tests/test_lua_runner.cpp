@@ -626,10 +626,11 @@ TEST_F(LuaRunnerTest, UpdateElementArraysIgnoredFromLua) {
     auto db = psr::Database::from_schema(":memory:", collections_schema);
 
     db.create_element("Configuration", psr::Element().set("label", "Config"));
-    db.create_element("Collection", psr::Element()
-                                        .set("label", "Item 1")
-                                        .set("some_integer", int64_t{10})
-                                        .set("value_int", std::vector<int64_t>{1, 2, 3}));
+    db.create_element("Collection",
+                      psr::Element()
+                          .set("label", "Item 1")
+                          .set("some_integer", int64_t{10})
+                          .set("value_int", std::vector<int64_t>{1, 2, 3}));
 
     psr::LuaRunner lua(db);
 
