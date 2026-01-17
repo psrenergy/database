@@ -504,3 +504,28 @@ function read_element_ids(db::Database, collection::String)
     C.psr_free_int_array(out_ids[])
     return result
 end
+
+function delete_element_by_id!(db::Database, collection::String, id::Int64)
+    err = C.psr_database_delete_element_by_id(db.ptr, collection, id)
+    if err != C.PSR_OK
+        throw(DatabaseException("Failed to delete element $id from '$collection'"))
+    end
+    return nothing
+end
+
+function update_element!(db::Database, collection::String, id::Int64, e::Element)
+    err = C.psr_database_update_element(db.ptr, collection, id, e.ptr)
+    if err != C.PSR_OK
+        throw(DatabaseException("Failed to update element $id in collection $collection"))
+    end
+    return nothing
+end
+
+function update_element!(db::Database, collection::String, id::Int64; kwargs...)
+    e = Element()
+    for (k, v) in kwargs
+        e[String(k)] = v
+    end
+    update_element!(db, collection, id, e)
+    return nothing
+end
