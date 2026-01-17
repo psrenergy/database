@@ -4,8 +4,11 @@
 #include "error.h"
 #include "export.h"
 
+#include <algorithm>
+#include <cctype>
 #include <regex>
 #include <string>
+#include <unordered_set>
 
 namespace psr {
 
