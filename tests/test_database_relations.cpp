@@ -1,21 +1,13 @@
 #include "database_fixture.h"
+#include "test_utils.h"
 
-#include <filesystem>
 #include <gtest/gtest.h>
 #include <psr/database.h>
 #include <psr/element.h>
 
-namespace fs = std::filesystem;
-
-namespace {
-std::string schema_path(const std::string& filename) {
-    return (fs::path(__FILE__).parent_path() / filename).string();
-}
-}  // namespace
-
 TEST_F(DatabaseFixture, SetScalarRelation) {
     auto db = psr::Database::from_schema(
-        ":memory:", schema_path("schemas/valid/relations.sql"), {.console_level = psr::LogLevel::off});
+        ":memory:", VALID_SCHEMA("relations.sql"), {.console_level = psr::LogLevel::off});
 
     // Create parent
     psr::Element parent;
@@ -38,7 +30,7 @@ TEST_F(DatabaseFixture, SetScalarRelation) {
 
 TEST_F(DatabaseFixture, SetScalarRelationSelfReference) {
     auto db = psr::Database::from_schema(
-        ":memory:", schema_path("schemas/valid/relations.sql"), {.console_level = psr::LogLevel::off});
+        ":memory:", VALID_SCHEMA("relations.sql"), {.console_level = psr::LogLevel::off});
 
     // Create two children
     psr::Element child1;

@@ -1,17 +1,9 @@
 #include "database_fixture.h"
+#include "test_utils.h"
 
-#include <filesystem>
 #include <gtest/gtest.h>
 #include <psr/database.h>
 #include <psr/element.h>
-
-namespace fs = std::filesystem;
-
-namespace {
-std::string schema_path(const std::string& filename) {
-    return (fs::path(__FILE__).parent_path() / filename).string();
-}
-}  // namespace
 
 // ============================================================================
 // Update scalar tests
@@ -19,7 +11,7 @@ std::string schema_path(const std::string& filename) {
 
 TEST_F(DatabaseFixture, UpdateScalarInteger) {
     auto db = psr::Database::from_schema(
-        ":memory:", schema_path("schemas/valid/basic.sql"), {.console_level = psr::LogLevel::off});
+        ":memory:", VALID_SCHEMA("basic.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element e;
     e.set("label", std::string("Config 1")).set("integer_attribute", int64_t{42});
@@ -34,7 +26,7 @@ TEST_F(DatabaseFixture, UpdateScalarInteger) {
 
 TEST_F(DatabaseFixture, UpdateScalarDouble) {
     auto db = psr::Database::from_schema(
-        ":memory:", schema_path("schemas/valid/basic.sql"), {.console_level = psr::LogLevel::off});
+        ":memory:", VALID_SCHEMA("basic.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element e;
     e.set("label", std::string("Config 1")).set("float_attribute", 3.14);
@@ -49,7 +41,7 @@ TEST_F(DatabaseFixture, UpdateScalarDouble) {
 
 TEST_F(DatabaseFixture, UpdateScalarString) {
     auto db = psr::Database::from_schema(
-        ":memory:", schema_path("schemas/valid/basic.sql"), {.console_level = psr::LogLevel::off});
+        ":memory:", VALID_SCHEMA("basic.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element e;
     e.set("label", std::string("Config 1")).set("string_attribute", std::string("hello"));
@@ -64,7 +56,7 @@ TEST_F(DatabaseFixture, UpdateScalarString) {
 
 TEST_F(DatabaseFixture, UpdateScalarMultipleElements) {
     auto db = psr::Database::from_schema(
-        ":memory:", schema_path("schemas/valid/basic.sql"), {.console_level = psr::LogLevel::off});
+        ":memory:", VALID_SCHEMA("basic.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element e1;
     e1.set("label", std::string("Config 1")).set("integer_attribute", int64_t{42});
@@ -94,7 +86,7 @@ TEST_F(DatabaseFixture, UpdateScalarMultipleElements) {
 
 TEST_F(DatabaseFixture, UpdateVectorIntegers) {
     auto db = psr::Database::from_schema(
-        ":memory:", schema_path("schemas/valid/collections.sql"), {.console_level = psr::LogLevel::off});
+        ":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element config;
     config.set("label", std::string("Test Config"));
@@ -112,7 +104,7 @@ TEST_F(DatabaseFixture, UpdateVectorIntegers) {
 
 TEST_F(DatabaseFixture, UpdateVectorDoubles) {
     auto db = psr::Database::from_schema(
-        ":memory:", schema_path("schemas/valid/collections.sql"), {.console_level = psr::LogLevel::off});
+        ":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element config;
     config.set("label", std::string("Test Config"));
@@ -130,7 +122,7 @@ TEST_F(DatabaseFixture, UpdateVectorDoubles) {
 
 TEST_F(DatabaseFixture, UpdateVectorToEmpty) {
     auto db = psr::Database::from_schema(
-        ":memory:", schema_path("schemas/valid/collections.sql"), {.console_level = psr::LogLevel::off});
+        ":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element config;
     config.set("label", std::string("Test Config"));
@@ -148,7 +140,7 @@ TEST_F(DatabaseFixture, UpdateVectorToEmpty) {
 
 TEST_F(DatabaseFixture, UpdateVectorMultipleElements) {
     auto db = psr::Database::from_schema(
-        ":memory:", schema_path("schemas/valid/collections.sql"), {.console_level = psr::LogLevel::off});
+        ":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element config;
     config.set("label", std::string("Test Config"));
@@ -180,7 +172,7 @@ TEST_F(DatabaseFixture, UpdateVectorMultipleElements) {
 
 TEST_F(DatabaseFixture, UpdateSetStrings) {
     auto db = psr::Database::from_schema(
-        ":memory:", schema_path("schemas/valid/collections.sql"), {.console_level = psr::LogLevel::off});
+        ":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element config;
     config.set("label", std::string("Test Config"));
@@ -199,7 +191,7 @@ TEST_F(DatabaseFixture, UpdateSetStrings) {
 
 TEST_F(DatabaseFixture, UpdateSetToEmpty) {
     auto db = psr::Database::from_schema(
-        ":memory:", schema_path("schemas/valid/collections.sql"), {.console_level = psr::LogLevel::off});
+        ":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element config;
     config.set("label", std::string("Test Config"));
@@ -217,7 +209,7 @@ TEST_F(DatabaseFixture, UpdateSetToEmpty) {
 
 TEST_F(DatabaseFixture, UpdateSetMultipleElements) {
     auto db = psr::Database::from_schema(
-        ":memory:", schema_path("schemas/valid/collections.sql"), {.console_level = psr::LogLevel::off});
+        ":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element config;
     config.set("label", std::string("Test Config"));
@@ -250,7 +242,7 @@ TEST_F(DatabaseFixture, UpdateSetMultipleElements) {
 
 TEST_F(DatabaseFixture, UpdateElementSingleScalar) {
     auto db = psr::Database::from_schema(
-        ":memory:", schema_path("schemas/valid/basic.sql"), {.console_level = psr::LogLevel::off});
+        ":memory:", VALID_SCHEMA("basic.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element e;
     e.set("label", std::string("Config 1")).set("integer_attribute", int64_t{42});
@@ -273,7 +265,7 @@ TEST_F(DatabaseFixture, UpdateElementSingleScalar) {
 
 TEST_F(DatabaseFixture, UpdateElementMultipleScalars) {
     auto db = psr::Database::from_schema(
-        ":memory:", schema_path("schemas/valid/basic.sql"), {.console_level = psr::LogLevel::off});
+        ":memory:", VALID_SCHEMA("basic.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element e;
     e.set("label", std::string("Config 1"))
@@ -309,7 +301,7 @@ TEST_F(DatabaseFixture, UpdateElementMultipleScalars) {
 
 TEST_F(DatabaseFixture, UpdateElementOtherElementsUnchanged) {
     auto db = psr::Database::from_schema(
-        ":memory:", schema_path("schemas/valid/basic.sql"), {.console_level = psr::LogLevel::off});
+        ":memory:", VALID_SCHEMA("basic.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element e1;
     e1.set("label", std::string("Config 1")).set("integer_attribute", int64_t{42});
@@ -337,7 +329,7 @@ TEST_F(DatabaseFixture, UpdateElementOtherElementsUnchanged) {
 
 TEST_F(DatabaseFixture, UpdateElementIgnoresArrays) {
     auto db = psr::Database::from_schema(
-        ":memory:", schema_path("schemas/valid/collections.sql"), {.console_level = psr::LogLevel::off});
+        ":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element config;
     config.set("label", std::string("Test Config"));

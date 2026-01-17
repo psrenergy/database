@@ -1,20 +1,12 @@
 #include "database_fixture.h"
+#include "test_utils.h"
 
 #include <algorithm>
-#include <filesystem>
 #include <gtest/gtest.h>
 #include <psr/c/database.h>
 #include <psr/c/element.h>
 #include <string>
 #include <vector>
-
-namespace fs = std::filesystem;
-
-namespace {
-std::string schema_path(const std::string& filename) {
-    return (fs::path(__FILE__).parent_path() / filename).string();
-}
-}  // namespace
 
 // ============================================================================
 // Update scalar tests
@@ -23,7 +15,7 @@ std::string schema_path(const std::string& filename) {
 TEST_F(DatabaseFixture, UpdateScalarInteger) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto e = psr_element_create();
@@ -48,7 +40,7 @@ TEST_F(DatabaseFixture, UpdateScalarInteger) {
 TEST_F(DatabaseFixture, UpdateScalarDouble) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto e = psr_element_create();
@@ -73,7 +65,7 @@ TEST_F(DatabaseFixture, UpdateScalarDouble) {
 TEST_F(DatabaseFixture, UpdateScalarString) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto e = psr_element_create();
@@ -103,7 +95,7 @@ TEST_F(DatabaseFixture, UpdateScalarString) {
 TEST_F(DatabaseFixture, UpdateVectorIntegers) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto config = psr_element_create();
@@ -139,7 +131,7 @@ TEST_F(DatabaseFixture, UpdateVectorIntegers) {
 TEST_F(DatabaseFixture, UpdateVectorDoubles) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto config = psr_element_create();
@@ -173,7 +165,7 @@ TEST_F(DatabaseFixture, UpdateVectorDoubles) {
 TEST_F(DatabaseFixture, UpdateVectorToEmpty) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto config = psr_element_create();
@@ -208,7 +200,7 @@ TEST_F(DatabaseFixture, UpdateVectorToEmpty) {
 TEST_F(DatabaseFixture, UpdateSetStrings) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto config = psr_element_create();
@@ -249,7 +241,7 @@ TEST_F(DatabaseFixture, UpdateSetStrings) {
 TEST_F(DatabaseFixture, UpdateSetToEmpty) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto config = psr_element_create();
@@ -284,7 +276,7 @@ TEST_F(DatabaseFixture, UpdateSetToEmpty) {
 TEST_F(DatabaseFixture, UpdateElementSingleScalar) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto e = psr_element_create();
@@ -321,7 +313,7 @@ TEST_F(DatabaseFixture, UpdateElementSingleScalar) {
 TEST_F(DatabaseFixture, UpdateElementMultipleScalars) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto e = psr_element_create();
@@ -375,7 +367,7 @@ TEST_F(DatabaseFixture, UpdateElementMultipleScalars) {
 TEST_F(DatabaseFixture, UpdateElementOtherElementsUnchanged) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto e1 = psr_element_create();
@@ -418,7 +410,7 @@ TEST_F(DatabaseFixture, UpdateElementOtherElementsUnchanged) {
 TEST_F(DatabaseFixture, UpdateElementNullArguments) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto element = psr_element_create();

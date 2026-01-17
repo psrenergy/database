@@ -1,20 +1,12 @@
 #include "database_fixture.h"
+#include "test_utils.h"
 
 #include <algorithm>
-#include <filesystem>
 #include <gtest/gtest.h>
 #include <psr/c/database.h>
 #include <psr/c/element.h>
 #include <string>
 #include <vector>
-
-namespace fs = std::filesystem;
-
-namespace {
-std::string schema_path(const std::string& filename) {
-    return (fs::path(__FILE__).parent_path() / filename).string();
-}
-}  // namespace
 
 // ============================================================================
 // Read scalar tests
@@ -23,7 +15,7 @@ std::string schema_path(const std::string& filename) {
 TEST_F(DatabaseFixture, ReadScalarIntegers) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto e1 = psr_element_create();
@@ -54,7 +46,7 @@ TEST_F(DatabaseFixture, ReadScalarIntegers) {
 TEST_F(DatabaseFixture, ReadScalarDoubles) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto e1 = psr_element_create();
@@ -85,7 +77,7 @@ TEST_F(DatabaseFixture, ReadScalarDoubles) {
 TEST_F(DatabaseFixture, ReadScalarStrings) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto e1 = psr_element_create();
@@ -116,7 +108,7 @@ TEST_F(DatabaseFixture, ReadScalarStrings) {
 TEST_F(DatabaseFixture, ReadScalarEmpty) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto config = psr_element_create();
@@ -148,7 +140,7 @@ TEST_F(DatabaseFixture, ReadScalarEmpty) {
 TEST_F(DatabaseFixture, ReadVectorIntegers) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto config = psr_element_create();
@@ -192,7 +184,7 @@ TEST_F(DatabaseFixture, ReadVectorIntegers) {
 TEST_F(DatabaseFixture, ReadVectorDoubles) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto config = psr_element_create();
@@ -236,7 +228,7 @@ TEST_F(DatabaseFixture, ReadVectorDoubles) {
 TEST_F(DatabaseFixture, ReadVectorEmpty) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto config = psr_element_create();
@@ -269,7 +261,7 @@ TEST_F(DatabaseFixture, ReadVectorEmpty) {
 TEST_F(DatabaseFixture, ReadVectorOnlyReturnsElementsWithData) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto config = psr_element_create();
@@ -326,7 +318,7 @@ TEST_F(DatabaseFixture, ReadVectorOnlyReturnsElementsWithData) {
 TEST_F(DatabaseFixture, ReadSetStrings) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto config = psr_element_create();
@@ -376,7 +368,7 @@ TEST_F(DatabaseFixture, ReadSetStrings) {
 TEST_F(DatabaseFixture, ReadSetEmpty) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto config = psr_element_create();
@@ -400,7 +392,7 @@ TEST_F(DatabaseFixture, ReadSetEmpty) {
 TEST_F(DatabaseFixture, ReadSetOnlyReturnsElementsWithData) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto config = psr_element_create();
@@ -452,7 +444,7 @@ TEST_F(DatabaseFixture, ReadSetOnlyReturnsElementsWithData) {
 TEST_F(DatabaseFixture, ReadScalarIntegerById) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto e1 = psr_element_create();
@@ -487,7 +479,7 @@ TEST_F(DatabaseFixture, ReadScalarIntegerById) {
 TEST_F(DatabaseFixture, ReadScalarDoubleById) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto e1 = psr_element_create();
@@ -510,7 +502,7 @@ TEST_F(DatabaseFixture, ReadScalarDoubleById) {
 TEST_F(DatabaseFixture, ReadScalarStringById) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto e1 = psr_element_create();
@@ -534,7 +526,7 @@ TEST_F(DatabaseFixture, ReadScalarStringById) {
 TEST_F(DatabaseFixture, ReadScalarByIdNotFound) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto e = psr_element_create();
@@ -561,7 +553,7 @@ TEST_F(DatabaseFixture, ReadScalarByIdNotFound) {
 TEST_F(DatabaseFixture, ReadVectorIntegerById) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto config = psr_element_create();
@@ -607,7 +599,7 @@ TEST_F(DatabaseFixture, ReadVectorIntegerById) {
 TEST_F(DatabaseFixture, ReadVectorDoubleById) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto config = psr_element_create();
@@ -639,7 +631,7 @@ TEST_F(DatabaseFixture, ReadVectorDoubleById) {
 TEST_F(DatabaseFixture, ReadVectorByIdEmpty) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto config = psr_element_create();
@@ -670,7 +662,7 @@ TEST_F(DatabaseFixture, ReadVectorByIdEmpty) {
 TEST_F(DatabaseFixture, ReadSetStringById) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto config = psr_element_create();
@@ -719,7 +711,7 @@ TEST_F(DatabaseFixture, ReadSetStringById) {
 TEST_F(DatabaseFixture, ReadSetByIdEmpty) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto config = psr_element_create();
@@ -750,7 +742,7 @@ TEST_F(DatabaseFixture, ReadSetByIdEmpty) {
 TEST_F(DatabaseFixture, ReadElementIds) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto e1 = psr_element_create();
@@ -788,7 +780,7 @@ TEST_F(DatabaseFixture, ReadElementIds) {
 TEST_F(DatabaseFixture, ReadElementIdsEmpty) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     auto config = psr_element_create();
@@ -815,7 +807,7 @@ TEST_F(DatabaseFixture, ReadElementIdsEmpty) {
 TEST_F(DatabaseFixture, GetAttributeTypeScalarInteger) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     psr_attribute_structure_t structure;
@@ -832,7 +824,7 @@ TEST_F(DatabaseFixture, GetAttributeTypeScalarInteger) {
 TEST_F(DatabaseFixture, GetAttributeTypeScalarReal) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     psr_attribute_structure_t structure;
@@ -849,7 +841,7 @@ TEST_F(DatabaseFixture, GetAttributeTypeScalarReal) {
 TEST_F(DatabaseFixture, GetAttributeTypeScalarText) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     psr_attribute_structure_t structure;
@@ -866,7 +858,7 @@ TEST_F(DatabaseFixture, GetAttributeTypeScalarText) {
 TEST_F(DatabaseFixture, GetAttributeTypeVectorInteger) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     psr_attribute_structure_t structure;
@@ -883,7 +875,7 @@ TEST_F(DatabaseFixture, GetAttributeTypeVectorInteger) {
 TEST_F(DatabaseFixture, GetAttributeTypeVectorReal) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     psr_attribute_structure_t structure;
@@ -900,7 +892,7 @@ TEST_F(DatabaseFixture, GetAttributeTypeVectorReal) {
 TEST_F(DatabaseFixture, GetAttributeTypeSetText) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     psr_attribute_structure_t structure;
@@ -917,7 +909,7 @@ TEST_F(DatabaseFixture, GetAttributeTypeSetText) {
 TEST_F(DatabaseFixture, GetAttributeTypeNotFound) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     psr_attribute_structure_t structure;
@@ -932,7 +924,7 @@ TEST_F(DatabaseFixture, GetAttributeTypeNotFound) {
 TEST_F(DatabaseFixture, GetAttributeTypeInvalidArgument) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
-    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
     psr_attribute_structure_t structure;
