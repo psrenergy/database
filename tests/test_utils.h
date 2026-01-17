@@ -2,9 +2,8 @@
 #define PSR_TEST_UTILS_H
 
 #include <filesystem>
-#include <string>
-
 #include <psr/c/database.h>
+#include <string>
 
 namespace psr::test {
 
