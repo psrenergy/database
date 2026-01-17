@@ -75,6 +75,11 @@ TEST_F(DatabaseFixture, ErrorStrings) {
     EXPECT_STREQ(psr_error_string(PSR_OK), "Success");
     EXPECT_STREQ(psr_error_string(PSR_ERROR_INVALID_ARGUMENT), "Invalid argument");
     EXPECT_STREQ(psr_error_string(PSR_ERROR_DATABASE), "Database error");
+    EXPECT_STREQ(psr_error_string(PSR_ERROR_MIGRATION), "Migration error");
+    EXPECT_STREQ(psr_error_string(PSR_ERROR_SCHEMA), "Schema validation error");
+    EXPECT_STREQ(psr_error_string(PSR_ERROR_CREATE_ELEMENT), "Failed to create element");
+    EXPECT_STREQ(psr_error_string(PSR_ERROR_NOT_FOUND), "Not found");
+    EXPECT_STREQ(psr_error_string(static_cast<psr_error_t>(-999)), "Unknown error");
 }
 
 TEST_F(DatabaseFixture, Version) {
