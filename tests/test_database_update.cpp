@@ -9,8 +9,7 @@
 // ============================================================================
 
 TEST(Database, UpdateScalarInteger) {
-    auto db = psr::Database::from_schema(
-        ":memory:", VALID_SCHEMA("basic.sql"), {.console_level = psr::LogLevel::off});
+    auto db = psr::Database::from_schema(":memory:", VALID_SCHEMA("basic.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element e;
     e.set("label", std::string("Config 1")).set("integer_attribute", int64_t{42});
@@ -24,8 +23,7 @@ TEST(Database, UpdateScalarInteger) {
 }
 
 TEST(Database, UpdateScalarDouble) {
-    auto db = psr::Database::from_schema(
-        ":memory:", VALID_SCHEMA("basic.sql"), {.console_level = psr::LogLevel::off});
+    auto db = psr::Database::from_schema(":memory:", VALID_SCHEMA("basic.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element e;
     e.set("label", std::string("Config 1")).set("float_attribute", 3.14);
@@ -39,8 +37,7 @@ TEST(Database, UpdateScalarDouble) {
 }
 
 TEST(Database, UpdateScalarString) {
-    auto db = psr::Database::from_schema(
-        ":memory:", VALID_SCHEMA("basic.sql"), {.console_level = psr::LogLevel::off});
+    auto db = psr::Database::from_schema(":memory:", VALID_SCHEMA("basic.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element e;
     e.set("label", std::string("Config 1")).set("string_attribute", std::string("hello"));
@@ -54,8 +51,7 @@ TEST(Database, UpdateScalarString) {
 }
 
 TEST(Database, UpdateScalarMultipleElements) {
-    auto db = psr::Database::from_schema(
-        ":memory:", VALID_SCHEMA("basic.sql"), {.console_level = psr::LogLevel::off});
+    auto db = psr::Database::from_schema(":memory:", VALID_SCHEMA("basic.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element e1;
     e1.set("label", std::string("Config 1")).set("integer_attribute", int64_t{42});
@@ -84,8 +80,8 @@ TEST(Database, UpdateScalarMultipleElements) {
 // ============================================================================
 
 TEST(Database, UpdateVectorIntegers) {
-    auto db = psr::Database::from_schema(
-        ":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
+    auto db =
+        psr::Database::from_schema(":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element config;
     config.set("label", std::string("Test Config"));
@@ -102,8 +98,8 @@ TEST(Database, UpdateVectorIntegers) {
 }
 
 TEST(Database, UpdateVectorDoubles) {
-    auto db = psr::Database::from_schema(
-        ":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
+    auto db =
+        psr::Database::from_schema(":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element config;
     config.set("label", std::string("Test Config"));
@@ -120,8 +116,8 @@ TEST(Database, UpdateVectorDoubles) {
 }
 
 TEST(Database, UpdateVectorToEmpty) {
-    auto db = psr::Database::from_schema(
-        ":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
+    auto db =
+        psr::Database::from_schema(":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element config;
     config.set("label", std::string("Test Config"));
@@ -138,8 +134,8 @@ TEST(Database, UpdateVectorToEmpty) {
 }
 
 TEST(Database, UpdateVectorMultipleElements) {
-    auto db = psr::Database::from_schema(
-        ":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
+    auto db =
+        psr::Database::from_schema(":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element config;
     config.set("label", std::string("Test Config"));
@@ -170,8 +166,8 @@ TEST(Database, UpdateVectorMultipleElements) {
 // ============================================================================
 
 TEST(Database, UpdateSetStrings) {
-    auto db = psr::Database::from_schema(
-        ":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
+    auto db =
+        psr::Database::from_schema(":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element config;
     config.set("label", std::string("Test Config"));
@@ -189,8 +185,8 @@ TEST(Database, UpdateSetStrings) {
 }
 
 TEST(Database, UpdateSetToEmpty) {
-    auto db = psr::Database::from_schema(
-        ":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
+    auto db =
+        psr::Database::from_schema(":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element config;
     config.set("label", std::string("Test Config"));
@@ -207,8 +203,8 @@ TEST(Database, UpdateSetToEmpty) {
 }
 
 TEST(Database, UpdateSetMultipleElements) {
-    auto db = psr::Database::from_schema(
-        ":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
+    auto db =
+        psr::Database::from_schema(":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element config;
     config.set("label", std::string("Test Config"));
@@ -240,8 +236,7 @@ TEST(Database, UpdateSetMultipleElements) {
 // ============================================================================
 
 TEST(Database, UpdateElementSingleScalar) {
-    auto db = psr::Database::from_schema(
-        ":memory:", VALID_SCHEMA("basic.sql"), {.console_level = psr::LogLevel::off});
+    auto db = psr::Database::from_schema(":memory:", VALID_SCHEMA("basic.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element e;
     e.set("label", std::string("Config 1")).set("integer_attribute", int64_t{42});
@@ -263,8 +258,7 @@ TEST(Database, UpdateElementSingleScalar) {
 }
 
 TEST(Database, UpdateElementMultipleScalars) {
-    auto db = psr::Database::from_schema(
-        ":memory:", VALID_SCHEMA("basic.sql"), {.console_level = psr::LogLevel::off});
+    auto db = psr::Database::from_schema(":memory:", VALID_SCHEMA("basic.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element e;
     e.set("label", std::string("Config 1"))
@@ -299,8 +293,7 @@ TEST(Database, UpdateElementMultipleScalars) {
 }
 
 TEST(Database, UpdateElementOtherElementsUnchanged) {
-    auto db = psr::Database::from_schema(
-        ":memory:", VALID_SCHEMA("basic.sql"), {.console_level = psr::LogLevel::off});
+    auto db = psr::Database::from_schema(":memory:", VALID_SCHEMA("basic.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element e1;
     e1.set("label", std::string("Config 1")).set("integer_attribute", int64_t{42});
@@ -327,8 +320,8 @@ TEST(Database, UpdateElementOtherElementsUnchanged) {
 }
 
 TEST(Database, UpdateElementIgnoresArrays) {
-    auto db = psr::Database::from_schema(
-        ":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
+    auto db =
+        psr::Database::from_schema(":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element config;
     config.set("label", std::string("Test Config"));

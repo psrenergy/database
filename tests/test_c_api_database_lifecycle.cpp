@@ -9,7 +9,8 @@ class TempFileFixture : public ::testing::Test {
 protected:
     void SetUp() override { path = (fs::temp_directory_path() / "psr_test.db").string(); }
     void TearDown() override {
-        if (fs::exists(path)) fs::remove(path);
+        if (fs::exists(path))
+            fs::remove(path);
     }
     std::string path;
 };

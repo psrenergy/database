@@ -16,7 +16,8 @@ protected:
         migrations_path = (fs::path(__FILE__).parent_path() / "chaining_migrations").string();
     }
     void TearDown() override {
-        if (fs::exists(path)) fs::remove(path);
+        if (fs::exists(path))
+            fs::remove(path);
     }
     std::string path;
     std::string migrations_path;

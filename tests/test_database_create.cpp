@@ -5,8 +5,7 @@
 #include <psr/element.h>
 
 TEST(Database, CreateElementWithScalars) {
-    auto db = psr::Database::from_schema(
-        ":memory:", VALID_SCHEMA("basic.sql"), {.console_level = psr::LogLevel::off});
+    auto db = psr::Database::from_schema(":memory:", VALID_SCHEMA("basic.sql"), {.console_level = psr::LogLevel::off});
 
     // Create element
     psr::Element element;
@@ -27,8 +26,8 @@ TEST(Database, CreateElementWithScalars) {
 }
 
 TEST(Database, CreateElementWithVector) {
-    auto db = psr::Database::from_schema(
-        ":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
+    auto db =
+        psr::Database::from_schema(":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
 
     // Configuration required first
     psr::Element config;
@@ -59,8 +58,8 @@ TEST(Database, CreateElementWithVector) {
 }
 
 TEST(Database, CreateElementWithVectorGroup) {
-    auto db = psr::Database::from_schema(
-        ":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
+    auto db =
+        psr::Database::from_schema(":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
 
     // Configuration required first
     psr::Element config;
@@ -87,8 +86,8 @@ TEST(Database, CreateElementWithVectorGroup) {
 }
 
 TEST(Database, CreateElementWithSetGroup) {
-    auto db = psr::Database::from_schema(
-        ":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
+    auto db =
+        psr::Database::from_schema(":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
 
     // Configuration required first
     psr::Element config;
@@ -111,8 +110,7 @@ TEST(Database, CreateElementWithSetGroup) {
 }
 
 TEST(Database, CreateMultipleElements) {
-    auto db = psr::Database::from_schema(
-        ":memory:", VALID_SCHEMA("basic.sql"), {.console_level = psr::LogLevel::off});
+    auto db = psr::Database::from_schema(":memory:", VALID_SCHEMA("basic.sql"), {.console_level = psr::LogLevel::off});
 
     // Create multiple Configuration elements
     psr::Element e1;

@@ -5,8 +5,8 @@
 #include <psr/element.h>
 
 TEST(Database, SetScalarRelation) {
-    auto db = psr::Database::from_schema(
-        ":memory:", VALID_SCHEMA("relations.sql"), {.console_level = psr::LogLevel::off});
+    auto db =
+        psr::Database::from_schema(":memory:", VALID_SCHEMA("relations.sql"), {.console_level = psr::LogLevel::off});
 
     // Create parent
     psr::Element parent;
@@ -28,8 +28,8 @@ TEST(Database, SetScalarRelation) {
 }
 
 TEST(Database, SetScalarRelationSelfReference) {
-    auto db = psr::Database::from_schema(
-        ":memory:", VALID_SCHEMA("relations.sql"), {.console_level = psr::LogLevel::off});
+    auto db =
+        psr::Database::from_schema(":memory:", VALID_SCHEMA("relations.sql"), {.console_level = psr::LogLevel::off});
 
     // Create two children
     psr::Element child1;
