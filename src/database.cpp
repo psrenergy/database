@@ -1366,4 +1366,71 @@ void Database::update_set_strings(const std::string& collection,
     impl_->logger->info("Updated set {}.{} for id {} with {} values", collection, attribute, id, values.size());
 }
 
+AttributeType Database::get_attribute_type(const std::string& collection, const std::string& attribute) const {
+    if (!impl_->schema) {
+        throw std::runtime_error("Cannot get attribute type: no schema loaded");
+    }
+
+    const auto* table_def = impl_->schema->get_table(collection);
+    if (!table_def) {
+        throw std::runtime_error("Collection not found in schema: " + collection);
+    }
+
+    // Helper to convert ColumnType to AttributeDataType
+    auto to_data_type = [](ColumnType ct) -> AttributeDataType {
+        switch (ct) {
+        case ColumnType::Integer:
+            return AttributeDataType::Integer;
+        case ColumnType::Real:
+            return AttributeDataType::Real;
+        case ColumnType::Text:
+            return AttributeDataType::Text;
+        default:
+            throw std::runtime_error("Unknown column type");
+        }
+    };
+
+    // Check if attribute exists as scalar (column on collection table)
+    if (table_def->has_column(attribute)) {
+        auto col_type = table_def->get_column_type(attribute);
+        if (col_type) {
+            return AttributeType{AttributeStructure::Scalar, to_data_type(*col_type)};
+        }
+    }
+
+    // Check if vector table exists for attribute
+    for (const auto& table_name : impl_->schema->table_names()) {
+        if (!impl_->schema->is_vector_table(table_name))
+            continue;
+        if (impl_->schema->get_parent_collection(table_name) != collection)
+            continue;
+
+        const auto* vec_table = impl_->schema->get_table(table_name);
+        if (vec_table && vec_table->has_column(attribute)) {
+            auto col_type = vec_table->get_column_type(attribute);
+            if (col_type) {
+                return AttributeType{AttributeStructure::Vector, to_data_type(*col_type)};
+            }
+        }
+    }
+
+    // Check if set table exists for attribute
+    for (const auto& table_name : impl_->schema->table_names()) {
+        if (!impl_->schema->is_set_table(table_name))
+            continue;
+        if (impl_->schema->get_parent_collection(table_name) != collection)
+            continue;
+
+        const auto* set_table = impl_->schema->get_table(table_name);
+        if (set_table && set_table->has_column(attribute)) {
+            auto col_type = set_table->get_column_type(attribute);
+            if (col_type) {
+                return AttributeType{AttributeStructure::Set, to_data_type(*col_type)};
+            }
+        }
+    }
+
+    throw std::runtime_error("Attribute '" + attribute + "' not found in collection '" + collection + "'");
+}
+
 }  // namespace psr

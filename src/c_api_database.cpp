@@ -881,4 +881,45 @@ PSR_C_API psr_error_t psr_database_update_set_strings(psr_database_t* db,
     }
 }
 
+PSR_C_API psr_error_t psr_database_get_attribute_type(psr_database_t* db,
+                                                      const char* collection,
+                                                      const char* attribute,
+                                                      psr_attribute_structure_t* out_structure,
+                                                      psr_data_type_t* out_data_type) {
+    if (!db || !collection || !attribute || !out_structure || !out_data_type) {
+        return PSR_ERROR_INVALID_ARGUMENT;
+    }
+    try {
+        auto attr_type = db->db.get_attribute_type(collection, attribute);
+
+        switch (attr_type.structure) {
+        case psr::AttributeStructure::Scalar:
+            *out_structure = PSR_ATTRIBUTE_SCALAR;
+            break;
+        case psr::AttributeStructure::Vector:
+            *out_structure = PSR_ATTRIBUTE_VECTOR;
+            break;
+        case psr::AttributeStructure::Set:
+            *out_structure = PSR_ATTRIBUTE_SET;
+            break;
+        }
+
+        switch (attr_type.data_type) {
+        case psr::AttributeDataType::Integer:
+            *out_data_type = PSR_DATA_TYPE_INTEGER;
+            break;
+        case psr::AttributeDataType::Real:
+            *out_data_type = PSR_DATA_TYPE_REAL;
+            break;
+        case psr::AttributeDataType::Text:
+            *out_data_type = PSR_DATA_TYPE_TEXT;
+            break;
+        }
+
+        return PSR_OK;
+    } catch (const std::exception&) {
+        return PSR_ERROR_DATABASE;
+    }
+}
+
 }  // extern "C"

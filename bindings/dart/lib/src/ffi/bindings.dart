@@ -784,6 +784,30 @@ class PsrDatabaseBindings {
       int Function(ffi.Pointer<psr_database_t>, ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Pointer<ffi.Int64>>,
           ffi.Pointer<ffi.Size>)>();
 
+  int psr_database_get_attribute_type(
+    ffi.Pointer<psr_database_t> db,
+    ffi.Pointer<ffi.Char> collection,
+    ffi.Pointer<ffi.Char> attribute,
+    ffi.Pointer<ffi.Int32> out_structure,
+    ffi.Pointer<ffi.Int32> out_data_type,
+  ) {
+    return _psr_database_get_attribute_type(
+      db,
+      collection,
+      attribute,
+      out_structure,
+      out_data_type,
+    );
+  }
+
+  late final _psr_database_get_attribute_typePtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Int32 Function(ffi.Pointer<psr_database_t>, ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>,
+              ffi.Pointer<ffi.Int32>, ffi.Pointer<ffi.Int32>)>>('psr_database_get_attribute_type');
+  late final _psr_database_get_attribute_type = _psr_database_get_attribute_typePtr.asFunction<
+      int Function(ffi.Pointer<psr_database_t>, ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Int32>,
+          ffi.Pointer<ffi.Int32>)>();
+
   int psr_database_update_scalar_integer(
     ffi.Pointer<psr_database_t> db,
     ffi.Pointer<ffi.Char> collection,
@@ -1460,6 +1484,18 @@ abstract class psr_log_level_t {
   static const int PSR_LOG_WARN = 2;
   static const int PSR_LOG_ERROR = 3;
   static const int PSR_LOG_OFF = 4;
+}
+
+abstract class psr_attribute_structure_t {
+  static const int PSR_ATTRIBUTE_SCALAR = 0;
+  static const int PSR_ATTRIBUTE_VECTOR = 1;
+  static const int PSR_ATTRIBUTE_SET = 2;
+}
+
+abstract class psr_data_type_t {
+  static const int PSR_DATA_TYPE_INTEGER = 0;
+  static const int PSR_DATA_TYPE_REAL = 1;
+  static const int PSR_DATA_TYPE_TEXT = 2;
 }
 
 final class psr_database_options_t extends ffi.Struct {

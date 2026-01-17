@@ -2,6 +2,7 @@
 #define PSR_DATABASE_H
 
 #include "export.h"
+#include "psr/attribute_type.h"
 #include "psr/element.h"
 #include "psr/log_level.h"
 #include "psr/result.h"
@@ -96,6 +97,9 @@ public:
 
     // Read element IDs
     std::vector<int64_t> read_element_ids(const std::string& collection);
+
+    // Attribute type query
+    AttributeType get_attribute_type(const std::string& collection, const std::string& attribute) const;
 
     // Update scalar attributes (by element ID)
     void update_scalar_integer(const std::string& collection, const std::string& attribute, int64_t id, int64_t value);

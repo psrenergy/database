@@ -27,6 +27,7 @@ tests/                 # C++ tests and shared SQL schemas
 - Simple solutions over complex abstractions
 - Delete unused code, do not deprecate
 - Intelligence in C++ layer, bindings are thin wrappers
+- All public C++ methods should be binded to C API, then to Julia/Dart/Lua
 - All *.sql test schemas in `tests/schemas/`, bindings reference from there
 
 ## Build
@@ -50,6 +51,16 @@ C++ tests:
 ./build/bin/psr_database_tests.exe      # Core library tests
 ./build/bin/psr_database_c_tests.exe    # C API tests
 ```
+
+Test files are organized by functionality:
+- `test_database_lifecycle.cpp` - open, close, move semantics, options
+- `test_database_create.cpp` - create element operations
+- `test_database_read.cpp` - read scalar/vector/set operations
+- `test_database_update.cpp` - update scalar/vector/set operations
+- `test_database_delete.cpp` - delete element operations
+- `test_database_relations.cpp` - relation operations
+
+C API tests follow same pattern with `test_c_api_database_*.cpp` prefix.
 
 Julia tests:
 ```bash
