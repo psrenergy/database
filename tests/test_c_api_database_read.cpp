@@ -807,3 +807,156 @@ TEST_F(DatabaseFixture, ReadElementIdsEmpty) {
 
     psr_database_close(db);
 }
+
+// ============================================================================
+// Get attribute type tests
+// ============================================================================
+
+TEST_F(DatabaseFixture, GetAttributeTypeScalarInteger) {
+    auto options = psr_database_options_default();
+    options.console_level = PSR_LOG_OFF;
+    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    ASSERT_NE(db, nullptr);
+
+    psr_attribute_structure_t structure;
+    psr_data_type_t data_type;
+    auto err = psr_database_get_attribute_type(db, "Configuration", "integer_attribute", &structure, &data_type);
+
+    EXPECT_EQ(err, PSR_OK);
+    EXPECT_EQ(structure, PSR_ATTRIBUTE_SCALAR);
+    EXPECT_EQ(data_type, PSR_DATA_TYPE_INTEGER);
+
+    psr_database_close(db);
+}
+
+TEST_F(DatabaseFixture, GetAttributeTypeScalarReal) {
+    auto options = psr_database_options_default();
+    options.console_level = PSR_LOG_OFF;
+    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    ASSERT_NE(db, nullptr);
+
+    psr_attribute_structure_t structure;
+    psr_data_type_t data_type;
+    auto err = psr_database_get_attribute_type(db, "Configuration", "float_attribute", &structure, &data_type);
+
+    EXPECT_EQ(err, PSR_OK);
+    EXPECT_EQ(structure, PSR_ATTRIBUTE_SCALAR);
+    EXPECT_EQ(data_type, PSR_DATA_TYPE_REAL);
+
+    psr_database_close(db);
+}
+
+TEST_F(DatabaseFixture, GetAttributeTypeScalarText) {
+    auto options = psr_database_options_default();
+    options.console_level = PSR_LOG_OFF;
+    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    ASSERT_NE(db, nullptr);
+
+    psr_attribute_structure_t structure;
+    psr_data_type_t data_type;
+    auto err = psr_database_get_attribute_type(db, "Configuration", "string_attribute", &structure, &data_type);
+
+    EXPECT_EQ(err, PSR_OK);
+    EXPECT_EQ(structure, PSR_ATTRIBUTE_SCALAR);
+    EXPECT_EQ(data_type, PSR_DATA_TYPE_TEXT);
+
+    psr_database_close(db);
+}
+
+TEST_F(DatabaseFixture, GetAttributeTypeVectorInteger) {
+    auto options = psr_database_options_default();
+    options.console_level = PSR_LOG_OFF;
+    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    ASSERT_NE(db, nullptr);
+
+    psr_attribute_structure_t structure;
+    psr_data_type_t data_type;
+    auto err = psr_database_get_attribute_type(db, "Collection", "value_int", &structure, &data_type);
+
+    EXPECT_EQ(err, PSR_OK);
+    EXPECT_EQ(structure, PSR_ATTRIBUTE_VECTOR);
+    EXPECT_EQ(data_type, PSR_DATA_TYPE_INTEGER);
+
+    psr_database_close(db);
+}
+
+TEST_F(DatabaseFixture, GetAttributeTypeVectorReal) {
+    auto options = psr_database_options_default();
+    options.console_level = PSR_LOG_OFF;
+    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    ASSERT_NE(db, nullptr);
+
+    psr_attribute_structure_t structure;
+    psr_data_type_t data_type;
+    auto err = psr_database_get_attribute_type(db, "Collection", "value_float", &structure, &data_type);
+
+    EXPECT_EQ(err, PSR_OK);
+    EXPECT_EQ(structure, PSR_ATTRIBUTE_VECTOR);
+    EXPECT_EQ(data_type, PSR_DATA_TYPE_REAL);
+
+    psr_database_close(db);
+}
+
+TEST_F(DatabaseFixture, GetAttributeTypeSetText) {
+    auto options = psr_database_options_default();
+    options.console_level = PSR_LOG_OFF;
+    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/collections.sql").c_str(), &options);
+    ASSERT_NE(db, nullptr);
+
+    psr_attribute_structure_t structure;
+    psr_data_type_t data_type;
+    auto err = psr_database_get_attribute_type(db, "Collection", "tag", &structure, &data_type);
+
+    EXPECT_EQ(err, PSR_OK);
+    EXPECT_EQ(structure, PSR_ATTRIBUTE_SET);
+    EXPECT_EQ(data_type, PSR_DATA_TYPE_TEXT);
+
+    psr_database_close(db);
+}
+
+TEST_F(DatabaseFixture, GetAttributeTypeNotFound) {
+    auto options = psr_database_options_default();
+    options.console_level = PSR_LOG_OFF;
+    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    ASSERT_NE(db, nullptr);
+
+    psr_attribute_structure_t structure;
+    psr_data_type_t data_type;
+    auto err = psr_database_get_attribute_type(db, "Configuration", "nonexistent", &structure, &data_type);
+
+    EXPECT_EQ(err, PSR_ERROR_DATABASE);
+
+    psr_database_close(db);
+}
+
+TEST_F(DatabaseFixture, GetAttributeTypeInvalidArgument) {
+    auto options = psr_database_options_default();
+    options.console_level = PSR_LOG_OFF;
+    auto db = psr_database_from_schema(":memory:", schema_path("schemas/valid/basic.sql").c_str(), &options);
+    ASSERT_NE(db, nullptr);
+
+    psr_attribute_structure_t structure;
+    psr_data_type_t data_type;
+
+    // Null db
+    auto err = psr_database_get_attribute_type(nullptr, "Configuration", "label", &structure, &data_type);
+    EXPECT_EQ(err, PSR_ERROR_INVALID_ARGUMENT);
+
+    // Null collection
+    err = psr_database_get_attribute_type(db, nullptr, "label", &structure, &data_type);
+    EXPECT_EQ(err, PSR_ERROR_INVALID_ARGUMENT);
+
+    // Null attribute
+    err = psr_database_get_attribute_type(db, "Configuration", nullptr, &structure, &data_type);
+    EXPECT_EQ(err, PSR_ERROR_INVALID_ARGUMENT);
+
+    // Null out_structure
+    err = psr_database_get_attribute_type(db, "Configuration", "label", nullptr, &data_type);
+    EXPECT_EQ(err, PSR_ERROR_INVALID_ARGUMENT);
+
+    // Null out_data_type
+    err = psr_database_get_attribute_type(db, "Configuration", "label", &structure, nullptr);
+    EXPECT_EQ(err, PSR_ERROR_INVALID_ARGUMENT);
+
+    psr_database_close(db);
+}

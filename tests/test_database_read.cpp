@@ -2,6 +2,7 @@
 
 #include <filesystem>
 #include <gtest/gtest.h>
+#include <psr/attribute_type.h>
 #include <psr/database.h>
 #include <psr/element.h>
 
@@ -484,4 +485,76 @@ TEST_F(DatabaseFixture, ReadElementIdsEmpty) {
     // No Collection elements created
     auto ids = db.read_element_ids("Collection");
     EXPECT_TRUE(ids.empty());
+}
+
+// ============================================================================
+// Get attribute type tests
+// ============================================================================
+
+TEST_F(DatabaseFixture, GetAttributeTypeScalarInteger) {
+    auto db = psr::Database::from_schema(
+        ":memory:", schema_path("schemas/valid/basic.sql"), {.console_level = psr::LogLevel::off});
+
+    auto attr_type = db.get_attribute_type("Configuration", "integer_attribute");
+    EXPECT_EQ(attr_type.structure, psr::AttributeStructure::Scalar);
+    EXPECT_EQ(attr_type.data_type, psr::AttributeDataType::Integer);
+}
+
+TEST_F(DatabaseFixture, GetAttributeTypeScalarReal) {
+    auto db = psr::Database::from_schema(
+        ":memory:", schema_path("schemas/valid/basic.sql"), {.console_level = psr::LogLevel::off});
+
+    auto attr_type = db.get_attribute_type("Configuration", "float_attribute");
+    EXPECT_EQ(attr_type.structure, psr::AttributeStructure::Scalar);
+    EXPECT_EQ(attr_type.data_type, psr::AttributeDataType::Real);
+}
+
+TEST_F(DatabaseFixture, GetAttributeTypeScalarText) {
+    auto db = psr::Database::from_schema(
+        ":memory:", schema_path("schemas/valid/basic.sql"), {.console_level = psr::LogLevel::off});
+
+    auto attr_type = db.get_attribute_type("Configuration", "string_attribute");
+    EXPECT_EQ(attr_type.structure, psr::AttributeStructure::Scalar);
+    EXPECT_EQ(attr_type.data_type, psr::AttributeDataType::Text);
+}
+
+TEST_F(DatabaseFixture, GetAttributeTypeVectorInteger) {
+    auto db = psr::Database::from_schema(
+        ":memory:", schema_path("schemas/valid/collections.sql"), {.console_level = psr::LogLevel::off});
+
+    auto attr_type = db.get_attribute_type("Collection", "value_int");
+    EXPECT_EQ(attr_type.structure, psr::AttributeStructure::Vector);
+    EXPECT_EQ(attr_type.data_type, psr::AttributeDataType::Integer);
+}
+
+TEST_F(DatabaseFixture, GetAttributeTypeVectorReal) {
+    auto db = psr::Database::from_schema(
+        ":memory:", schema_path("schemas/valid/collections.sql"), {.console_level = psr::LogLevel::off});
+
+    auto attr_type = db.get_attribute_type("Collection", "value_float");
+    EXPECT_EQ(attr_type.structure, psr::AttributeStructure::Vector);
+    EXPECT_EQ(attr_type.data_type, psr::AttributeDataType::Real);
+}
+
+TEST_F(DatabaseFixture, GetAttributeTypeSetText) {
+    auto db = psr::Database::from_schema(
+        ":memory:", schema_path("schemas/valid/collections.sql"), {.console_level = psr::LogLevel::off});
+
+    auto attr_type = db.get_attribute_type("Collection", "tag");
+    EXPECT_EQ(attr_type.structure, psr::AttributeStructure::Set);
+    EXPECT_EQ(attr_type.data_type, psr::AttributeDataType::Text);
+}
+
+TEST_F(DatabaseFixture, GetAttributeTypeNotFound) {
+    auto db = psr::Database::from_schema(
+        ":memory:", schema_path("schemas/valid/basic.sql"), {.console_level = psr::LogLevel::off});
+
+    EXPECT_THROW(db.get_attribute_type("Configuration", "nonexistent"), std::runtime_error);
+}
+
+TEST_F(DatabaseFixture, GetAttributeTypeCollectionNotFound) {
+    auto db = psr::Database::from_schema(
+        ":memory:", schema_path("schemas/valid/basic.sql"), {.console_level = psr::LogLevel::off});
+
+    EXPECT_THROW(db.get_attribute_type("NonexistentCollection", "label"), std::runtime_error);
 }

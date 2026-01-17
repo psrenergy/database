@@ -22,6 +22,20 @@ typedef struct {
     psr_log_level_t console_level;
 } psr_database_options_t;
 
+// Attribute structure types
+typedef enum {
+    PSR_ATTRIBUTE_SCALAR = 0,
+    PSR_ATTRIBUTE_VECTOR = 1,
+    PSR_ATTRIBUTE_SET = 2
+} psr_attribute_structure_t;
+
+// Attribute data types
+typedef enum {
+    PSR_DATA_TYPE_INTEGER = 0,
+    PSR_DATA_TYPE_REAL = 1,
+    PSR_DATA_TYPE_TEXT = 2
+} psr_data_type_t;
+
 // Returns default options
 PSR_C_API psr_database_options_t psr_database_options_default(void);
 
@@ -197,6 +211,13 @@ PSR_C_API psr_error_t psr_database_read_element_ids(psr_database_t* db,
                                                     const char* collection,
                                                     int64_t** out_ids,
                                                     size_t* out_count);
+
+// Attribute type query
+PSR_C_API psr_error_t psr_database_get_attribute_type(psr_database_t* db,
+                                                       const char* collection,
+                                                       const char* attribute,
+                                                       psr_attribute_structure_t* out_structure,
+                                                       psr_data_type_t* out_data_type);
 
 // Update scalar attributes (by element ID)
 PSR_C_API psr_error_t psr_database_update_scalar_integer(psr_database_t* db,
