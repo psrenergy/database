@@ -565,7 +565,7 @@ include("fixture.jl")
         PSRDatabase.close!(db)
     end
 
-    @testset "Generic Read - Scalar Double" begin
+    @testset "Generic Read - Scalar Float" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
         db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -607,7 +607,7 @@ include("fixture.jl")
         PSRDatabase.close!(db)
     end
 
-    @testset "Generic Read - Vector Double" begin
+    @testset "Generic Read - Vector Float" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
         db = PSRDatabase.from_schema(":memory:", path_schema)
 
