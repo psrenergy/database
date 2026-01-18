@@ -218,4 +218,345 @@ end
     PSRDatabase.close!(db)
 end
 
+# ============================================================================
+# Scalar update functions tests
+# ============================================================================
+
+@testset "Update Scalar Integer" begin
+    path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
+    db = PSRDatabase.from_schema(":memory:", path_schema)
+
+    PSRDatabase.create_element!(db, "Configuration"; label = "Config 1", integer_attribute = 42)
+
+    # Basic update
+    PSRDatabase.update_scalar_integer!(db, "Configuration", "integer_attribute", Int64(1), 100)
+    value = PSRDatabase.read_scalar_integers_by_id(db, "Configuration", "integer_attribute", Int64(1))
+    @test value == 100
+
+    # Update to 0
+    PSRDatabase.update_scalar_integer!(db, "Configuration", "integer_attribute", Int64(1), 0)
+    value = PSRDatabase.read_scalar_integers_by_id(db, "Configuration", "integer_attribute", Int64(1))
+    @test value == 0
+
+    # Update to negative
+    PSRDatabase.update_scalar_integer!(db, "Configuration", "integer_attribute", Int64(1), -999)
+    value = PSRDatabase.read_scalar_integers_by_id(db, "Configuration", "integer_attribute", Int64(1))
+    @test value == -999
+
+    PSRDatabase.close!(db)
+end
+
+@testset "Update Scalar Integer Multiple Elements" begin
+    path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
+    db = PSRDatabase.from_schema(":memory:", path_schema)
+
+    PSRDatabase.create_element!(db, "Configuration"; label = "Config 1", integer_attribute = 42)
+    PSRDatabase.create_element!(db, "Configuration"; label = "Config 2", integer_attribute = 100)
+
+    # Update only first element
+    PSRDatabase.update_scalar_integer!(db, "Configuration", "integer_attribute", Int64(1), 999)
+
+    # Verify first element changed
+    @test PSRDatabase.read_scalar_integers_by_id(db, "Configuration", "integer_attribute", Int64(1)) == 999
+
+    # Verify second element unchanged
+    @test PSRDatabase.read_scalar_integers_by_id(db, "Configuration", "integer_attribute", Int64(2)) == 100
+
+    PSRDatabase.close!(db)
+end
+
+@testset "Update Scalar Double" begin
+    path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
+    db = PSRDatabase.from_schema(":memory:", path_schema)
+
+    PSRDatabase.create_element!(db, "Configuration"; label = "Config 1", float_attribute = 3.14)
+
+    # Basic update
+    PSRDatabase.update_scalar_double!(db, "Configuration", "float_attribute", Int64(1), 2.71)
+    value = PSRDatabase.read_scalar_doubles_by_id(db, "Configuration", "float_attribute", Int64(1))
+    @test value == 2.71
+
+    # Update to 0.0
+    PSRDatabase.update_scalar_double!(db, "Configuration", "float_attribute", Int64(1), 0.0)
+    value = PSRDatabase.read_scalar_doubles_by_id(db, "Configuration", "float_attribute", Int64(1))
+    @test value == 0.0
+
+    # Precision test
+    PSRDatabase.update_scalar_double!(db, "Configuration", "float_attribute", Int64(1), 1.23456789012345)
+    value = PSRDatabase.read_scalar_doubles_by_id(db, "Configuration", "float_attribute", Int64(1))
+    @test value ≈ 1.23456789012345
+
+    PSRDatabase.close!(db)
+end
+
+@testset "Update Scalar String" begin
+    path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
+    db = PSRDatabase.from_schema(":memory:", path_schema)
+
+    PSRDatabase.create_element!(db, "Configuration"; label = "Config 1", string_attribute = "hello")
+
+    # Basic update
+    PSRDatabase.update_scalar_string!(db, "Configuration", "string_attribute", Int64(1), "world")
+    value = PSRDatabase.read_scalar_strings_by_id(db, "Configuration", "string_attribute", Int64(1))
+    @test value == "world"
+
+    # Update to empty string
+    PSRDatabase.update_scalar_string!(db, "Configuration", "string_attribute", Int64(1), "")
+    value = PSRDatabase.read_scalar_strings_by_id(db, "Configuration", "string_attribute", Int64(1))
+    @test value == ""
+
+    # Unicode support
+    PSRDatabase.update_scalar_string!(db, "Configuration", "string_attribute", Int64(1), "日本語テスト")
+    value = PSRDatabase.read_scalar_strings_by_id(db, "Configuration", "string_attribute", Int64(1))
+    @test value == "日本語テスト"
+
+    PSRDatabase.close!(db)
+end
+
+# ============================================================================
+# Vector update functions tests
+# ============================================================================
+
+@testset "Update Vector Integers" begin
+    path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
+    db = PSRDatabase.from_schema(":memory:", path_schema)
+
+    PSRDatabase.create_element!(db, "Configuration"; label = "Test Config")
+    PSRDatabase.create_element!(db, "Collection"; label = "Item 1", value_int = [1, 2, 3])
+
+    # Replace existing vector
+    PSRDatabase.update_vector_integers!(db, "Collection", "value_int", Int64(1), [10, 20, 30, 40])
+    values = PSRDatabase.read_vector_integers_by_id(db, "Collection", "value_int", Int64(1))
+    @test values == [10, 20, 30, 40]
+
+    # Update to smaller vector
+    PSRDatabase.update_vector_integers!(db, "Collection", "value_int", Int64(1), [100])
+    values = PSRDatabase.read_vector_integers_by_id(db, "Collection", "value_int", Int64(1))
+    @test values == [100]
+
+    # Update to empty vector
+    PSRDatabase.update_vector_integers!(db, "Collection", "value_int", Int64(1), Int64[])
+    values = PSRDatabase.read_vector_integers_by_id(db, "Collection", "value_int", Int64(1))
+    @test isempty(values)
+
+    PSRDatabase.close!(db)
+end
+
+@testset "Update Vector Integers From Empty" begin
+    path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
+    db = PSRDatabase.from_schema(":memory:", path_schema)
+
+    PSRDatabase.create_element!(db, "Configuration"; label = "Test Config")
+    PSRDatabase.create_element!(db, "Collection"; label = "Item 1")
+
+    # Verify initially empty
+    values = PSRDatabase.read_vector_integers_by_id(db, "Collection", "value_int", Int64(1))
+    @test isempty(values)
+
+    # Update to non-empty
+    PSRDatabase.update_vector_integers!(db, "Collection", "value_int", Int64(1), [1, 2, 3])
+    values = PSRDatabase.read_vector_integers_by_id(db, "Collection", "value_int", Int64(1))
+    @test values == [1, 2, 3]
+
+    PSRDatabase.close!(db)
+end
+
+@testset "Update Vector Integers Multiple Elements" begin
+    path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
+    db = PSRDatabase.from_schema(":memory:", path_schema)
+
+    PSRDatabase.create_element!(db, "Configuration"; label = "Test Config")
+    PSRDatabase.create_element!(db, "Collection"; label = "Item 1", value_int = [1, 2, 3])
+    PSRDatabase.create_element!(db, "Collection"; label = "Item 2", value_int = [10, 20])
+
+    # Update only first element
+    PSRDatabase.update_vector_integers!(db, "Collection", "value_int", Int64(1), [100, 200])
+
+    # Verify first element changed
+    @test PSRDatabase.read_vector_integers_by_id(db, "Collection", "value_int", Int64(1)) == [100, 200]
+
+    # Verify second element unchanged
+    @test PSRDatabase.read_vector_integers_by_id(db, "Collection", "value_int", Int64(2)) == [10, 20]
+
+    PSRDatabase.close!(db)
+end
+
+@testset "Update Vector Doubles" begin
+    path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
+    db = PSRDatabase.from_schema(":memory:", path_schema)
+
+    PSRDatabase.create_element!(db, "Configuration"; label = "Test Config")
+    PSRDatabase.create_element!(db, "Collection"; label = "Item 1", value_float = [1.5, 2.5, 3.5])
+
+    # Replace existing vector
+    PSRDatabase.update_vector_doubles!(db, "Collection", "value_float", Int64(1), [10.5, 20.5])
+    values = PSRDatabase.read_vector_doubles_by_id(db, "Collection", "value_float", Int64(1))
+    @test values == [10.5, 20.5]
+
+    # Precision test
+    PSRDatabase.update_vector_doubles!(db, "Collection", "value_float", Int64(1), [1.23456789, 9.87654321])
+    values = PSRDatabase.read_vector_doubles_by_id(db, "Collection", "value_float", Int64(1))
+    @test values ≈ [1.23456789, 9.87654321]
+
+    # Update to empty vector
+    PSRDatabase.update_vector_doubles!(db, "Collection", "value_float", Int64(1), Float64[])
+    values = PSRDatabase.read_vector_doubles_by_id(db, "Collection", "value_float", Int64(1))
+    @test isempty(values)
+
+    PSRDatabase.close!(db)
+end
+
+# ============================================================================
+# Set update functions tests
+# ============================================================================
+
+@testset "Update Set Strings" begin
+    path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
+    db = PSRDatabase.from_schema(":memory:", path_schema)
+
+    PSRDatabase.create_element!(db, "Configuration"; label = "Test Config")
+    PSRDatabase.create_element!(db, "Collection"; label = "Item 1", tag = ["important", "urgent"])
+
+    # Replace existing set
+    PSRDatabase.update_set_strings!(db, "Collection", "tag", Int64(1), ["new_tag1", "new_tag2", "new_tag3"])
+    values = PSRDatabase.read_set_strings_by_id(db, "Collection", "tag", Int64(1))
+    @test sort(values) == sort(["new_tag1", "new_tag2", "new_tag3"])
+
+    # Update to single element
+    PSRDatabase.update_set_strings!(db, "Collection", "tag", Int64(1), ["single_tag"])
+    values = PSRDatabase.read_set_strings_by_id(db, "Collection", "tag", Int64(1))
+    @test values == ["single_tag"]
+
+    # Update to empty set
+    PSRDatabase.update_set_strings!(db, "Collection", "tag", Int64(1), String[])
+    values = PSRDatabase.read_set_strings_by_id(db, "Collection", "tag", Int64(1))
+    @test isempty(values)
+
+    PSRDatabase.close!(db)
+end
+
+@testset "Update Set Strings From Empty" begin
+    path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
+    db = PSRDatabase.from_schema(":memory:", path_schema)
+
+    PSRDatabase.create_element!(db, "Configuration"; label = "Test Config")
+    PSRDatabase.create_element!(db, "Collection"; label = "Item 1")
+
+    # Verify initially empty
+    values = PSRDatabase.read_set_strings_by_id(db, "Collection", "tag", Int64(1))
+    @test isempty(values)
+
+    # Update to non-empty
+    PSRDatabase.update_set_strings!(db, "Collection", "tag", Int64(1), ["important", "urgent"])
+    values = PSRDatabase.read_set_strings_by_id(db, "Collection", "tag", Int64(1))
+    @test sort(values) == sort(["important", "urgent"])
+
+    PSRDatabase.close!(db)
+end
+
+@testset "Update Set Strings Multiple Elements" begin
+    path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
+    db = PSRDatabase.from_schema(":memory:", path_schema)
+
+    PSRDatabase.create_element!(db, "Configuration"; label = "Test Config")
+    PSRDatabase.create_element!(db, "Collection"; label = "Item 1", tag = ["important"])
+    PSRDatabase.create_element!(db, "Collection"; label = "Item 2", tag = ["urgent", "review"])
+
+    # Update only first element
+    PSRDatabase.update_set_strings!(db, "Collection", "tag", Int64(1), ["updated"])
+
+    # Verify first element changed
+    @test PSRDatabase.read_set_strings_by_id(db, "Collection", "tag", Int64(1)) == ["updated"]
+
+    # Verify second element unchanged
+    @test sort(PSRDatabase.read_set_strings_by_id(db, "Collection", "tag", Int64(2))) == sort(["urgent", "review"])
+
+    PSRDatabase.close!(db)
+end
+
+@testset "Update Set Strings Unicode" begin
+    path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
+    db = PSRDatabase.from_schema(":memory:", path_schema)
+
+    PSRDatabase.create_element!(db, "Configuration"; label = "Test Config")
+    PSRDatabase.create_element!(db, "Collection"; label = "Item 1", tag = ["tag1"])
+
+    # Unicode support
+    PSRDatabase.update_set_strings!(db, "Collection", "tag", Int64(1), ["日本語", "中文", "한국어"])
+    values = PSRDatabase.read_set_strings_by_id(db, "Collection", "tag", Int64(1))
+    @test sort(values) == sort(["日本語", "中文", "한국어"])
+
+    PSRDatabase.close!(db)
+end
+
+# ============================================================================
+# Error handling tests for new update functions
+# ============================================================================
+
+@testset "Update Scalar Integer Invalid Collection" begin
+    path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
+    db = PSRDatabase.from_schema(":memory:", path_schema)
+
+    @test_throws PSRDatabase.DatabaseException PSRDatabase.update_scalar_integer!(
+        db,
+        "NonexistentCollection",
+        "integer_attribute",
+        Int64(1),
+        42,
+    )
+
+    PSRDatabase.close!(db)
+end
+
+@testset "Update Scalar Integer Invalid Attribute" begin
+    path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
+    db = PSRDatabase.from_schema(":memory:", path_schema)
+
+    PSRDatabase.create_element!(db, "Configuration"; label = "Config 1", integer_attribute = 42)
+
+    @test_throws PSRDatabase.DatabaseException PSRDatabase.update_scalar_integer!(
+        db,
+        "Configuration",
+        "nonexistent_attribute",
+        Int64(1),
+        100,
+    )
+
+    PSRDatabase.close!(db)
+end
+
+@testset "Update Vector Integers Invalid Collection" begin
+    path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
+    db = PSRDatabase.from_schema(":memory:", path_schema)
+
+    PSRDatabase.create_element!(db, "Configuration"; label = "Test Config")
+
+    @test_throws PSRDatabase.DatabaseException PSRDatabase.update_vector_integers!(
+        db,
+        "NonexistentCollection",
+        "value_int",
+        Int64(1),
+        [1, 2, 3],
+    )
+
+    PSRDatabase.close!(db)
+end
+
+@testset "Update Set Strings Invalid Collection" begin
+    path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
+    db = PSRDatabase.from_schema(":memory:", path_schema)
+
+    PSRDatabase.create_element!(db, "Configuration"; label = "Test Config")
+
+    @test_throws PSRDatabase.DatabaseException PSRDatabase.update_set_strings!(
+        db,
+        "NonexistentCollection",
+        "tag",
+        Int64(1),
+        ["tag1"],
+    )
+
+    PSRDatabase.close!(db)
+end
+
 end
