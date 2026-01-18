@@ -9,7 +9,7 @@ namespace psr {
 enum class DataStructure { Scalar, Vector, Set };
 
 struct PSR_API AttributeType {
-    DataStructure structure;
+    DataStructure data_structure;
     DataType data_type;
 };
 

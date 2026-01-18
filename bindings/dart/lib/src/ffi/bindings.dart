@@ -1486,10 +1486,10 @@ abstract class psr_log_level_t {
   static const int PSR_LOG_OFF = 4;
 }
 
-abstract class psr_attribute_structure_t {
-  static const int PSR_ATTRIBUTE_SCALAR = 0;
-  static const int PSR_ATTRIBUTE_VECTOR = 1;
-  static const int PSR_ATTRIBUTE_SET = 2;
+abstract class psr_data_structure_t {
+  static const int PSR_DATA_STRUCTURE_SCALAR = 0;
+  static const int PSR_DATA_STRUCTURE_VECTOR = 1;
+  static const int PSR_DATA_STRUCTURE_SET = 2;
 }
 
 abstract class psr_data_type_t {
