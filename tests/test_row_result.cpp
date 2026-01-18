@@ -92,7 +92,7 @@ TEST(Row, GetIntWrongType) {
 }
 
 TEST(Row, GetFloatWrongType) {
-    psr::Row row(std::vector<psr::Value>{std::string("not a double")});
+    psr::Row row(std::vector<psr::Value>{std::string("not a float")});
 
     auto result = row.get_float(0);
     EXPECT_FALSE(result.has_value());

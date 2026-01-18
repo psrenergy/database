@@ -128,8 +128,8 @@ TEST_F(LuaRunnerTest, ReadScalarFloatsFromLua) {
     lua.run(R"(
         local floats = db:read_scalar_floats("Collection", "some_float")
         assert(#floats == 2, "Expected 2 floats")
-        assert(floats[1] == 1.5, "First double should be 1.5")
-        assert(floats[2] == 2.5, "Second double should be 2.5")
+        assert(floats[1] == 1.5, "First float should be 1.5")
+        assert(floats[2] == 2.5, "Second float should be 2.5")
     )");
 }
 
