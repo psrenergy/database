@@ -18,7 +18,7 @@ TEST(Element, SetInt) {
     EXPECT_EQ(std::get<int64_t>(element.scalars().at("count")), 42);
 }
 
-TEST(Element, SetDouble) {
+TEST(Element, SetFloat) {
     psr::Element element;
     element.set("value", 3.14);
 
@@ -55,7 +55,7 @@ TEST(Element, SetArrayInt) {
     EXPECT_EQ(std::get<int64_t>(arrays.at("counts")[2]), 30);
 }
 
-TEST(Element, SetArrayDouble) {
+TEST(Element, SetArrayFloat) {
     psr::Element element;
     element.set("values", std::vector<double>{1.5, 2.5, 3.5});
 

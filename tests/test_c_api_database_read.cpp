@@ -50,13 +50,13 @@ TEST(DatabaseCApi, ReadScalarFloats) {
 
     auto e1 = psr_element_create();
     psr_element_set_string(e1, "label", "Config 1");
-    psr_element_set_double(e1, "float_attribute", 3.14);
+    psr_element_set_float(e1, "float_attribute", 3.14);
     psr_database_create_element(db, "Configuration", e1);
     psr_element_destroy(e1);
 
     auto e2 = psr_element_create();
     psr_element_set_string(e2, "label", "Config 2");
-    psr_element_set_double(e2, "float_attribute", 2.71);
+    psr_element_set_float(e2, "float_attribute", 2.71);
     psr_database_create_element(db, "Configuration", e2);
     psr_element_destroy(e2);
 
@@ -69,7 +69,7 @@ TEST(DatabaseCApi, ReadScalarFloats) {
     EXPECT_DOUBLE_EQ(values[0], 3.14);
     EXPECT_DOUBLE_EQ(values[1], 2.71);
 
-    psr_free_double_array(values);
+    psr_free_float_array(values);
     psr_database_close(db);
 }
 
@@ -194,14 +194,14 @@ TEST(DatabaseCApi, ReadVectorFloats) {
     auto e1 = psr_element_create();
     psr_element_set_string(e1, "label", "Item 1");
     double values1[] = {1.5, 2.5, 3.5};
-    psr_element_set_array_double(e1, "value_float", values1, 3);
+    psr_element_set_array_float(e1, "value_float", values1, 3);
     psr_database_create_element(db, "Collection", e1);
     psr_element_destroy(e1);
 
     auto e2 = psr_element_create();
     psr_element_set_string(e2, "label", "Item 2");
     double values2[] = {10.5, 20.5};
-    psr_element_set_array_double(e2, "value_float", values2, 2);
+    psr_element_set_array_float(e2, "value_float", values2, 2);
     psr_database_create_element(db, "Collection", e2);
     psr_element_destroy(e2);
 
@@ -220,7 +220,7 @@ TEST(DatabaseCApi, ReadVectorFloats) {
     EXPECT_DOUBLE_EQ(vectors[1][0], 10.5);
     EXPECT_DOUBLE_EQ(vectors[1][1], 20.5);
 
-    psr_free_double_vectors(vectors, sizes, count);
+    psr_free_float_vectors(vectors, sizes, count);
     psr_database_close(db);
 }
 
@@ -475,7 +475,7 @@ TEST(DatabaseCApi, ReadScalarIntegerById) {
     psr_database_close(db);
 }
 
-TEST(DatabaseCApi, ReadScalarDoubleById) {
+TEST(DatabaseCApi, ReadScalarFloatById) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
@@ -483,7 +483,7 @@ TEST(DatabaseCApi, ReadScalarDoubleById) {
 
     auto e1 = psr_element_create();
     psr_element_set_string(e1, "label", "Config 1");
-    psr_element_set_double(e1, "float_attribute", 3.14);
+    psr_element_set_float(e1, "float_attribute", 3.14);
     int64_t id1 = psr_database_create_element(db, "Configuration", e1);
     psr_element_destroy(e1);
 
@@ -595,7 +595,7 @@ TEST(DatabaseCApi, ReadVectorIntegerById) {
     psr_database_close(db);
 }
 
-TEST(DatabaseCApi, ReadVectorDoubleById) {
+TEST(DatabaseCApi, ReadVectorFloatById) {
     auto options = psr_database_options_default();
     options.console_level = PSR_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
@@ -609,7 +609,7 @@ TEST(DatabaseCApi, ReadVectorDoubleById) {
     auto e1 = psr_element_create();
     psr_element_set_string(e1, "label", "Item 1");
     double values1[] = {1.5, 2.5, 3.5};
-    psr_element_set_array_double(e1, "value_float", values1, 3);
+    psr_element_set_array_float(e1, "value_float", values1, 3);
     int64_t id1 = psr_database_create_element(db, "Collection", e1);
     psr_element_destroy(e1);
 
@@ -623,7 +623,7 @@ TEST(DatabaseCApi, ReadVectorDoubleById) {
     EXPECT_DOUBLE_EQ(values[1], 2.5);
     EXPECT_DOUBLE_EQ(values[2], 3.5);
 
-    psr_free_double_array(values);
+    psr_free_float_array(values);
     psr_database_close(db);
 }
 

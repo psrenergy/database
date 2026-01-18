@@ -265,10 +265,10 @@ TEST(DatabaseErrors, UpdateScalarIntegerNoSchema) {
     EXPECT_THROW(db.update_scalar_integer("Configuration", "integer_attribute", 1, 42), std::exception);
 }
 
-TEST(DatabaseErrors, UpdateScalarDoubleNoSchema) {
+TEST(DatabaseErrors, UpdateScalarFloatNoSchema) {
     psr::Database db(":memory:", {.console_level = psr::LogLevel::off});
 
-    EXPECT_THROW(db.update_scalar_double("Configuration", "float_attribute", 1, 3.14), std::exception);
+    EXPECT_THROW(db.update_scalar_float("Configuration", "float_attribute", 1, 3.14), std::exception);
 }
 
 TEST(DatabaseErrors, UpdateScalarStringNoSchema) {
@@ -446,10 +446,10 @@ TEST(DatabaseErrors, UpdateScalarIntegerCollectionNotFound) {
     EXPECT_THROW(db.update_scalar_integer("NonexistentCollection", "value", 1, 42), std::runtime_error);
 }
 
-TEST(DatabaseErrors, UpdateScalarDoubleCollectionNotFound) {
+TEST(DatabaseErrors, UpdateScalarFloatCollectionNotFound) {
     auto db = psr::Database::from_schema(":memory:", VALID_SCHEMA("basic.sql"), {.console_level = psr::LogLevel::off});
 
-    EXPECT_THROW(db.update_scalar_double("NonexistentCollection", "value", 1, 3.14), std::runtime_error);
+    EXPECT_THROW(db.update_scalar_float("NonexistentCollection", "value", 1, 3.14), std::runtime_error);
 }
 
 TEST(DatabaseErrors, UpdateScalarStringCollectionNotFound) {

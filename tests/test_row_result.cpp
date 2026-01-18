@@ -64,13 +64,13 @@ TEST(Row, GetIntOutOfBounds) {
     EXPECT_FALSE(result.has_value());
 }
 
-TEST(Row, GetDoubleOutOfBounds) {
+TEST(Row, GetFloatOutOfBounds) {
     psr::Row row(std::vector<psr::Value>{3.14});
 
-    auto result = row.get_double(1);
+    auto result = row.get_float(1);
     EXPECT_FALSE(result.has_value());
 
-    result = row.get_double(100);
+    result = row.get_float(100);
     EXPECT_FALSE(result.has_value());
 }
 
@@ -91,10 +91,10 @@ TEST(Row, GetIntWrongType) {
     EXPECT_FALSE(result.has_value());
 }
 
-TEST(Row, GetDoubleWrongType) {
+TEST(Row, GetFloatWrongType) {
     psr::Row row(std::vector<psr::Value>{std::string("not a double")});
 
-    auto result = row.get_double(0);
+    auto result = row.get_float(0);
     EXPECT_FALSE(result.has_value());
 }
 
@@ -112,10 +112,10 @@ TEST(Row, GetIntFromNull) {
     EXPECT_FALSE(result.has_value());
 }
 
-TEST(Row, GetDoubleFromNull) {
+TEST(Row, GetFloatFromNull) {
     psr::Row row(std::vector<psr::Value>{nullptr});
 
-    auto result = row.get_double(0);
+    auto result = row.get_float(0);
     EXPECT_FALSE(result.has_value());
 }
 
@@ -232,7 +232,7 @@ TEST(Result, MixedValueTypes) {
 
     const auto& row = result[0];
     EXPECT_EQ(row.get_int(0).value(), 42);
-    EXPECT_DOUBLE_EQ(row.get_double(1).value(), 3.14);
+    EXPECT_DOUBLE_EQ(row.get_float(1).value(), 3.14);
     EXPECT_EQ(row.get_string(2).value(), "hello");
     EXPECT_TRUE(row.is_null(3));
 }

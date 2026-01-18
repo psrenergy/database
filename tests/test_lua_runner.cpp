@@ -278,7 +278,7 @@ TEST_F(LuaRunnerTest, ReadScalarIntegerByIdFromLua) {
     lua.run(script);
 }
 
-TEST_F(LuaRunnerTest, ReadScalarDoubleByIdFromLua) {
+TEST_F(LuaRunnerTest, ReadScalarFloatByIdFromLua) {
     auto db = psr::Database::from_schema(":memory:", collections_schema);
 
     db.create_element("Configuration", psr::Element().set("label", "Config"));

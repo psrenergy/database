@@ -268,7 +268,7 @@ TEST(Database, ReadScalarIntegerById) {
     EXPECT_EQ(*val2, 100);
 }
 
-TEST(Database, ReadScalarDoubleById) {
+TEST(Database, ReadScalarFloatById) {
     auto db = psr::Database::from_schema(":memory:", VALID_SCHEMA("basic.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element e1;
@@ -347,7 +347,7 @@ TEST(Database, ReadVectorIntegerById) {
     EXPECT_EQ(vec2, (std::vector<int64_t>{10, 20}));
 }
 
-TEST(Database, ReadVectorDoubleById) {
+TEST(Database, ReadVectorFloatById) {
     auto db =
         psr::Database::from_schema(":memory:", VALID_SCHEMA("collections.sql"), {.console_level = psr::LogLevel::off});
 

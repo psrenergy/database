@@ -15,7 +15,7 @@ TEST(DatabaseCApi, CreateElementWithScalars) {
     ASSERT_NE(element, nullptr);
     psr_element_set_string(element, "label", "Config 1");
     psr_element_set_integer(element, "integer_attribute", 42);
-    psr_element_set_double(element, "float_attribute", 3.14);
+    psr_element_set_float(element, "float_attribute", 3.14);
 
     int64_t id = psr_database_create_element(db, "Configuration", element);
     EXPECT_EQ(id, 1);

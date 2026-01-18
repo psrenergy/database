@@ -22,14 +22,14 @@ TEST(Database, UpdateScalarInteger) {
     EXPECT_EQ(*val, 100);
 }
 
-TEST(Database, UpdateScalarDouble) {
+TEST(Database, UpdateScalarFloat) {
     auto db = psr::Database::from_schema(":memory:", VALID_SCHEMA("basic.sql"), {.console_level = psr::LogLevel::off});
 
     psr::Element e;
     e.set("label", std::string("Config 1")).set("float_attribute", 3.14);
     int64_t id = db.create_element("Configuration", e);
 
-    db.update_scalar_double("Configuration", "float_attribute", id, 2.71);
+    db.update_scalar_float("Configuration", "float_attribute", id, 2.71);
 
     auto val = db.read_scalar_floats_by_id("Configuration", "float_attribute", id);
     EXPECT_TRUE(val.has_value());
