@@ -22,7 +22,7 @@ typedef struct {
     psr_log_level_t console_level;
 } psr_database_options_t;
 
-// Attribute data structure types
+// Attribute data structure
 typedef enum {
     PSR_DATA_STRUCTURE_SCALAR = 0,
     PSR_DATA_STRUCTURE_VECTOR = 1,
