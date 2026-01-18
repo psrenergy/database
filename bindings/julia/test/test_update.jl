@@ -131,7 +131,12 @@ end
 
     PSRDatabase.create_element!(db, "Configuration"; label = "Config 1", integer_attribute = 100)
 
-    @test_throws PSRDatabase.DatabaseException PSRDatabase.update_element!(db, "NonexistentCollection", Int64(1); integer_attribute = 999)
+    @test_throws PSRDatabase.DatabaseException PSRDatabase.update_element!(
+        db,
+        "NonexistentCollection",
+        Int64(1);
+        integer_attribute = 999,
+    )
 
     PSRDatabase.close!(db)
 end
@@ -158,7 +163,12 @@ end
 
     PSRDatabase.create_element!(db, "Configuration"; label = "Config 1", integer_attribute = 100)
 
-    @test_throws PSRDatabase.DatabaseException PSRDatabase.update_element!(db, "Configuration", Int64(1); nonexistent_attribute = 999)
+    @test_throws PSRDatabase.DatabaseException PSRDatabase.update_element!(
+        db,
+        "Configuration",
+        Int64(1);
+        nonexistent_attribute = 999,
+    )
 
     PSRDatabase.close!(db)
 end

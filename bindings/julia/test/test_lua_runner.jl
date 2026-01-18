@@ -110,7 +110,10 @@ end
     PSRDatabase.run!(lua, """db:create_element("Configuration", { label = "Test Config" })""")
 
     # Script that creates element in nonexistent collection
-    @test_throws PSRDatabase.DatabaseException PSRDatabase.run!(lua, """db:create_element("NonexistentCollection", { label = "Item" })""")
+    @test_throws PSRDatabase.DatabaseException PSRDatabase.run!(
+        lua,
+        """db:create_element("NonexistentCollection", { label = "Item" })""",
+    )
 
     PSRDatabase.close!(lua)
     PSRDatabase.close!(db)

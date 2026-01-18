@@ -475,8 +475,16 @@ end
 
     PSRDatabase.create_element!(db, "Configuration"; label = "Test Config")
 
-    @test_throws PSRDatabase.DatabaseException PSRDatabase.read_vector_integers(db, "NonexistentCollection", "value_int")
-    @test_throws PSRDatabase.DatabaseException PSRDatabase.read_vector_doubles(db, "NonexistentCollection", "value_float")
+    @test_throws PSRDatabase.DatabaseException PSRDatabase.read_vector_integers(
+        db,
+        "NonexistentCollection",
+        "value_int",
+    )
+    @test_throws PSRDatabase.DatabaseException PSRDatabase.read_vector_doubles(
+        db,
+        "NonexistentCollection",
+        "value_float",
+    )
 
     PSRDatabase.close!(db)
 end
@@ -507,7 +515,11 @@ end
 
     PSRDatabase.create_element!(db, "Configuration"; label = "Test Config")
 
-    @test_throws PSRDatabase.DatabaseException PSRDatabase.read_scalar_relation(db, "NonexistentCollection", "parent_id")
+    @test_throws PSRDatabase.DatabaseException PSRDatabase.read_scalar_relation(
+        db,
+        "NonexistentCollection",
+        "parent_id",
+    )
 
     PSRDatabase.close!(db)
 end
