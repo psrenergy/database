@@ -893,13 +893,13 @@ PSR_C_API psr_error_t psr_database_get_attribute_type(psr_database_t* db,
         auto attr_type = db->db.get_attribute_type(collection, attribute);
 
         switch (attr_type.structure) {
-        case psr::AttributeStructure::Scalar:
+        case psr::DataStructure::Scalar:
             *out_structure = PSR_ATTRIBUTE_SCALAR;
             break;
-        case psr::AttributeStructure::Vector:
+        case psr::DataStructure::Vector:
             *out_structure = PSR_ATTRIBUTE_VECTOR;
             break;
-        case psr::AttributeStructure::Set:
+        case psr::DataStructure::Set:
             *out_structure = PSR_ATTRIBUTE_SET;
             break;
         }

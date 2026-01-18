@@ -85,7 +85,7 @@ void SchemaValidator::validate_collection(const std::string& name) {
     }
 
     // Check for UNIQUE constraint on label
-    bool label_unique = false;
+    auto label_unique = false;
     for (const auto& idx : table->indexes) {
         if (idx.unique && idx.columns.size() == 1 && idx.columns[0] == "label") {
             label_unique = true;
@@ -104,7 +104,7 @@ void SchemaValidator::validate_vector_table(const std::string& name) {
     }
 
     // Get parent collection
-    std::string parent = schema_.get_parent_collection(name);
+    auto parent = schema_.get_parent_collection(name);
     if (std::find(collections_.begin(), collections_.end(), parent) == collections_.end()) {
         validation_error("Vector table '" + name + "' references non-existent collection '" + parent + "'");
     }

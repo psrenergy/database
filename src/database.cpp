@@ -1380,7 +1380,7 @@ AttributeType Database::get_attribute_type(const std::string& collection, const 
     if (table_def->has_column(attribute)) {
         auto data_type = table_def->get_data_type(attribute);
         if (data_type) {
-            return AttributeType{AttributeStructure::Scalar, *data_type};
+            return AttributeType{DataStructure::Scalar, *data_type};
         }
     }
 
@@ -1395,7 +1395,7 @@ AttributeType Database::get_attribute_type(const std::string& collection, const 
         if (vec_table && vec_table->has_column(attribute)) {
             auto data_type = vec_table->get_data_type(attribute);
             if (data_type) {
-                return AttributeType{AttributeStructure::Vector, *data_type};
+                return AttributeType{DataStructure::Vector, *data_type};
             }
         }
     }
@@ -1411,7 +1411,7 @@ AttributeType Database::get_attribute_type(const std::string& collection, const 
         if (set_table && set_table->has_column(attribute)) {
             auto data_type = set_table->get_data_type(attribute);
             if (data_type) {
-                return AttributeType{AttributeStructure::Set, *data_type};
+                return AttributeType{DataStructure::Set, *data_type};
             }
         }
     }

@@ -6,10 +6,10 @@
 
 namespace psr {
 
-enum class AttributeStructure { Scalar, Vector, Set };
+enum class DataStructure { Scalar, Vector, Set };
 
 struct PSR_API AttributeType {
-    AttributeStructure structure;
+    DataStructure structure;
     DataType data_type;
 };
 
