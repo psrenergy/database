@@ -125,8 +125,8 @@ TEST_F(SchemaValidatorFixture, GetAttributeTypeScalarInteger) {
 
     auto type = db.get_attribute_type("Configuration", "integer_attribute");
 
-    EXPECT_EQ(type.structure, psr::AttributeStructure::scalar);
-    EXPECT_EQ(type.data_type, psr::DataType::integer);
+    EXPECT_EQ(type.structure, psr::AttributeStructure::Scalar);
+    EXPECT_EQ(type.data_type, psr::AttributeDataType::Integer);
 }
 
 TEST_F(SchemaValidatorFixture, GetAttributeTypeScalarReal) {
@@ -134,8 +134,8 @@ TEST_F(SchemaValidatorFixture, GetAttributeTypeScalarReal) {
 
     auto type = db.get_attribute_type("Configuration", "float_attribute");
 
-    EXPECT_EQ(type.structure, psr::AttributeStructure::scalar);
-    EXPECT_EQ(type.data_type, psr::DataType::real);
+    EXPECT_EQ(type.structure, psr::AttributeStructure::Scalar);
+    EXPECT_EQ(type.data_type, psr::AttributeDataType::Real);
 }
 
 TEST_F(SchemaValidatorFixture, GetAttributeTypeScalarText) {
@@ -143,8 +143,8 @@ TEST_F(SchemaValidatorFixture, GetAttributeTypeScalarText) {
 
     auto type = db.get_attribute_type("Configuration", "label");
 
-    EXPECT_EQ(type.structure, psr::AttributeStructure::scalar);
-    EXPECT_EQ(type.data_type, psr::DataType::text);
+    EXPECT_EQ(type.structure, psr::AttributeStructure::Scalar);
+    EXPECT_EQ(type.data_type, psr::AttributeDataType::Text);
 }
 
 TEST_F(SchemaValidatorFixture, GetAttributeTypeVectorInteger) {
@@ -152,8 +152,8 @@ TEST_F(SchemaValidatorFixture, GetAttributeTypeVectorInteger) {
 
     auto type = db.get_attribute_type("Collection", "value_int");
 
-    EXPECT_EQ(type.structure, psr::AttributeStructure::vector);
-    EXPECT_EQ(type.data_type, psr::DataType::integer);
+    EXPECT_EQ(type.structure, psr::AttributeStructure::Vector);
+    EXPECT_EQ(type.data_type, psr::AttributeDataType::Integer);
 }
 
 TEST_F(SchemaValidatorFixture, GetAttributeTypeSetText) {
@@ -161,6 +161,6 @@ TEST_F(SchemaValidatorFixture, GetAttributeTypeSetText) {
 
     auto type = db.get_attribute_type("Collection", "tag");
 
-    EXPECT_EQ(type.structure, psr::AttributeStructure::set);
-    EXPECT_EQ(type.data_type, psr::DataType::text);
+    EXPECT_EQ(type.structure, psr::AttributeStructure::Set);
+    EXPECT_EQ(type.data_type, psr::AttributeDataType::Text);
 }
