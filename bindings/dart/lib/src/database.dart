@@ -186,7 +186,7 @@ class Database {
     }
   }
 
-  /// Reads all double values for a scalar attribute from a collection.
+  /// Reads all float values for a scalar attribute from a collection.
   List<double> readScalarFloats(String collection, String attribute) {
     _ensureNotClosed();
 
@@ -213,7 +213,7 @@ class Database {
       }
 
       final result = List<double>.generate(count, (i) => outValues.value[i]);
-      bindings.psr_free_double_array(outValues.value);
+      bindings.psr_free_float_array(outValues.value);
       return result;
     } finally {
       arena.releaseAll();
@@ -298,7 +298,7 @@ class Database {
     }
   }
 
-  /// Reads all double vectors for a vector attribute from a collection.
+  /// Reads all float vectors for a vector attribute from a collection.
   List<List<double>> readVectorFloats(String collection, String attribute) {
     _ensureNotClosed();
 
@@ -335,7 +335,7 @@ class Database {
           result.add(List<double>.generate(size, (j) => outVectors.value[i][j]));
         }
       }
-      bindings.psr_free_double_vectors(outVectors.value, outSizes.value, count);
+      bindings.psr_free_float_vectors(outVectors.value, outSizes.value, count);
       return result;
     } finally {
       arena.releaseAll();
@@ -430,7 +430,7 @@ class Database {
     }
   }
 
-  /// Reads all double sets for a set attribute from a collection.
+  /// Reads all float sets for a set attribute from a collection.
   List<List<double>> readSetFloats(String collection, String attribute) {
     _ensureNotClosed();
 
@@ -467,7 +467,7 @@ class Database {
           result.add(List<double>.generate(size, (j) => outSets.value[i][j]));
         }
       }
-      bindings.psr_free_double_vectors(outSets.value, outSizes.value, count);
+      bindings.psr_free_float_vectors(outSets.value, outSizes.value, count);
       return result;
     } finally {
       arena.releaseAll();
@@ -552,9 +552,9 @@ class Database {
     }
   }
 
-  /// Reads a double value for a scalar attribute by element ID.
+  /// Reads a float value for a scalar attribute by element ID.
   /// Returns null if the element is not found.
-  double? readScalarDoubleById(String collection, String attribute, int id) {
+  double? readScalarFloatById(String collection, String attribute, int id) {
     _ensureNotClosed();
 
     final arena = Arena();
@@ -683,7 +683,7 @@ class Database {
       }
 
       final result = List<double>.generate(count, (i) => outValues.value[i]);
-      bindings.psr_free_double_array(outValues.value);
+      bindings.psr_free_float_array(outValues.value);
       return result;
     } finally {
       arena.releaseAll();
@@ -790,7 +790,7 @@ class Database {
       }
 
       final result = List<double>.generate(count, (i) => outValues.value[i]);
-      bindings.psr_free_double_array(outValues.value);
+      bindings.psr_free_float_array(outValues.value);
       return result;
     } finally {
       arena.releaseAll();
@@ -989,12 +989,12 @@ class Database {
   }
 
   /// Updates a double scalar attribute value by element ID.
-  void updateScalarDouble(String collection, String attribute, int id, double value) {
+  void updateScalarFloat(String collection, String attribute, int id, double value) {
     _ensureNotClosed();
 
     final arena = Arena();
     try {
-      final err = bindings.psr_database_update_scalar_double(
+      final err = bindings.psr_database_update_scalar_float(
         _ptr,
         collection.toNativeUtf8(allocator: arena).cast(),
         attribute.toNativeUtf8(allocator: arena).cast(),

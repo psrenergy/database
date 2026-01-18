@@ -52,13 +52,13 @@ class Element {
       case int v:
         setInteger(name, v);
       case double v:
-        setDouble(name, v);
+        setFloat(name, v);
       case String v:
         setString(name, v);
       case List<int> v:
         setArrayInteger(name, v);
       case List<double> v:
-        setArrayDouble(name, v);
+        setArrayFloat(name, v);
       case List<String> v:
         setArrayString(name, v);
       case List v when v.isEmpty:
@@ -77,7 +77,7 @@ class Element {
     if (first is int) {
       setArrayInteger(name, values.cast<int>());
     } else if (first is double) {
-      setArrayDouble(name, values.cast<double>());
+      setArrayFloat(name, values.cast<double>());
     } else if (first is String) {
       setArrayString(name, values.cast<String>());
     } else {
@@ -101,14 +101,14 @@ class Element {
     }
   }
 
-  /// Sets a double value.
-  void setDouble(String name, double value) {
+  /// Sets a float value.
+  void setFloat(String name, double value) {
     _ensureNotDisposed();
     final namePtr = name.toNativeUtf8();
     try {
-      final error = bindings.psr_element_set_double(_ptr, namePtr.cast(), value);
+      final error = bindings.psr_element_set_float(_ptr, namePtr.cast(), value);
       if (error != 0) {
-        throw DatabaseException.fromError(error, "Failed to set double '$name'");
+        throw DatabaseException.fromError(error, "Failed to set float '$name'");
       }
     } finally {
       malloc.free(namePtr);
@@ -175,23 +175,23 @@ class Element {
   }
 
   /// Sets an array of floats.
-  void setArrayDouble(String name, List<double> values) {
+  void setArrayFloat(String name, List<double> values) {
     _ensureNotDisposed();
     final namePtr = name.toNativeUtf8();
-    final arrayPtr = malloc<Double>(values.length);
+    final arrayPtr = malloc<Float>(values.length);
 
     try {
       for (var i = 0; i < values.length; i++) {
         arrayPtr[i] = values[i];
       }
-      final error = bindings.psr_element_set_array_double(
+      final error = bindings.psr_element_set_array_float(
         _ptr,
         namePtr.cast(),
         arrayPtr,
         values.length,
       );
       if (error != 0) {
-        throw DatabaseException.fromError(error, "Failed to set double array '$name'");
+        throw DatabaseException.fromError(error, "Failed to set float array '$name'");
       }
     } finally {
       malloc.free(namePtr);
