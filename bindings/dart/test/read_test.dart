@@ -443,8 +443,8 @@ void main() {
           'float_attribute': 2.71,
         });
 
-        expect(db.readScalarDoubleById('Configuration', 'float_attribute', 1), equals(3.14));
-        expect(db.readScalarDoubleById('Configuration', 'float_attribute', 2), equals(2.71));
+        expect(db.readScalarFloatById('Configuration', 'float_attribute', 1), equals(3.14));
+        expect(db.readScalarFloatById('Configuration', 'float_attribute', 2), equals(2.71));
       } finally {
         db.close();
       }
@@ -840,7 +840,7 @@ void main() {
           'float_attribute': 3.14,
         });
 
-        expect(db.readScalarDoubleById('Configuration', 'float_attribute', 999), isNull);
+        expect(db.readScalarFloatById('Configuration', 'float_attribute', 999), isNull);
       } finally {
         db.close();
       }
