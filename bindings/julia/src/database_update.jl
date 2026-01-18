@@ -107,7 +107,14 @@ end
 
 function update_set_integers!(db::Database, collection::String, attribute::String, id::Int64, values::Vector{<:Integer})
     integer_values = Int64[Int64(v) for v in values]
-    err = C.psr_database_update_set_integers(db.ptr, collection, attribute, id, integer_values, Csize_t(length(integer_values)))
+    err = C.psr_database_update_set_integers(
+        db.ptr,
+        collection,
+        attribute,
+        id,
+        integer_values,
+        Csize_t(length(integer_values)),
+    )
     if err != C.PSR_OK
         throw(DatabaseException("Failed to update set integers '$collection.$attribute' for id $id"))
     end

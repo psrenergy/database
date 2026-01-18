@@ -235,14 +235,15 @@ TEST(DatabaseCApi, ReadVectorEmpty) {
     psr_database_create_element(db, "Configuration", config);
     psr_element_destroy(config);
 
-    int64_t** int_vectors = nullptr;
-    size_t* int_sizes = nullptr;
+    int64_t** integer_vectors = nullptr;
+    size_t* integer_sizes = nullptr;
     size_t integer_count = 0;
-    auto err = psr_database_read_vector_integers(db, "Collection", "value_int", &int_vectors, &int_sizes, &integer_count);
+    auto err =
+        psr_database_read_vector_integers(db, "Collection", "value_int", &integer_vectors, &integer_sizes, &integer_count);
     EXPECT_EQ(err, PSR_OK);
     EXPECT_EQ(integer_count, 0);
-    EXPECT_EQ(int_vectors, nullptr);
-    EXPECT_EQ(int_sizes, nullptr);
+    EXPECT_EQ(integer_vectors, nullptr);
+    EXPECT_EQ(integer_sizes, nullptr);
 
     double** double_vectors = nullptr;
     size_t* double_sizes = nullptr;

@@ -642,9 +642,9 @@ TEST_F(LuaRunnerTest, UpdateElementArraysIgnoredFromLua) {
     )");
 
     // Verify from C++ side
-    auto int_value = db.read_scalar_integers_by_id("Collection", "some_integer", 1);
-    EXPECT_TRUE(int_value.has_value());
-    EXPECT_EQ(*int_value, 999);
+    auto integer_value = db.read_scalar_integers_by_id("Collection", "some_integer", 1);
+    EXPECT_TRUE(integer_value.has_value());
+    EXPECT_EQ(*integer_value, 999);
 
     auto vec_values = db.read_vector_integers_by_id("Collection", "value_int", 1);
     EXPECT_EQ(vec_values, (std::vector<int64_t>{1, 2, 3}));

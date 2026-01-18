@@ -221,7 +221,7 @@ TEST(Result, OperatorBracketValid) {
 }
 
 TEST(Result, MixedValueTypes) {
-    std::vector<std::string> columns = {"int_col", "double_col", "string_col", "null_col"};
+    std::vector<std::string> columns = {"integer_col", "float_col", "string_col", "null_col"};
     std::vector<psr::Row> rows;
     rows.emplace_back(std::vector<psr::Value>{int64_t{42}, 3.14, std::string("hello"), nullptr});
 
