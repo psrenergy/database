@@ -272,24 +272,24 @@ include("fixture.jl")
         PSRDatabase.close!(db)
     end
 
-    @testset "Scalar Double" begin
+    @testset "Scalar Float" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
         db = PSRDatabase.from_schema(":memory:", path_schema)
 
         PSRDatabase.create_element!(db, "Configuration"; label = "Config 1", float_attribute = 3.14)
 
         # Basic update
-        PSRDatabase.update_scalar_double!(db, "Configuration", "float_attribute", Int64(1), 2.71)
+        PSRDatabase.update_scalar_float!(db, "Configuration", "float_attribute", Int64(1), 2.71)
         value = PSRDatabase.read_scalar_floats_by_id(db, "Configuration", "float_attribute", Int64(1))
         @test value == 2.71
 
         # Update to 0.0
-        PSRDatabase.update_scalar_double!(db, "Configuration", "float_attribute", Int64(1), 0.0)
+        PSRDatabase.update_scalar_float!(db, "Configuration", "float_attribute", Int64(1), 0.0)
         value = PSRDatabase.read_scalar_floats_by_id(db, "Configuration", "float_attribute", Int64(1))
         @test value == 0.0
 
         # Precision test
-        PSRDatabase.update_scalar_double!(db, "Configuration", "float_attribute", Int64(1), 1.23456789012345)
+        PSRDatabase.update_scalar_float!(db, "Configuration", "float_attribute", Int64(1), 1.23456789012345)
         value = PSRDatabase.read_scalar_floats_by_id(db, "Configuration", "float_attribute", Int64(1))
         @test value ≈ 1.23456789012345
 

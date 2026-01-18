@@ -29,10 +29,10 @@ function update_scalar_integer!(db::Database, collection::String, attribute::Str
     return nothing
 end
 
-function update_scalar_double!(db::Database, collection::String, attribute::String, id::Int64, value::Real)
-    err = C.psr_database_update_scalar_double(db.ptr, collection, attribute, id, Float64(value))
+function update_scalar_float!(db::Database, collection::String, attribute::String, id::Int64, value::Real)
+    err = C.psr_database_update_scalar_float(db.ptr, collection, attribute, id, Float64(value))
     if err != C.PSR_OK
-        throw(DatabaseException("Failed to update scalar double '$collection.$attribute' for id $id"))
+        throw(DatabaseException("Failed to update scalar float '$collection.$attribute' for id $id"))
     end
     return nothing
 end

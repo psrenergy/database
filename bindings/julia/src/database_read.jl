@@ -60,7 +60,7 @@ function read_scalar_floats(db::Database, collection::String, attribute::String)
     end
 
     result = unsafe_wrap(Array, out_values[], count) |> copy
-    C.psr_free_double_array(out_values[])
+    C.psr_free_float_array(out_values[])
     return result
 end
 
@@ -138,7 +138,7 @@ function read_vector_floats(db::Database, collection::String, attribute::String)
             push!(result, copy(unsafe_wrap(Array, vectors_ptr[i], sizes_ptr[i])))
         end
     end
-    C.psr_free_double_vectors(out_vectors[], out_sizes[], count)
+    C.psr_free_float_vectors(out_vectors[], out_sizes[], count)
     return result
 end
 
@@ -226,7 +226,7 @@ function read_set_floats(db::Database, collection::String, attribute::String)
             push!(result, copy(unsafe_wrap(Array, sets_ptr[i], sizes_ptr[i])))
         end
     end
-    C.psr_free_double_vectors(out_sets[], out_sizes[], count)
+    C.psr_free_float_vectors(out_sets[], out_sizes[], count)
     return result
 end
 
@@ -345,7 +345,7 @@ function read_vector_floats_by_id(db::Database, collection::String, attribute::S
     end
 
     result = unsafe_wrap(Array, out_values[], count) |> copy
-    C.psr_free_double_array(out_values[])
+    C.psr_free_float_array(out_values[])
     return result
 end
 
@@ -405,7 +405,7 @@ function read_set_floats_by_id(db::Database, collection::String, attribute::Stri
     end
 
     result = unsafe_wrap(Array, out_values[], count) |> copy
-    C.psr_free_double_array(out_values[])
+    C.psr_free_float_array(out_values[])
     return result
 end
 
