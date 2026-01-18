@@ -178,7 +178,7 @@ class Element {
   void setArrayFloat(String name, List<double> values) {
     _ensureNotDisposed();
     final namePtr = name.toNativeUtf8();
-    final arrayPtr = malloc<Float>(values.length);
+    final arrayPtr = malloc<Double>(values.length);
 
     try {
       for (var i = 0; i < values.length; i++) {
