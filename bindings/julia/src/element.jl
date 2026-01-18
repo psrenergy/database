@@ -1,4 +1,4 @@
-struct Element
+mutable struct Element
     ptr::Ptr{C.psr_element}
 
     function Element()
