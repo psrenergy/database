@@ -23,7 +23,11 @@ typedef struct {
 } psr_database_options_t;
 
 // Attribute data structure types
-typedef enum { PSR_DATA_STRUCTURE_SCALAR = 0, PSR_DATA_STRUCTURE_VECTOR = 1, PSR_DATA_STRUCTURE_SET = 2 } psr_data_structure_t;
+typedef enum {
+    PSR_DATA_STRUCTURE_SCALAR = 0,
+    PSR_DATA_STRUCTURE_VECTOR = 1,
+    PSR_DATA_STRUCTURE_SET = 2
+} psr_data_structure_t;
 
 // Attribute data types
 typedef enum { PSR_DATA_TYPE_INTEGER = 0, PSR_DATA_TYPE_REAL = 1, PSR_DATA_TYPE_TEXT = 2 } psr_data_type_t;
