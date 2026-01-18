@@ -5,7 +5,9 @@ using Test
 
 include("fixture.jl")
 
-@testset "LuaRunner Create Element" begin
+@testset "LuaRunner" begin
+
+@testset "Create Element" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -31,7 +33,7 @@ include("fixture.jl")
     PSRDatabase.close!(db)
 end
 
-@testset "LuaRunner Read from Lua" begin
+@testset "Read from Lua" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -55,7 +57,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "LuaRunner Script Error" begin
+@testset "Script Error" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -67,7 +69,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "LuaRunner Reuse Runner" begin
+@testset "Reuse Runner" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -88,7 +90,7 @@ end
 
 # Error handling tests
 
-@testset "LuaRunner Undefined Variable" begin
+@testset "Undefined Variable" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -101,7 +103,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "LuaRunner Create Invalid Collection" begin
+@testset "Create Invalid Collection" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -119,7 +121,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "LuaRunner Empty Script" begin
+@testset "Empty Script" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -133,7 +135,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "LuaRunner Comment Only Script" begin
+@testset "Comment Only Script" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -147,7 +149,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "LuaRunner Read Integers" begin
+@testset "Read Integers" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -171,7 +173,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "LuaRunner Read Doubles" begin
+@testset "Read Doubles" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -195,7 +197,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "LuaRunner Read Vectors" begin
+@testset "Read Vectors" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -220,7 +222,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "LuaRunner Create With Vector" begin
+@testset "Create With Vector" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -240,6 +242,8 @@ end
 
     PSRDatabase.close!(lua)
     PSRDatabase.close!(db)
+end
+
 end
 
 end

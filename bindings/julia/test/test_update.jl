@@ -5,7 +5,9 @@ using Test
 
 include("fixture.jl")
 
-@testset "Update Element Single Scalar" begin
+@testset "Update" begin
+
+@testset "Element Single Scalar" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -27,7 +29,7 @@ include("fixture.jl")
     PSRDatabase.close!(db)
 end
 
-@testset "Update Element Multiple Scalars" begin
+@testset "Element Multiple Scalars" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -51,7 +53,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Update Element Other Elements Unchanged" begin
+@testset "Element Other Elements Unchanged" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -77,7 +79,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Update Element Arrays Ignored" begin
+@testset "Element Arrays Ignored" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -104,7 +106,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Update Element Using Element Builder" begin
+@testset "Element Using Element Builder" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -125,7 +127,7 @@ end
 
 # Error handling tests
 
-@testset "Update Invalid Collection" begin
+@testset "Invalid Collection" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -141,7 +143,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Update Invalid Element ID" begin
+@testset "Invalid Element ID" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -157,7 +159,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Update Invalid Attribute" begin
+@testset "Invalid Attribute" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -173,7 +175,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Update String Attribute" begin
+@testset "String Attribute" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -187,7 +189,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Update Float Attribute" begin
+@testset "Float Attribute" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -201,7 +203,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Update Multiple Elements Sequentially" begin
+@testset "Multiple Elements Sequentially" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -222,7 +224,7 @@ end
 # Scalar update functions tests
 # ============================================================================
 
-@testset "Update Scalar Integer" begin
+@testset "Scalar Integer" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -246,7 +248,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Update Scalar Integer Multiple Elements" begin
+@testset "Scalar Integer Multiple Elements" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -265,7 +267,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Update Scalar Double" begin
+@testset "Scalar Double" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -289,7 +291,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Update Scalar String" begin
+@testset "Scalar String" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -317,7 +319,7 @@ end
 # Vector update functions tests
 # ============================================================================
 
-@testset "Update Vector Integers" begin
+@testset "Vector Integers" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -342,7 +344,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Update Vector Integers From Empty" begin
+@testset "Vector Integers From Empty" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -361,7 +363,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Update Vector Integers Multiple Elements" begin
+@testset "Vector Integers Multiple Elements" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -381,7 +383,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Update Vector Doubles" begin
+@testset "Vector Doubles" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -410,7 +412,7 @@ end
 # Set update functions tests
 # ============================================================================
 
-@testset "Update Set Strings" begin
+@testset "Set Strings" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -435,7 +437,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Update Set Strings From Empty" begin
+@testset "Set Strings From Empty" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -454,7 +456,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Update Set Strings Multiple Elements" begin
+@testset "Set Strings Multiple Elements" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -474,7 +476,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Update Set Strings Unicode" begin
+@testset "Set Strings Unicode" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -493,7 +495,7 @@ end
 # Error handling tests for new update functions
 # ============================================================================
 
-@testset "Update Scalar Integer Invalid Collection" begin
+@testset "Scalar Integer Invalid Collection" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -508,7 +510,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Update Scalar Integer Invalid Attribute" begin
+@testset "Scalar Integer Invalid Attribute" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -525,7 +527,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Update Vector Integers Invalid Collection" begin
+@testset "Vector Integers Invalid Collection" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -542,7 +544,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Update Set Strings Invalid Collection" begin
+@testset "Set Strings Invalid Collection" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -557,6 +559,8 @@ end
     )
 
     PSRDatabase.close!(db)
+end
+
 end
 
 end

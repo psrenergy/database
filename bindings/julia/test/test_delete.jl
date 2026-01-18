@@ -5,7 +5,8 @@ using Test
 
 include("fixture.jl")
 
-@testset "Delete Element By ID" begin
+@testset "Delete" begin
+@testset "Element By ID" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -31,7 +32,7 @@ include("fixture.jl")
     PSRDatabase.close!(db)
 end
 
-@testset "Delete Element With Vector Data (CASCADE)" begin
+@testset "Element With Vector Data (CASCADE)" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -71,7 +72,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Delete Element With Set Data (CASCADE)" begin
+@testset "Element With Set Data (CASCADE)" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -101,7 +102,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Delete Non-Existent Element (Idempotent)" begin
+@testset "Non-Existent Element (Idempotent)" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -118,7 +119,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Delete Does Not Affect Other Elements" begin
+@testset "Does Not Affect Other Elements" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -144,6 +145,8 @@ end
     @test 200 ∉ values
 
     PSRDatabase.close!(db)
+end
+
 end
 
 end

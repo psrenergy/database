@@ -5,7 +5,9 @@ using Test
 
 include("fixture.jl")
 
-@testset "Read Scalar Attributes" begin
+@testset "Read" begin
+
+@testset "Scalar Attributes" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -30,7 +32,7 @@ include("fixture.jl")
     PSRDatabase.close!(db)
 end
 
-@testset "Read From Collections" begin
+@testset "Collections" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -45,7 +47,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Read Empty Result" begin
+@testset "Empty Result" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -59,7 +61,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Read Vector Attributes" begin
+@testset "Vector Attributes" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -79,7 +81,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Read Vector Empty Result" begin
+@testset "Vector Empty Result" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -92,7 +94,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Read Vector Only Returns Elements With Data" begin
+@testset "Vector Only Returns Elements With Data" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -114,7 +116,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Read Set Attributes" begin
+@testset "Set Attributes" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -131,7 +133,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Read Set Empty Result" begin
+@testset "Set Empty Result" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -143,7 +145,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Read Set Only Returns Elements With Data" begin
+@testset "Set Only Returns Elements With Data" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -192,7 +194,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Read Scalar Relations Self-Reference" begin
+@testset "Scalar Relations Self-Reference" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "relations.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -214,7 +216,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Read Scalar Relations Empty Result" begin
+@testset "Scalar Relations Empty Result" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "relations.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -229,7 +231,7 @@ end
 
 # Read by ID tests
 
-@testset "Read Scalar Integers by ID" begin
+@testset "Scalar Integers by ID" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -243,7 +245,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Read Scalar Doubles by ID" begin
+@testset "Scalar Doubles by ID" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -256,7 +258,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Read Scalar Strings by ID" begin
+@testset "Scalar Strings by ID" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -269,7 +271,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Read Vector Integers by ID" begin
+@testset "Vector Integers by ID" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -283,7 +285,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Read Vector Doubles by ID" begin
+@testset "Vector Doubles by ID" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -295,7 +297,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Read Set Strings by ID" begin
+@testset "Set Strings by ID" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -310,7 +312,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Read Vector by ID Empty" begin
+@testset "Vector by ID Empty" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -324,7 +326,7 @@ end
 
 # Read element IDs tests
 
-@testset "Read Element IDs" begin
+@testset "Element IDs" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -341,7 +343,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Read Element IDs Empty" begin
+@testset "Element IDs Empty" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -433,7 +435,7 @@ end
 
 # Error handling tests
 
-@testset "Read Invalid Collection" begin
+@testset "Invalid Collection" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -444,7 +446,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Read Invalid Attribute" begin
+@testset "Invalid Attribute" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -455,7 +457,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Read By ID Not Found" begin
+@testset "ID Not Found" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -469,7 +471,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Read Vector Invalid Collection" begin
+@testset "Vector Invalid Collection" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -489,7 +491,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Read Set Invalid Collection" begin
+@testset "Set Invalid Collection" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -500,7 +502,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Read Element IDs Invalid Collection" begin
+@testset "Element IDs Invalid Collection" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -509,7 +511,7 @@ end
     PSRDatabase.close!(db)
 end
 
-@testset "Read Scalar Relation Invalid Collection" begin
+@testset "Scalar Relation Invalid Collection" begin
     path_schema = joinpath(tests_path(), "schemas", "valid", "relations.sql")
     db = PSRDatabase.from_schema(":memory:", path_schema)
 
@@ -522,6 +524,8 @@ end
     )
 
     PSRDatabase.close!(db)
+end
+
 end
 
 end

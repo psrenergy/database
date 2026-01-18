@@ -3,8 +3,8 @@ mutable struct Database
 
     function Database(ptr::Ptr{C.psr_database})
         db = new(ptr)
-    finalizer(d -> d.ptr != C_NULL && C.psr_database_close(d.ptr), db)
-    return db
+        finalizer(d -> d.ptr != C_NULL && C.psr_database_close(d.ptr), db)
+        return db
     end
 end
 
@@ -587,9 +587,22 @@ end
 
 # Update vector attribute functions
 
-function update_vector_integers!(db::Database, collection::String, attribute::String, id::Int64, values::Vector{<:Integer})
+function update_vector_integers!(
+    db::Database,
+    collection::String,
+    attribute::String,
+    id::Int64,
+    values::Vector{<:Integer},
+)
     int_values = Int64[Int64(v) for v in values]
-    err = C.psr_database_update_vector_integers(db.ptr, collection, attribute, id, int_values, Csize_t(length(int_values)))
+    err = C.psr_database_update_vector_integers(
+        db.ptr,
+        collection,
+        attribute,
+        id,
+        int_values,
+        Csize_t(length(int_values)),
+    )
     if err != C.PSR_OK
         throw(DatabaseException("Failed to update vector integers '$collection.$attribute' for id $id"))
     end
@@ -598,14 +611,27 @@ end
 
 function update_vector_doubles!(db::Database, collection::String, attribute::String, id::Int64, values::Vector{<:Real})
     float_values = Float64[Float64(v) for v in values]
-    err = C.psr_database_update_vector_doubles(db.ptr, collection, attribute, id, float_values, Csize_t(length(float_values)))
+    err = C.psr_database_update_vector_doubles(
+        db.ptr,
+        collection,
+        attribute,
+        id,
+        float_values,
+        Csize_t(length(float_values)),
+    )
     if err != C.PSR_OK
         throw(DatabaseException("Failed to update vector doubles '$collection.$attribute' for id $id"))
     end
     return nothing
 end
 
-function update_vector_strings!(db::Database, collection::String, attribute::String, id::Int64, values::Vector{<:AbstractString})
+function update_vector_strings!(
+    db::Database,
+    collection::String,
+    attribute::String,
+    id::Int64,
+    values::Vector{<:AbstractString},
+)
     cstrings = [Base.cconvert(Cstring, s) for s in values]
     ptrs = [Base.unsafe_convert(Cstring, cs) for cs in cstrings]
     GC.@preserve cstrings begin
@@ -630,14 +656,27 @@ end
 
 function update_set_doubles!(db::Database, collection::String, attribute::String, id::Int64, values::Vector{<:Real})
     float_values = Float64[Float64(v) for v in values]
-    err = C.psr_database_update_set_doubles(db.ptr, collection, attribute, id, float_values, Csize_t(length(float_values)))
+    err = C.psr_database_update_set_doubles(
+        db.ptr,
+        collection,
+        attribute,
+        id,
+        float_values,
+        Csize_t(length(float_values)),
+    )
     if err != C.PSR_OK
         throw(DatabaseException("Failed to update set doubles '$collection.$attribute' for id $id"))
     end
     return nothing
 end
 
-function update_set_strings!(db::Database, collection::String, attribute::String, id::Int64, values::Vector{<:AbstractString})
+function update_set_strings!(
+    db::Database,
+    collection::String,
+    attribute::String,
+    id::Int64,
+    values::Vector{<:AbstractString},
+)
     cstrings = [Base.cconvert(Cstring, s) for s in values]
     ptrs = [Base.unsafe_convert(Cstring, cs) for cs in cstrings]
     GC.@preserve cstrings begin
