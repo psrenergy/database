@@ -905,13 +905,13 @@ PSR_C_API psr_error_t psr_database_get_attribute_type(psr_database_t* db,
         }
 
         switch (attr_type.data_type) {
-        case psr::AttributeDataType::Integer:
+        case psr::DataType::Integer:
             *out_data_type = PSR_DATA_TYPE_INTEGER;
             break;
-        case psr::AttributeDataType::Real:
+        case psr::DataType::Real:
             *out_data_type = PSR_DATA_TYPE_REAL;
             break;
-        case psr::AttributeDataType::Text:
+        case psr::DataType::Text:
             *out_data_type = PSR_DATA_TYPE_TEXT;
             break;
         }
