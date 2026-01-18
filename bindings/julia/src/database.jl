@@ -1,4 +1,4 @@
-struct Database
+mutable struct Database
     ptr::Ptr{C.psr_database}
 end
 
@@ -8,7 +8,9 @@ function from_schema(db_path, schema_path)
     if ptr == C_NULL
         throw(DatabaseException("Failed to create database from schema '$schema_path'"))
     end
-    return Database(ptr)
+    db = Database(ptr)
+    finalizer(d -> d.ptr != C_NULL && C.psr_database_close(d.ptr), db)
+    return db
 end
 
 function from_migrations(db_path, migrations_path)
@@ -17,7 +19,9 @@ function from_migrations(db_path, migrations_path)
     if ptr == C_NULL
         throw(DatabaseException("Failed to create database from migrations '$migrations_path'"))
     end
-    return Database(ptr)
+    db = Database(ptr)
+    finalizer(d -> d.ptr != C_NULL && C.psr_database_close(d.ptr), db)
+    return db
 end
 
 function create_element!(db::Database, collection::String, e::Element)
@@ -41,7 +45,10 @@ function create_element!(db::Database, collection::String; kwargs...)
 end
 
 function close!(db::Database)
-    C.psr_database_close(db.ptr)
+    if db.ptr != C_NULL
+        C.psr_database_close(db.ptr)
+        db.ptr = C_NULL
+    end
     return nothing
 end
 
