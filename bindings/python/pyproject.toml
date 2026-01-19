@@ -1,0 +1,23 @@
+[project]
+name = "psr_database"
+version = "0.1.0"
+description = "Python bindings for PSR Database"
+requires-python = ">=3.10"
+dependencies = [
+    "cffi>=1.17",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/psr_database"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
