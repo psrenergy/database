@@ -23,9 +23,7 @@ std::atomic<uint64_t> g_logger_counter{0};
 std::once_flag sqlite3_init_flag;
 
 void ensure_sqlite3_initialized() {
-    std::call_once(sqlite3_init_flag, []() {
-        sqlite3_initialize();
-    });
+    std::call_once(sqlite3_init_flag, []() { sqlite3_initialize(); });
 }
 
 spdlog::level::level_enum to_spdlog_level(psr::LogLevel level) {
