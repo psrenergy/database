@@ -1,4 +1,4 @@
-# Project: PSR Database
+# Project: Margaux
 
 SQLite wrapper library with C++ core, C API for FFI, and language bindings (Julia, Dart).
 
@@ -14,8 +14,8 @@ include/margaux/c/         # C API headers (for FFI)
   element.h
   lua_runner.h
 src/                   # Implementation
-bindings/julia/        # Julia bindings (PSRDatabase.jl)
-bindings/dart/         # Dart bindings (psr_database)
+bindings/julia/        # Julia bindings (Margaux.jl)
+bindings/dart/         # Dart bindings (margaux)
 tests/                 # C++ tests and shared SQL schemas
 ```
 

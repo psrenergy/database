@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 REM ============================================================
-REM Build and Test All - PSR Database
+REM Build and Test All - Margaux
 REM ============================================================
 REM Builds C++ library, C API, and runs all tests:
 REM   - C++ unit tests
@@ -36,7 +36,7 @@ goto parse_args
 
 echo.
 echo ============================================================
-echo  PSR Database - Build All (%BUILD_TYPE%)
+echo  Margaux - Build All (%BUILD_TYPE%)
 echo ============================================================
 echo.
 
