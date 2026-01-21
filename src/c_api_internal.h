@@ -14,7 +14,7 @@ struct margaux {
     margaux(psr::Database&& database) : db(std::move(database)) {}
 };
 
-struct psr_element {
+struct margaux_element {
     psr::Element element;
 };
 

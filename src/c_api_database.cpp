@@ -7,7 +7,7 @@
 
 namespace {
 
-psr::LogLevel to_cpp_log_level(psr_log_level_t level) {
+psr::LogLevel to_cpp_log_level(margaux_log_level_t level) {
     switch (level) {
     case PSR_LOG_DEBUG:
         return psr::LogLevel::debug;
@@ -155,7 +155,7 @@ PSR_C_API int64_t margaux_current_version(margaux_t* db) {
     }
 }
 
-PSR_C_API int64_t margaux_create_element(margaux_t* db, const char* collection, psr_element_t* element) {
+PSR_C_API int64_t margaux_create_element(margaux_t* db, const char* collection, margaux_element_t* element) {
     if (!db || !collection || !element) {
         return -1;
     }
@@ -169,7 +169,7 @@ PSR_C_API int64_t margaux_create_element(margaux_t* db, const char* collection, 
 PSR_C_API margaux_error_t margaux_update_element(margaux_t* db,
                                                   const char* collection,
                                                   int64_t id,
-                                                  const psr_element_t* element) {
+                                                  const margaux_element_t* element) {
     if (!db || !collection || !element) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }
@@ -311,15 +311,15 @@ PSR_C_API margaux_error_t margaux_read_scalar_strings(margaux_t* db,
     }
 }
 
-PSR_C_API void psr_free_integer_array(int64_t* values) {
+PSR_C_API void margaux_free_integer_array(int64_t* values) {
     delete[] values;
 }
 
-PSR_C_API void psr_free_float_array(double* values) {
+PSR_C_API void margaux_free_float_array(double* values) {
     delete[] values;
 }
 
-PSR_C_API void psr_free_string_array(char** values, size_t count) {
+PSR_C_API void margaux_free_string_array(char** values, size_t count) {
     if (!values) {
         return;
     }
@@ -399,15 +399,15 @@ PSR_C_API margaux_error_t margaux_read_vector_strings(margaux_t* db,
     }
 }
 
-PSR_C_API void psr_free_integer_vectors(int64_t** vectors, size_t* sizes, size_t count) {
+PSR_C_API void margaux_free_integer_vectors(int64_t** vectors, size_t* sizes, size_t count) {
     free_vectors_impl(vectors, sizes, count);
 }
 
-PSR_C_API void psr_free_float_vectors(double** vectors, size_t* sizes, size_t count) {
+PSR_C_API void margaux_free_float_vectors(double** vectors, size_t* sizes, size_t count) {
     free_vectors_impl(vectors, sizes, count);
 }
 
-PSR_C_API void psr_free_string_vectors(char*** vectors, size_t* sizes, size_t count) {
+PSR_C_API void margaux_free_string_vectors(char*** vectors, size_t* sizes, size_t count) {
     if (!vectors) {
         return;
     }
@@ -884,8 +884,8 @@ PSR_C_API margaux_error_t margaux_update_set_strings(margaux_t* db,
 PSR_C_API margaux_error_t margaux_get_attribute_type(margaux_t* db,
                                                       const char* collection,
                                                       const char* attribute,
-                                                      psr_data_structure_t* out_data_structure,
-                                                      psr_data_type_t* out_data_type) {
+                                                      margaux_data_structure_t* out_data_structure,
+                                                      margaux_data_type_t* out_data_type) {
     if (!db || !collection || !attribute || !out_data_structure || !out_data_type) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }

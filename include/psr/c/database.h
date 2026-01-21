@@ -14,12 +14,12 @@ typedef enum {
     PSR_LOG_WARN = 2,
     PSR_LOG_ERROR = 3,
     PSR_LOG_OFF = 4,
-} psr_log_level_t;
+} margaux_log_level_t;
 
 // Database options
 typedef struct {
     int read_only;
-    psr_log_level_t console_level;
+    margaux_log_level_t console_level;
 } margaux_options_t;
 
 // Attribute data structure
@@ -27,10 +27,10 @@ typedef enum {
     PSR_DATA_STRUCTURE_SCALAR = 0,
     PSR_DATA_STRUCTURE_VECTOR = 1,
     PSR_DATA_STRUCTURE_SET = 2
-} psr_data_structure_t;
+} margaux_data_structure_t;
 
 // Attribute data types
-typedef enum { PSR_DATA_TYPE_INTEGER = 0, PSR_DATA_TYPE_FLOAT = 1, PSR_DATA_TYPE_STRING = 2 } psr_data_type_t;
+typedef enum { PSR_DATA_TYPE_INTEGER = 0, PSR_DATA_TYPE_FLOAT = 1, PSR_DATA_TYPE_STRING = 2 } margaux_data_type_t;
 
 // Returns default options
 PSR_C_API margaux_options_t margaux_options_default(void);
@@ -51,13 +51,13 @@ PSR_C_API const char* margaux_path(margaux_t* db);
 // Version
 PSR_C_API int64_t margaux_current_version(margaux_t* db);
 
-// Element operations (requires psr_element_t from element.h)
-typedef struct psr_element psr_element_t;
-PSR_C_API int64_t margaux_create_element(margaux_t* db, const char* collection, psr_element_t* element);
+// Element operations (requires margaux_element_t from element.h)
+typedef struct margaux_element margaux_element_t;
+PSR_C_API int64_t margaux_create_element(margaux_t* db, const char* collection, margaux_element_t* element);
 PSR_C_API margaux_error_t margaux_update_element(margaux_t* db,
                                                   const char* collection,
                                                   int64_t id,
-                                                  const psr_element_t* element);
+                                                  const margaux_element_t* element);
 PSR_C_API margaux_error_t margaux_delete_element_by_id(margaux_t* db, const char* collection, int64_t id);
 
 // Relation operations
@@ -212,8 +212,8 @@ PSR_C_API margaux_error_t margaux_read_element_ids(margaux_t* db,
 PSR_C_API margaux_error_t margaux_get_attribute_type(margaux_t* db,
                                                       const char* collection,
                                                       const char* attribute,
-                                                      psr_data_structure_t* out_data_structure,
-                                                      psr_data_type_t* out_data_type);
+                                                      margaux_data_structure_t* out_data_structure,
+                                                      margaux_data_type_t* out_data_type);
 
 // Update scalar attributes (by element ID)
 PSR_C_API margaux_error_t margaux_update_scalar_integer(margaux_t* db,
@@ -279,14 +279,14 @@ PSR_C_API margaux_error_t margaux_update_set_strings(margaux_t* db,
                                                       size_t count);
 
 // Memory cleanup for read results
-PSR_C_API void psr_free_integer_array(int64_t* values);
-PSR_C_API void psr_free_float_array(double* values);
-PSR_C_API void psr_free_string_array(char** values, size_t count);
+PSR_C_API void margaux_free_integer_array(int64_t* values);
+PSR_C_API void margaux_free_float_array(double* values);
+PSR_C_API void margaux_free_string_array(char** values, size_t count);
 
 // Memory cleanup for vector read results
-PSR_C_API void psr_free_integer_vectors(int64_t** vectors, size_t* sizes, size_t count);
-PSR_C_API void psr_free_float_vectors(double** vectors, size_t* sizes, size_t count);
-PSR_C_API void psr_free_string_vectors(char*** vectors, size_t* sizes, size_t count);
+PSR_C_API void margaux_free_integer_vectors(int64_t** vectors, size_t* sizes, size_t count);
+PSR_C_API void margaux_free_float_vectors(double** vectors, size_t* sizes, size_t count);
+PSR_C_API void margaux_free_string_vectors(char*** vectors, size_t* sizes, size_t count);
 
 #ifdef __cplusplus
 }

@@ -9,7 +9,7 @@ namespace fs = std::filesystem;
 
 class TempFileFixture : public ::testing::Test {
 protected:
-    void SetUp() override { path = (fs::temp_directory_path() / "psr_test.db").string(); }
+    void SetUp() override { path = (fs::temp_directory_path() / "margaux_test.db").string(); }
     void TearDown() override {
         if (fs::exists(path))
             fs::remove(path);
@@ -82,18 +82,18 @@ TEST_F(TempFileFixture, CloseNullDb) {
 }
 
 TEST_F(TempFileFixture, ErrorStrings) {
-    EXPECT_STREQ(psr_error_string(PSR_OK), "Success");
-    EXPECT_STREQ(psr_error_string(PSR_ERROR_INVALID_ARGUMENT), "Invalid argument");
-    EXPECT_STREQ(psr_error_string(PSR_ERROR_DATABASE), "Database error");
-    EXPECT_STREQ(psr_error_string(PSR_ERROR_MIGRATION), "Migration error");
-    EXPECT_STREQ(psr_error_string(PSR_ERROR_SCHEMA), "Schema validation error");
-    EXPECT_STREQ(psr_error_string(PSR_ERROR_CREATE_ELEMENT), "Failed to create element");
-    EXPECT_STREQ(psr_error_string(PSR_ERROR_NOT_FOUND), "Not found");
-    EXPECT_STREQ(psr_error_string(static_cast<margaux_error_t>(-999)), "Unknown error");
+    EXPECT_STREQ(margaux_error_string(PSR_OK), "Success");
+    EXPECT_STREQ(margaux_error_string(PSR_ERROR_INVALID_ARGUMENT), "Invalid argument");
+    EXPECT_STREQ(margaux_error_string(PSR_ERROR_DATABASE), "Database error");
+    EXPECT_STREQ(margaux_error_string(PSR_ERROR_MIGRATION), "Migration error");
+    EXPECT_STREQ(margaux_error_string(PSR_ERROR_SCHEMA), "Schema validation error");
+    EXPECT_STREQ(margaux_error_string(PSR_ERROR_CREATE_ELEMENT), "Failed to create element");
+    EXPECT_STREQ(margaux_error_string(PSR_ERROR_NOT_FOUND), "Not found");
+    EXPECT_STREQ(margaux_error_string(static_cast<margaux_error_t>(-999)), "Unknown error");
 }
 
 TEST_F(TempFileFixture, Version) {
-    auto version = psr_version();
+    auto version = margaux_version();
     EXPECT_NE(version, nullptr);
     EXPECT_STREQ(version, "1.0.0");
 }
@@ -316,16 +316,16 @@ TEST_F(TempFileFixture, SetScalarRelationValid) {
     ASSERT_NE(db, nullptr);
 
     // Create parent
-    auto parent = psr_element_create();
-    psr_element_set_string(parent, "label", "Parent 1");
+    auto parent = margaux_element_create();
+    margaux_element_set_string(parent, "label", "Parent 1");
     margaux_create_element(db, "Parent", parent);
-    psr_element_destroy(parent);
+    margaux_element_destroy(parent);
 
     // Create child
-    auto child = psr_element_create();
-    psr_element_set_string(child, "label", "Child 1");
+    auto child = margaux_element_create();
+    margaux_element_set_string(child, "label", "Child 1");
     margaux_create_element(db, "Child", child);
-    psr_element_destroy(child);
+    margaux_element_destroy(child);
 
     // Set relation
     auto err = margaux_set_scalar_relation(db, "Child", "parent_id", "Child 1", "Parent 1");
@@ -393,16 +393,16 @@ TEST_F(TempFileFixture, ReadScalarRelationValid) {
     ASSERT_NE(db, nullptr);
 
     // Create parent
-    auto parent = psr_element_create();
-    psr_element_set_string(parent, "label", "Parent 1");
+    auto parent = margaux_element_create();
+    margaux_element_set_string(parent, "label", "Parent 1");
     margaux_create_element(db, "Parent", parent);
-    psr_element_destroy(parent);
+    margaux_element_destroy(parent);
 
     // Create child
-    auto child = psr_element_create();
-    psr_element_set_string(child, "label", "Child 1");
+    auto child = margaux_element_create();
+    margaux_element_set_string(child, "label", "Child 1");
     margaux_create_element(db, "Child", child);
-    psr_element_destroy(child);
+    margaux_element_destroy(child);
 
     // Set relation
     auto err = margaux_set_scalar_relation(db, "Child", "parent_id", "Child 1", "Parent 1");
@@ -416,7 +416,7 @@ TEST_F(TempFileFixture, ReadScalarRelationValid) {
     EXPECT_EQ(count, 1);
     EXPECT_STREQ(values[0], "Parent 1");
 
-    psr_free_string_array(values, count);
+    margaux_free_string_array(values, count);
     margaux_close(db);
 }
 
@@ -431,10 +431,10 @@ TEST_F(TempFileFixture, CreateElementInNonExistentCollection) {
     ASSERT_NE(db, nullptr);
 
     // Try to create element in non-existent collection - should fail
-    auto element = psr_element_create();
-    psr_element_set_string(element, "label", "Test");
+    auto element = margaux_element_create();
+    margaux_element_set_string(element, "label", "Test");
     auto id = margaux_create_element(db, "NonexistentCollection", element);
-    psr_element_destroy(element);
+    margaux_element_destroy(element);
 
     EXPECT_EQ(id, -1);
 
@@ -513,17 +513,17 @@ TEST_F(TempFileFixture, ReadElementIdsValid) {
     ASSERT_NE(db, nullptr);
 
     // Create Configuration first
-    auto config = psr_element_create();
-    psr_element_set_string(config, "label", "Config");
+    auto config = margaux_element_create();
+    margaux_element_set_string(config, "label", "Config");
     margaux_create_element(db, "Configuration", config);
-    psr_element_destroy(config);
+    margaux_element_destroy(config);
 
     // Create some elements
     for (int i = 1; i <= 3; ++i) {
-        auto element = psr_element_create();
-        psr_element_set_string(element, "label", ("Item " + std::to_string(i)).c_str());
+        auto element = margaux_element_create();
+        margaux_element_set_string(element, "label", ("Item " + std::to_string(i)).c_str());
         margaux_create_element(db, "Collection", element);
-        psr_element_destroy(element);
+        margaux_element_destroy(element);
     }
 
     // Read element IDs
@@ -568,16 +568,16 @@ TEST_F(TempFileFixture, DeleteElementValid) {
     ASSERT_NE(db, nullptr);
 
     // Create Configuration first
-    auto config = psr_element_create();
-    psr_element_set_string(config, "label", "Config");
+    auto config = margaux_element_create();
+    margaux_element_set_string(config, "label", "Config");
     margaux_create_element(db, "Configuration", config);
-    psr_element_destroy(config);
+    margaux_element_destroy(config);
 
     // Create element
-    auto element = psr_element_create();
-    psr_element_set_string(element, "label", "Item 1");
+    auto element = margaux_element_create();
+    margaux_element_set_string(element, "label", "Item 1");
     int64_t id = margaux_create_element(db, "Collection", element);
-    psr_element_destroy(element);
+    margaux_element_destroy(element);
 
     EXPECT_GT(id, 0);
 
@@ -603,13 +603,13 @@ TEST_F(TempFileFixture, DeleteElementValid) {
 // ============================================================================
 
 TEST_F(TempFileFixture, UpdateElementNullDb) {
-    auto element = psr_element_create();
-    psr_element_set_string(element, "label", "New Label");
+    auto element = margaux_element_create();
+    margaux_element_set_string(element, "label", "New Label");
 
     auto err = margaux_update_element(nullptr, "Collection", 1, element);
     EXPECT_EQ(err, PSR_ERROR_INVALID_ARGUMENT);
 
-    psr_element_destroy(element);
+    margaux_element_destroy(element);
 }
 
 TEST_F(TempFileFixture, UpdateElementNullCollection) {
@@ -618,13 +618,13 @@ TEST_F(TempFileFixture, UpdateElementNullCollection) {
     auto db = margaux_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
-    auto element = psr_element_create();
-    psr_element_set_string(element, "label", "New Label");
+    auto element = margaux_element_create();
+    margaux_element_set_string(element, "label", "New Label");
 
     auto err = margaux_update_element(db, nullptr, 1, element);
     EXPECT_EQ(err, PSR_ERROR_INVALID_ARGUMENT);
 
-    psr_element_destroy(element);
+    margaux_element_destroy(element);
     margaux_close(db);
 }
 

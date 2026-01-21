@@ -19,24 +19,24 @@ class PsrDatabaseBindings {
   PsrDatabaseBindings.fromLookup(ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName) lookup)
       : _lookup = lookup;
 
-  ffi.Pointer<ffi.Char> psr_error_string(
+  ffi.Pointer<ffi.Char> margaux_error_string(
     int error,
   ) {
-    return _psr_error_string(
+    return _margaux_error_string(
       error,
     );
   }
 
-  late final _psr_error_stringPtr =
-      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function(ffi.Int32)>>('psr_error_string');
-  late final _psr_error_string = _psr_error_stringPtr.asFunction<ffi.Pointer<ffi.Char> Function(int)>();
+  late final _margaux_error_stringPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function(ffi.Int32)>>('margaux_error_string');
+  late final _margaux_error_string = _margaux_error_stringPtr.asFunction<ffi.Pointer<ffi.Char> Function(int)>();
 
-  ffi.Pointer<ffi.Char> psr_version() {
-    return _psr_version();
+  ffi.Pointer<ffi.Char> margaux_version() {
+    return _margaux_version();
   }
 
-  late final _psr_versionPtr = _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function()>>('psr_version');
-  late final _psr_version = _psr_versionPtr.asFunction<ffi.Pointer<ffi.Char> Function()>();
+  late final _margaux_versionPtr = _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function()>>('margaux_version');
+  late final _margaux_version = _margaux_versionPtr.asFunction<ffi.Pointer<ffi.Char> Function()>();
 
   margaux_options_t margaux_options_default() {
     return _margaux_options_default();
@@ -158,7 +158,7 @@ class PsrDatabaseBindings {
   int margaux_create_element(
     ffi.Pointer<margaux_t> db,
     ffi.Pointer<ffi.Char> collection,
-    ffi.Pointer<psr_element_t> element,
+    ffi.Pointer<margaux_element_t> element,
   ) {
     return _margaux_create_element(
       db,
@@ -170,15 +170,15 @@ class PsrDatabaseBindings {
   late final _margaux_create_elementPtr = _lookup<
       ffi.NativeFunction<
           ffi.Int64 Function(ffi.Pointer<margaux_t>, ffi.Pointer<ffi.Char>,
-              ffi.Pointer<psr_element_t>)>>('margaux_create_element');
+              ffi.Pointer<margaux_element_t>)>>('margaux_create_element');
   late final _margaux_create_element = _margaux_create_elementPtr
-      .asFunction<int Function(ffi.Pointer<margaux_t>, ffi.Pointer<ffi.Char>, ffi.Pointer<psr_element_t>)>();
+      .asFunction<int Function(ffi.Pointer<margaux_t>, ffi.Pointer<ffi.Char>, ffi.Pointer<margaux_element_t>)>();
 
   int margaux_update_element(
     ffi.Pointer<margaux_t> db,
     ffi.Pointer<ffi.Char> collection,
     int id,
-    ffi.Pointer<psr_element_t> element,
+    ffi.Pointer<margaux_element_t> element,
   ) {
     return _margaux_update_element(
       db,
@@ -191,9 +191,9 @@ class PsrDatabaseBindings {
   late final _margaux_update_elementPtr = _lookup<
       ffi.NativeFunction<
           ffi.Int32 Function(ffi.Pointer<margaux_t>, ffi.Pointer<ffi.Char>, ffi.Int64,
-              ffi.Pointer<psr_element_t>)>>('margaux_update_element');
+              ffi.Pointer<margaux_element_t>)>>('margaux_update_element');
   late final _margaux_update_element = _margaux_update_elementPtr
-      .asFunction<int Function(ffi.Pointer<margaux_t>, ffi.Pointer<ffi.Char>, int, ffi.Pointer<psr_element_t>)>();
+      .asFunction<int Function(ffi.Pointer<margaux_t>, ffi.Pointer<ffi.Char>, int, ffi.Pointer<margaux_element_t>)>();
 
   int margaux_delete_element_by_id(
     ffi.Pointer<margaux_t> db,
@@ -1073,211 +1073,211 @@ class PsrDatabaseBindings {
       int Function(ffi.Pointer<margaux_t>, ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>, int,
           ffi.Pointer<ffi.Pointer<ffi.Char>>, int)>();
 
-  void psr_free_integer_array(
+  void margaux_free_integer_array(
     ffi.Pointer<ffi.Int64> values,
   ) {
-    return _psr_free_integer_array(
+    return _margaux_free_integer_array(
       values,
     );
   }
 
-  late final _psr_free_integer_arrayPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Int64>)>>('psr_free_integer_array');
-  late final _psr_free_integer_array = _psr_free_integer_arrayPtr.asFunction<void Function(ffi.Pointer<ffi.Int64>)>();
+  late final _margaux_free_integer_arrayPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Int64>)>>('margaux_free_integer_array');
+  late final _margaux_free_integer_array = _margaux_free_integer_arrayPtr.asFunction<void Function(ffi.Pointer<ffi.Int64>)>();
 
-  void psr_free_float_array(
+  void margaux_free_float_array(
     ffi.Pointer<ffi.Double> values,
   ) {
-    return _psr_free_float_array(
+    return _margaux_free_float_array(
       values,
     );
   }
 
-  late final _psr_free_float_arrayPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Double>)>>('psr_free_float_array');
-  late final _psr_free_float_array = _psr_free_float_arrayPtr.asFunction<void Function(ffi.Pointer<ffi.Double>)>();
+  late final _margaux_free_float_arrayPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Double>)>>('margaux_free_float_array');
+  late final _margaux_free_float_array = _margaux_free_float_arrayPtr.asFunction<void Function(ffi.Pointer<ffi.Double>)>();
 
-  void psr_free_string_array(
+  void margaux_free_string_array(
     ffi.Pointer<ffi.Pointer<ffi.Char>> values,
     int count,
   ) {
-    return _psr_free_string_array(
+    return _margaux_free_string_array(
       values,
       count,
     );
   }
 
-  late final _psr_free_string_arrayPtr =
+  late final _margaux_free_string_arrayPtr =
       _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Pointer<ffi.Char>>, ffi.Size)>>(
-          'psr_free_string_array');
-  late final _psr_free_string_array =
-      _psr_free_string_arrayPtr.asFunction<void Function(ffi.Pointer<ffi.Pointer<ffi.Char>>, int)>();
+          'margaux_free_string_array');
+  late final _margaux_free_string_array =
+      _margaux_free_string_arrayPtr.asFunction<void Function(ffi.Pointer<ffi.Pointer<ffi.Char>>, int)>();
 
-  void psr_free_integer_vectors(
+  void margaux_free_integer_vectors(
     ffi.Pointer<ffi.Pointer<ffi.Int64>> vectors,
     ffi.Pointer<ffi.Size> sizes,
     int count,
   ) {
-    return _psr_free_integer_vectors(
+    return _margaux_free_integer_vectors(
       vectors,
       sizes,
       count,
     );
   }
 
-  late final _psr_free_integer_vectorsPtr = _lookup<
+  late final _margaux_free_integer_vectorsPtr = _lookup<
           ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Pointer<ffi.Int64>>, ffi.Pointer<ffi.Size>, ffi.Size)>>(
-      'psr_free_integer_vectors');
-  late final _psr_free_integer_vectors = _psr_free_integer_vectorsPtr
+      'margaux_free_integer_vectors');
+  late final _margaux_free_integer_vectors = _margaux_free_integer_vectorsPtr
       .asFunction<void Function(ffi.Pointer<ffi.Pointer<ffi.Int64>>, ffi.Pointer<ffi.Size>, int)>();
 
-  void psr_free_float_vectors(
+  void margaux_free_float_vectors(
     ffi.Pointer<ffi.Pointer<ffi.Double>> vectors,
     ffi.Pointer<ffi.Size> sizes,
     int count,
   ) {
-    return _psr_free_float_vectors(
+    return _margaux_free_float_vectors(
       vectors,
       sizes,
       count,
     );
   }
 
-  late final _psr_free_float_vectorsPtr = _lookup<
+  late final _margaux_free_float_vectorsPtr = _lookup<
           ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Pointer<ffi.Double>>, ffi.Pointer<ffi.Size>, ffi.Size)>>(
-      'psr_free_float_vectors');
-  late final _psr_free_float_vectors = _psr_free_float_vectorsPtr
+      'margaux_free_float_vectors');
+  late final _margaux_free_float_vectors = _margaux_free_float_vectorsPtr
       .asFunction<void Function(ffi.Pointer<ffi.Pointer<ffi.Double>>, ffi.Pointer<ffi.Size>, int)>();
 
-  void psr_free_string_vectors(
+  void margaux_free_string_vectors(
     ffi.Pointer<ffi.Pointer<ffi.Pointer<ffi.Char>>> vectors,
     ffi.Pointer<ffi.Size> sizes,
     int count,
   ) {
-    return _psr_free_string_vectors(
+    return _margaux_free_string_vectors(
       vectors,
       sizes,
       count,
     );
   }
 
-  late final _psr_free_string_vectorsPtr = _lookup<
+  late final _margaux_free_string_vectorsPtr = _lookup<
       ffi.NativeFunction<
           ffi.Void Function(ffi.Pointer<ffi.Pointer<ffi.Pointer<ffi.Char>>>, ffi.Pointer<ffi.Size>,
-              ffi.Size)>>('psr_free_string_vectors');
-  late final _psr_free_string_vectors = _psr_free_string_vectorsPtr
+              ffi.Size)>>('margaux_free_string_vectors');
+  late final _margaux_free_string_vectors = _margaux_free_string_vectorsPtr
       .asFunction<void Function(ffi.Pointer<ffi.Pointer<ffi.Pointer<ffi.Char>>>, ffi.Pointer<ffi.Size>, int)>();
 
-  ffi.Pointer<psr_element_t1> psr_element_create() {
-    return _psr_element_create();
+  ffi.Pointer<margaux_element_t1> margaux_element_create() {
+    return _margaux_element_create();
   }
 
-  late final _psr_element_createPtr =
-      _lookup<ffi.NativeFunction<ffi.Pointer<psr_element_t1> Function()>>('psr_element_create');
-  late final _psr_element_create = _psr_element_createPtr.asFunction<ffi.Pointer<psr_element_t1> Function()>();
+  late final _margaux_element_createPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<margaux_element_t1> Function()>>('margaux_element_create');
+  late final _margaux_element_create = _margaux_element_createPtr.asFunction<ffi.Pointer<margaux_element_t1> Function()>();
 
-  void psr_element_destroy(
-    ffi.Pointer<psr_element_t1> element,
+  void margaux_element_destroy(
+    ffi.Pointer<margaux_element_t1> element,
   ) {
-    return _psr_element_destroy(
+    return _margaux_element_destroy(
       element,
     );
   }
 
-  late final _psr_element_destroyPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<psr_element_t1>)>>('psr_element_destroy');
-  late final _psr_element_destroy = _psr_element_destroyPtr.asFunction<void Function(ffi.Pointer<psr_element_t1>)>();
+  late final _margaux_element_destroyPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<margaux_element_t1>)>>('margaux_element_destroy');
+  late final _margaux_element_destroy = _margaux_element_destroyPtr.asFunction<void Function(ffi.Pointer<margaux_element_t1>)>();
 
-  void psr_element_clear(
-    ffi.Pointer<psr_element_t1> element,
+  void margaux_element_clear(
+    ffi.Pointer<margaux_element_t1> element,
   ) {
-    return _psr_element_clear(
+    return _margaux_element_clear(
       element,
     );
   }
 
-  late final _psr_element_clearPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<psr_element_t1>)>>('psr_element_clear');
-  late final _psr_element_clear = _psr_element_clearPtr.asFunction<void Function(ffi.Pointer<psr_element_t1>)>();
+  late final _margaux_element_clearPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<margaux_element_t1>)>>('margaux_element_clear');
+  late final _margaux_element_clear = _margaux_element_clearPtr.asFunction<void Function(ffi.Pointer<margaux_element_t1>)>();
 
-  int psr_element_set_integer(
-    ffi.Pointer<psr_element_t1> element,
+  int margaux_element_set_integer(
+    ffi.Pointer<margaux_element_t1> element,
     ffi.Pointer<ffi.Char> name,
     int value,
   ) {
-    return _psr_element_set_integer(
+    return _margaux_element_set_integer(
       element,
       name,
       value,
     );
   }
 
-  late final _psr_element_set_integerPtr =
-      _lookup<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<psr_element_t1>, ffi.Pointer<ffi.Char>, ffi.Int64)>>(
-          'psr_element_set_integer');
-  late final _psr_element_set_integer =
-      _psr_element_set_integerPtr.asFunction<int Function(ffi.Pointer<psr_element_t1>, ffi.Pointer<ffi.Char>, int)>();
+  late final _margaux_element_set_integerPtr =
+      _lookup<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<margaux_element_t1>, ffi.Pointer<ffi.Char>, ffi.Int64)>>(
+          'margaux_element_set_integer');
+  late final _margaux_element_set_integer =
+      _margaux_element_set_integerPtr.asFunction<int Function(ffi.Pointer<margaux_element_t1>, ffi.Pointer<ffi.Char>, int)>();
 
-  int psr_element_set_float(
-    ffi.Pointer<psr_element_t1> element,
+  int margaux_element_set_float(
+    ffi.Pointer<margaux_element_t1> element,
     ffi.Pointer<ffi.Char> name,
     double value,
   ) {
-    return _psr_element_set_float(
+    return _margaux_element_set_float(
       element,
       name,
       value,
     );
   }
 
-  late final _psr_element_set_floatPtr =
-      _lookup<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<psr_element_t1>, ffi.Pointer<ffi.Char>, ffi.Double)>>(
-          'psr_element_set_float');
-  late final _psr_element_set_float =
-      _psr_element_set_floatPtr.asFunction<int Function(ffi.Pointer<psr_element_t1>, ffi.Pointer<ffi.Char>, double)>();
+  late final _margaux_element_set_floatPtr =
+      _lookup<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<margaux_element_t1>, ffi.Pointer<ffi.Char>, ffi.Double)>>(
+          'margaux_element_set_float');
+  late final _margaux_element_set_float =
+      _margaux_element_set_floatPtr.asFunction<int Function(ffi.Pointer<margaux_element_t1>, ffi.Pointer<ffi.Char>, double)>();
 
-  int psr_element_set_string(
-    ffi.Pointer<psr_element_t1> element,
+  int margaux_element_set_string(
+    ffi.Pointer<margaux_element_t1> element,
     ffi.Pointer<ffi.Char> name,
     ffi.Pointer<ffi.Char> value,
   ) {
-    return _psr_element_set_string(
+    return _margaux_element_set_string(
       element,
       name,
       value,
     );
   }
 
-  late final _psr_element_set_stringPtr = _lookup<
+  late final _margaux_element_set_stringPtr = _lookup<
       ffi.NativeFunction<
           ffi.Int32 Function(
-              ffi.Pointer<psr_element_t1>, ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>)>>('psr_element_set_string');
-  late final _psr_element_set_string = _psr_element_set_stringPtr
-      .asFunction<int Function(ffi.Pointer<psr_element_t1>, ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>)>();
+              ffi.Pointer<margaux_element_t1>, ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>)>>('margaux_element_set_string');
+  late final _margaux_element_set_string = _margaux_element_set_stringPtr
+      .asFunction<int Function(ffi.Pointer<margaux_element_t1>, ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>)>();
 
-  int psr_element_set_null(
-    ffi.Pointer<psr_element_t1> element,
+  int margaux_element_set_null(
+    ffi.Pointer<margaux_element_t1> element,
     ffi.Pointer<ffi.Char> name,
   ) {
-    return _psr_element_set_null(
+    return _margaux_element_set_null(
       element,
       name,
     );
   }
 
-  late final _psr_element_set_nullPtr =
-      _lookup<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<psr_element_t1>, ffi.Pointer<ffi.Char>)>>(
-          'psr_element_set_null');
-  late final _psr_element_set_null =
-      _psr_element_set_nullPtr.asFunction<int Function(ffi.Pointer<psr_element_t1>, ffi.Pointer<ffi.Char>)>();
+  late final _margaux_element_set_nullPtr =
+      _lookup<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<margaux_element_t1>, ffi.Pointer<ffi.Char>)>>(
+          'margaux_element_set_null');
+  late final _margaux_element_set_null =
+      _margaux_element_set_nullPtr.asFunction<int Function(ffi.Pointer<margaux_element_t1>, ffi.Pointer<ffi.Char>)>();
 
-  int psr_element_set_array_integer(
-    ffi.Pointer<psr_element_t1> element,
+  int margaux_element_set_array_integer(
+    ffi.Pointer<margaux_element_t1> element,
     ffi.Pointer<ffi.Char> name,
     ffi.Pointer<ffi.Int64> values,
     int count,
   ) {
-    return _psr_element_set_array_integer(
+    return _margaux_element_set_array_integer(
       element,
       name,
       values,
@@ -1285,20 +1285,20 @@ class PsrDatabaseBindings {
     );
   }
 
-  late final _psr_element_set_array_integerPtr = _lookup<
+  late final _margaux_element_set_array_integerPtr = _lookup<
       ffi.NativeFunction<
-          ffi.Int32 Function(ffi.Pointer<psr_element_t1>, ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Int64>,
-              ffi.Int32)>>('psr_element_set_array_integer');
-  late final _psr_element_set_array_integer = _psr_element_set_array_integerPtr
-      .asFunction<int Function(ffi.Pointer<psr_element_t1>, ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Int64>, int)>();
+          ffi.Int32 Function(ffi.Pointer<margaux_element_t1>, ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Int64>,
+              ffi.Int32)>>('margaux_element_set_array_integer');
+  late final _margaux_element_set_array_integer = _margaux_element_set_array_integerPtr
+      .asFunction<int Function(ffi.Pointer<margaux_element_t1>, ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Int64>, int)>();
 
-  int psr_element_set_array_float(
-    ffi.Pointer<psr_element_t1> element,
+  int margaux_element_set_array_float(
+    ffi.Pointer<margaux_element_t1> element,
     ffi.Pointer<ffi.Char> name,
     ffi.Pointer<ffi.Double> values,
     int count,
   ) {
-    return _psr_element_set_array_float(
+    return _margaux_element_set_array_float(
       element,
       name,
       values,
@@ -1306,20 +1306,20 @@ class PsrDatabaseBindings {
     );
   }
 
-  late final _psr_element_set_array_floatPtr = _lookup<
+  late final _margaux_element_set_array_floatPtr = _lookup<
       ffi.NativeFunction<
-          ffi.Int32 Function(ffi.Pointer<psr_element_t1>, ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Double>,
-              ffi.Int32)>>('psr_element_set_array_float');
-  late final _psr_element_set_array_float = _psr_element_set_array_floatPtr
-      .asFunction<int Function(ffi.Pointer<psr_element_t1>, ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Double>, int)>();
+          ffi.Int32 Function(ffi.Pointer<margaux_element_t1>, ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Double>,
+              ffi.Int32)>>('margaux_element_set_array_float');
+  late final _margaux_element_set_array_float = _margaux_element_set_array_floatPtr
+      .asFunction<int Function(ffi.Pointer<margaux_element_t1>, ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Double>, int)>();
 
-  int psr_element_set_array_string(
-    ffi.Pointer<psr_element_t1> element,
+  int margaux_element_set_array_string(
+    ffi.Pointer<margaux_element_t1> element,
     ffi.Pointer<ffi.Char> name,
     ffi.Pointer<ffi.Pointer<ffi.Char>> values,
     int count,
   ) {
-    return _psr_element_set_array_string(
+    return _margaux_element_set_array_string(
       element,
       name,
       values,
@@ -1327,145 +1327,145 @@ class PsrDatabaseBindings {
     );
   }
 
-  late final _psr_element_set_array_stringPtr = _lookup<
+  late final _margaux_element_set_array_stringPtr = _lookup<
       ffi.NativeFunction<
-          ffi.Int32 Function(ffi.Pointer<psr_element_t1>, ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Pointer<ffi.Char>>,
-              ffi.Int32)>>('psr_element_set_array_string');
-  late final _psr_element_set_array_string = _psr_element_set_array_stringPtr.asFunction<
-      int Function(ffi.Pointer<psr_element_t1>, ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Pointer<ffi.Char>>, int)>();
+          ffi.Int32 Function(ffi.Pointer<margaux_element_t1>, ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Pointer<ffi.Char>>,
+              ffi.Int32)>>('margaux_element_set_array_string');
+  late final _margaux_element_set_array_string = _margaux_element_set_array_stringPtr.asFunction<
+      int Function(ffi.Pointer<margaux_element_t1>, ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Pointer<ffi.Char>>, int)>();
 
-  int psr_element_has_scalars(
-    ffi.Pointer<psr_element_t1> element,
+  int margaux_element_has_scalars(
+    ffi.Pointer<margaux_element_t1> element,
   ) {
-    return _psr_element_has_scalars(
+    return _margaux_element_has_scalars(
       element,
     );
   }
 
-  late final _psr_element_has_scalarsPtr =
-      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Pointer<psr_element_t1>)>>('psr_element_has_scalars');
-  late final _psr_element_has_scalars =
-      _psr_element_has_scalarsPtr.asFunction<int Function(ffi.Pointer<psr_element_t1>)>();
+  late final _margaux_element_has_scalarsPtr =
+      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Pointer<margaux_element_t1>)>>('margaux_element_has_scalars');
+  late final _margaux_element_has_scalars =
+      _margaux_element_has_scalarsPtr.asFunction<int Function(ffi.Pointer<margaux_element_t1>)>();
 
-  int psr_element_has_arrays(
-    ffi.Pointer<psr_element_t1> element,
+  int margaux_element_has_arrays(
+    ffi.Pointer<margaux_element_t1> element,
   ) {
-    return _psr_element_has_arrays(
+    return _margaux_element_has_arrays(
       element,
     );
   }
 
-  late final _psr_element_has_arraysPtr =
-      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Pointer<psr_element_t1>)>>('psr_element_has_arrays');
-  late final _psr_element_has_arrays =
-      _psr_element_has_arraysPtr.asFunction<int Function(ffi.Pointer<psr_element_t1>)>();
+  late final _margaux_element_has_arraysPtr =
+      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Pointer<margaux_element_t1>)>>('margaux_element_has_arrays');
+  late final _margaux_element_has_arrays =
+      _margaux_element_has_arraysPtr.asFunction<int Function(ffi.Pointer<margaux_element_t1>)>();
 
-  int psr_element_scalar_count(
-    ffi.Pointer<psr_element_t1> element,
+  int margaux_element_scalar_count(
+    ffi.Pointer<margaux_element_t1> element,
   ) {
-    return _psr_element_scalar_count(
+    return _margaux_element_scalar_count(
       element,
     );
   }
 
-  late final _psr_element_scalar_countPtr =
-      _lookup<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<psr_element_t1>)>>('psr_element_scalar_count');
-  late final _psr_element_scalar_count =
-      _psr_element_scalar_countPtr.asFunction<int Function(ffi.Pointer<psr_element_t1>)>();
+  late final _margaux_element_scalar_countPtr =
+      _lookup<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<margaux_element_t1>)>>('margaux_element_scalar_count');
+  late final _margaux_element_scalar_count =
+      _margaux_element_scalar_countPtr.asFunction<int Function(ffi.Pointer<margaux_element_t1>)>();
 
-  int psr_element_array_count(
-    ffi.Pointer<psr_element_t1> element,
+  int margaux_element_array_count(
+    ffi.Pointer<margaux_element_t1> element,
   ) {
-    return _psr_element_array_count(
+    return _margaux_element_array_count(
       element,
     );
   }
 
-  late final _psr_element_array_countPtr =
-      _lookup<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<psr_element_t1>)>>('psr_element_array_count');
-  late final _psr_element_array_count =
-      _psr_element_array_countPtr.asFunction<int Function(ffi.Pointer<psr_element_t1>)>();
+  late final _margaux_element_array_countPtr =
+      _lookup<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<margaux_element_t1>)>>('margaux_element_array_count');
+  late final _margaux_element_array_count =
+      _margaux_element_array_countPtr.asFunction<int Function(ffi.Pointer<margaux_element_t1>)>();
 
-  ffi.Pointer<ffi.Char> psr_element_to_string(
-    ffi.Pointer<psr_element_t1> element,
+  ffi.Pointer<ffi.Char> margaux_element_to_string(
+    ffi.Pointer<margaux_element_t1> element,
   ) {
-    return _psr_element_to_string(
+    return _margaux_element_to_string(
       element,
     );
   }
 
-  late final _psr_element_to_stringPtr =
-      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function(ffi.Pointer<psr_element_t1>)>>('psr_element_to_string');
-  late final _psr_element_to_string =
-      _psr_element_to_stringPtr.asFunction<ffi.Pointer<ffi.Char> Function(ffi.Pointer<psr_element_t1>)>();
+  late final _margaux_element_to_stringPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function(ffi.Pointer<margaux_element_t1>)>>('margaux_element_to_string');
+  late final _margaux_element_to_string =
+      _margaux_element_to_stringPtr.asFunction<ffi.Pointer<ffi.Char> Function(ffi.Pointer<margaux_element_t1>)>();
 
-  void psr_string_free(
+  void margaux_string_free(
     ffi.Pointer<ffi.Char> str,
   ) {
-    return _psr_string_free(
+    return _margaux_string_free(
       str,
     );
   }
 
-  late final _psr_string_freePtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Char>)>>('psr_string_free');
-  late final _psr_string_free = _psr_string_freePtr.asFunction<void Function(ffi.Pointer<ffi.Char>)>();
+  late final _margaux_string_freePtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Char>)>>('margaux_string_free');
+  late final _margaux_string_free = _margaux_string_freePtr.asFunction<void Function(ffi.Pointer<ffi.Char>)>();
 
-  ffi.Pointer<psr_lua_runner_t> psr_lua_runner_new(
+  ffi.Pointer<margaux_lua_runner_t> margaux_lua_runner_new(
     ffi.Pointer<margaux_t> db,
   ) {
-    return _psr_lua_runner_new(
+    return _margaux_lua_runner_new(
       db,
     );
   }
 
-  late final _psr_lua_runner_newPtr =
-      _lookup<ffi.NativeFunction<ffi.Pointer<psr_lua_runner_t> Function(ffi.Pointer<margaux_t>)>>(
-          'psr_lua_runner_new');
-  late final _psr_lua_runner_new =
-      _psr_lua_runner_newPtr.asFunction<ffi.Pointer<psr_lua_runner_t> Function(ffi.Pointer<margaux_t>)>();
+  late final _margaux_lua_runner_newPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<margaux_lua_runner_t> Function(ffi.Pointer<margaux_t>)>>(
+          'margaux_lua_runner_new');
+  late final _margaux_lua_runner_new =
+      _margaux_lua_runner_newPtr.asFunction<ffi.Pointer<margaux_lua_runner_t> Function(ffi.Pointer<margaux_t>)>();
 
-  void psr_lua_runner_free(
-    ffi.Pointer<psr_lua_runner_t> runner,
+  void margaux_lua_runner_free(
+    ffi.Pointer<margaux_lua_runner_t> runner,
   ) {
-    return _psr_lua_runner_free(
+    return _margaux_lua_runner_free(
       runner,
     );
   }
 
-  late final _psr_lua_runner_freePtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<psr_lua_runner_t>)>>('psr_lua_runner_free');
-  late final _psr_lua_runner_free = _psr_lua_runner_freePtr.asFunction<void Function(ffi.Pointer<psr_lua_runner_t>)>();
+  late final _margaux_lua_runner_freePtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<margaux_lua_runner_t>)>>('margaux_lua_runner_free');
+  late final _margaux_lua_runner_free = _margaux_lua_runner_freePtr.asFunction<void Function(ffi.Pointer<margaux_lua_runner_t>)>();
 
-  int psr_lua_runner_run(
-    ffi.Pointer<psr_lua_runner_t> runner,
+  int margaux_lua_runner_run(
+    ffi.Pointer<margaux_lua_runner_t> runner,
     ffi.Pointer<ffi.Char> script,
   ) {
-    return _psr_lua_runner_run(
+    return _margaux_lua_runner_run(
       runner,
       script,
     );
   }
 
-  late final _psr_lua_runner_runPtr =
-      _lookup<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<psr_lua_runner_t>, ffi.Pointer<ffi.Char>)>>(
-          'psr_lua_runner_run');
-  late final _psr_lua_runner_run =
-      _psr_lua_runner_runPtr.asFunction<int Function(ffi.Pointer<psr_lua_runner_t>, ffi.Pointer<ffi.Char>)>();
+  late final _margaux_lua_runner_runPtr =
+      _lookup<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<margaux_lua_runner_t>, ffi.Pointer<ffi.Char>)>>(
+          'margaux_lua_runner_run');
+  late final _margaux_lua_runner_run =
+      _margaux_lua_runner_runPtr.asFunction<int Function(ffi.Pointer<margaux_lua_runner_t>, ffi.Pointer<ffi.Char>)>();
 
-  ffi.Pointer<ffi.Char> psr_lua_runner_get_error(
-    ffi.Pointer<psr_lua_runner_t> runner,
+  ffi.Pointer<ffi.Char> margaux_lua_runner_get_error(
+    ffi.Pointer<margaux_lua_runner_t> runner,
   ) {
-    return _psr_lua_runner_get_error(
+    return _margaux_lua_runner_get_error(
       runner,
     );
   }
 
-  late final _psr_lua_runner_get_errorPtr =
-      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function(ffi.Pointer<psr_lua_runner_t>)>>(
-          'psr_lua_runner_get_error');
-  late final _psr_lua_runner_get_error =
-      _psr_lua_runner_get_errorPtr.asFunction<ffi.Pointer<ffi.Char> Function(ffi.Pointer<psr_lua_runner_t>)>();
+  late final _margaux_lua_runner_get_errorPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function(ffi.Pointer<margaux_lua_runner_t>)>>(
+          'margaux_lua_runner_get_error');
+  late final _margaux_lua_runner_get_error =
+      _margaux_lua_runner_get_errorPtr.asFunction<ffi.Pointer<ffi.Char> Function(ffi.Pointer<margaux_lua_runner_t>)>();
 }
 
 abstract class margaux_error_t {
@@ -1478,7 +1478,7 @@ abstract class margaux_error_t {
   static const int PSR_ERROR_NOT_FOUND = -6;
 }
 
-abstract class psr_log_level_t {
+abstract class margaux_log_level_t {
   static const int PSR_LOG_DEBUG = 0;
   static const int PSR_LOG_INFO = 1;
   static const int PSR_LOG_WARN = 2;
@@ -1494,13 +1494,13 @@ final class margaux_options_t extends ffi.Struct {
   external int console_level;
 }
 
-abstract class psr_data_structure_t {
+abstract class margaux_data_structure_t {
   static const int PSR_DATA_STRUCTURE_SCALAR = 0;
   static const int PSR_DATA_STRUCTURE_VECTOR = 1;
   static const int PSR_DATA_STRUCTURE_SET = 2;
 }
 
-abstract class psr_data_type_t {
+abstract class margaux_data_type_t {
   static const int PSR_DATA_TYPE_INTEGER = 0;
   static const int PSR_DATA_TYPE_FLOAT = 1;
   static const int PSR_DATA_TYPE_STRING = 2;
@@ -1510,11 +1510,11 @@ final class margaux extends ffi.Opaque {}
 
 typedef margaux_t = margaux;
 
-final class psr_element extends ffi.Opaque {}
+final class margaux_element extends ffi.Opaque {}
 
-typedef psr_element_t = psr_element;
-typedef psr_element_t1 = psr_element;
+typedef margaux_element_t = margaux_element;
+typedef margaux_element_t1 = margaux_element;
 
-final class psr_lua_runner extends ffi.Opaque {}
+final class margaux_lua_runner extends ffi.Opaque {}
 
-typedef psr_lua_runner_t = psr_lua_runner;
+typedef margaux_lua_runner_t = margaux_lua_runner;

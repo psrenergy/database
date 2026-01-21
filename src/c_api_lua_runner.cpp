@@ -5,29 +5,29 @@
 #include <new>
 #include <string>
 
-struct psr_lua_runner {
+struct margaux_lua_runner {
     psr::LuaRunner runner;
     std::string last_error;
 
-    explicit psr_lua_runner(psr::Database& db) : runner(db) {}
+    explicit margaux_lua_runner(psr::Database& db) : runner(db) {}
 };
 
-psr_lua_runner_t* psr_lua_runner_new(margaux_t* db) {
+margaux_lua_runner_t* margaux_lua_runner_new(margaux_t* db) {
     if (!db) {
         return nullptr;
     }
     try {
-        return new psr_lua_runner(db->db);
+        return new margaux_lua_runner(db->db);
     } catch (...) {
         return nullptr;
     }
 }
 
-void psr_lua_runner_free(psr_lua_runner_t* runner) {
+void margaux_lua_runner_free(margaux_lua_runner_t* runner) {
     delete runner;
 }
 
-margaux_error_t psr_lua_runner_run(psr_lua_runner_t* runner, const char* script) {
+margaux_error_t margaux_lua_runner_run(margaux_lua_runner_t* runner, const char* script) {
     if (!runner || !script) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }
@@ -44,7 +44,7 @@ margaux_error_t psr_lua_runner_run(psr_lua_runner_t* runner, const char* script)
     }
 }
 
-const char* psr_lua_runner_get_error(psr_lua_runner_t* runner) {
+const char* margaux_lua_runner_get_error(margaux_lua_runner_t* runner) {
     if (!runner || runner->last_error.empty()) {
         return nullptr;
     }

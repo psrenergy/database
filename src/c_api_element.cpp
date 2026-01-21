@@ -7,25 +7,25 @@
 
 extern "C" {
 
-PSR_C_API psr_element_t* psr_element_create(void) {
+PSR_C_API margaux_element_t* margaux_element_create(void) {
     try {
-        return new psr_element();
+        return new margaux_element();
     } catch (const std::bad_alloc&) {
         return nullptr;
     }
 }
 
-PSR_C_API void psr_element_destroy(psr_element_t* element) {
+PSR_C_API void margaux_element_destroy(margaux_element_t* element) {
     delete element;
 }
 
-PSR_C_API void psr_element_clear(psr_element_t* element) {
+PSR_C_API void margaux_element_clear(margaux_element_t* element) {
     if (element) {
         element->element.clear();
     }
 }
 
-PSR_C_API margaux_error_t psr_element_set_integer(psr_element_t* element, const char* name, int64_t value) {
+PSR_C_API margaux_error_t margaux_element_set_integer(margaux_element_t* element, const char* name, int64_t value) {
     if (!element || !name) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }
@@ -33,7 +33,7 @@ PSR_C_API margaux_error_t psr_element_set_integer(psr_element_t* element, const 
     return PSR_OK;
 }
 
-PSR_C_API margaux_error_t psr_element_set_float(psr_element_t* element, const char* name, double value) {
+PSR_C_API margaux_error_t margaux_element_set_float(margaux_element_t* element, const char* name, double value) {
     if (!element || !name) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }
@@ -41,7 +41,7 @@ PSR_C_API margaux_error_t psr_element_set_float(psr_element_t* element, const ch
     return PSR_OK;
 }
 
-PSR_C_API margaux_error_t psr_element_set_string(psr_element_t* element, const char* name, const char* value) {
+PSR_C_API margaux_error_t margaux_element_set_string(margaux_element_t* element, const char* name, const char* value) {
     if (!element || !name || !value) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }
@@ -49,7 +49,7 @@ PSR_C_API margaux_error_t psr_element_set_string(psr_element_t* element, const c
     return PSR_OK;
 }
 
-PSR_C_API margaux_error_t psr_element_set_null(psr_element_t* element, const char* name) {
+PSR_C_API margaux_error_t margaux_element_set_null(margaux_element_t* element, const char* name) {
     if (!element || !name) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }
@@ -57,7 +57,7 @@ PSR_C_API margaux_error_t psr_element_set_null(psr_element_t* element, const cha
     return PSR_OK;
 }
 
-PSR_C_API margaux_error_t psr_element_set_array_integer(psr_element_t* element,
+PSR_C_API margaux_error_t margaux_element_set_array_integer(margaux_element_t* element,
                                                     const char* name,
                                                     const int64_t* values,
                                                     int32_t count) {
@@ -69,7 +69,7 @@ PSR_C_API margaux_error_t psr_element_set_array_integer(psr_element_t* element,
     return PSR_OK;
 }
 
-PSR_C_API margaux_error_t psr_element_set_array_float(psr_element_t* element,
+PSR_C_API margaux_error_t margaux_element_set_array_float(margaux_element_t* element,
                                                   const char* name,
                                                   const double* values,
                                                   int32_t count) {
@@ -81,7 +81,7 @@ PSR_C_API margaux_error_t psr_element_set_array_float(psr_element_t* element,
     return PSR_OK;
 }
 
-PSR_C_API margaux_error_t psr_element_set_array_string(psr_element_t* element,
+PSR_C_API margaux_error_t margaux_element_set_array_string(margaux_element_t* element,
                                                    const char* name,
                                                    const char* const* values,
                                                    int32_t count) {
@@ -97,35 +97,35 @@ PSR_C_API margaux_error_t psr_element_set_array_string(psr_element_t* element,
     return PSR_OK;
 }
 
-PSR_C_API int psr_element_has_scalars(psr_element_t* element) {
+PSR_C_API int margaux_element_has_scalars(margaux_element_t* element) {
     if (!element) {
         return 0;
     }
     return element->element.has_scalars() ? 1 : 0;
 }
 
-PSR_C_API int psr_element_has_arrays(psr_element_t* element) {
+PSR_C_API int margaux_element_has_arrays(margaux_element_t* element) {
     if (!element) {
         return 0;
     }
     return element->element.has_arrays() ? 1 : 0;
 }
 
-PSR_C_API size_t psr_element_scalar_count(psr_element_t* element) {
+PSR_C_API size_t margaux_element_scalar_count(margaux_element_t* element) {
     if (!element) {
         return 0;
     }
     return element->element.scalars().size();
 }
 
-PSR_C_API size_t psr_element_array_count(psr_element_t* element) {
+PSR_C_API size_t margaux_element_array_count(margaux_element_t* element) {
     if (!element) {
         return 0;
     }
     return element->element.arrays().size();
 }
 
-PSR_C_API char* psr_element_to_string(psr_element_t* element) {
+PSR_C_API char* margaux_element_to_string(margaux_element_t* element) {
     if (!element) {
         return nullptr;
     }
@@ -139,7 +139,7 @@ PSR_C_API char* psr_element_to_string(psr_element_t* element) {
     }
 }
 
-PSR_C_API void psr_string_free(char* str) {
+PSR_C_API void margaux_string_free(char* str) {
     delete[] str;
 }
 
