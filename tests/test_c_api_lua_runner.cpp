@@ -13,7 +13,7 @@ protected:
 
 TEST_F(LuaRunnerCApiTest, CreateAndDestroy) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -35,7 +35,7 @@ TEST_F(LuaRunnerCApiTest, CreateWithNullDb) {
 
 TEST_F(LuaRunnerCApiTest, RunSimpleScript) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -51,7 +51,7 @@ TEST_F(LuaRunnerCApiTest, RunSimpleScript) {
 
 TEST_F(LuaRunnerCApiTest, RunNullScript) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -72,7 +72,7 @@ TEST_F(LuaRunnerCApiTest, RunWithNullRunner) {
 
 TEST_F(LuaRunnerCApiTest, CreateElement) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -100,7 +100,7 @@ TEST_F(LuaRunnerCApiTest, CreateElement) {
 
 TEST_F(LuaRunnerCApiTest, SyntaxError) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -119,7 +119,7 @@ TEST_F(LuaRunnerCApiTest, SyntaxError) {
 
 TEST_F(LuaRunnerCApiTest, RuntimeError) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -143,7 +143,7 @@ TEST_F(LuaRunnerCApiTest, GetErrorNull) {
 
 TEST_F(LuaRunnerCApiTest, ReuseRunner) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -169,7 +169,7 @@ TEST_F(LuaRunnerCApiTest, ReuseRunner) {
 
 TEST_F(LuaRunnerCApiTest, ReadScalarIntegers) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -202,7 +202,7 @@ TEST_F(LuaRunnerCApiTest, ReadScalarIntegers) {
 
 TEST_F(LuaRunnerCApiTest, CreateElementWithVectors) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -238,7 +238,7 @@ TEST_F(LuaRunnerCApiTest, CreateElementWithVectors) {
 
 TEST_F(LuaRunnerCApiTest, DeleteElement) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -267,7 +267,7 @@ TEST_F(LuaRunnerCApiTest, DeleteElement) {
 
 TEST_F(LuaRunnerCApiTest, UpdateElement) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -303,7 +303,7 @@ TEST_F(LuaRunnerCApiTest, UpdateElement) {
 
 TEST_F(LuaRunnerCApiTest, EmptyScript) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -319,7 +319,7 @@ TEST_F(LuaRunnerCApiTest, EmptyScript) {
 
 TEST_F(LuaRunnerCApiTest, CommentOnlyScript) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -335,7 +335,7 @@ TEST_F(LuaRunnerCApiTest, CommentOnlyScript) {
 
 TEST_F(LuaRunnerCApiTest, AssertionFailure) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -355,7 +355,7 @@ TEST_F(LuaRunnerCApiTest, AssertionFailure) {
 
 TEST_F(LuaRunnerCApiTest, UndefinedVariableError) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -374,7 +374,7 @@ TEST_F(LuaRunnerCApiTest, UndefinedVariableError) {
 
 TEST_F(LuaRunnerCApiTest, ErrorClearedAfterSuccessfulRun) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -397,7 +397,7 @@ TEST_F(LuaRunnerCApiTest, ErrorClearedAfterSuccessfulRun) {
 
 TEST_F(LuaRunnerCApiTest, ReadVectorIntegersFromLua) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 

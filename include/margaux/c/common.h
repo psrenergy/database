@@ -1,5 +1,5 @@
-#ifndef PSR_C_COMMON_H
-#define PSR_C_COMMON_H
+#ifndef MARGAUX_C_COMMON_H
+#define MARGAUX_C_COMMON_H
 
 #include <stddef.h>
 #include <stdint.h>
@@ -10,7 +10,7 @@ extern "C" {
 
 // Platform-specific export macros
 #ifdef _WIN32
-#ifdef PSR_DATABASE_C_EXPORTS
+#ifdef MARGAUX_DATABASE_C_EXPORTS
 #define MARGAUX_C_API __declspec(dllexport)
 #else
 #define MARGAUX_C_API __declspec(dllimport)
@@ -38,4 +38,4 @@ MARGAUX_C_API const char* psr_version(void);
 }
 #endif
 
-#endif  // PSR_C_COMMON_H
+#endif  // MARGAUX_C_COMMON_H

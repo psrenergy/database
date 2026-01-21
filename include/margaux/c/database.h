@@ -1,5 +1,5 @@
-#ifndef PSR_C_DATABASE_H
-#define PSR_C_DATABASE_H
+#ifndef MARGAUX_C_DATABASE_H
+#define MARGAUX_C_DATABASE_H
 
 #include "common.h"
 
@@ -9,11 +9,11 @@ extern "C" {
 
 // Log levels for console output
 typedef enum {
-    PSR_LOG_DEBUG = 0,
-    PSR_LOG_INFO = 1,
-    PSR_LOG_WARN = 2,
-    PSR_LOG_ERROR = 3,
-    PSR_LOG_OFF = 4,
+    MARGAUX_LOG_DEBUG = 0,
+    MARGAUX_LOG_INFO = 1,
+    MARGAUX_LOG_WARN = 2,
+    MARGAUX_LOG_ERROR = 3,
+    MARGAUX_LOG_OFF = 4,
 } psr_log_level_t;
 
 // Database options
@@ -24,13 +24,13 @@ typedef struct {
 
 // Attribute data structure
 typedef enum {
-    PSR_DATA_STRUCTURE_SCALAR = 0,
-    PSR_DATA_STRUCTURE_VECTOR = 1,
-    PSR_DATA_STRUCTURE_SET = 2
+    MARGAUX_DATA_STRUCTURE_SCALAR = 0,
+    MARGAUX_DATA_STRUCTURE_VECTOR = 1,
+    MARGAUX_DATA_STRUCTURE_SET = 2
 } psr_data_structure_t;
 
 // Attribute data types
-typedef enum { PSR_DATA_TYPE_INTEGER = 0, PSR_DATA_TYPE_FLOAT = 1, PSR_DATA_TYPE_STRING = 2 } psr_data_type_t;
+typedef enum { MARGAUX_DATA_TYPE_INTEGER = 0, MARGAUX_DATA_TYPE_FLOAT = 1, MARGAUX_DATA_TYPE_STRING = 2 } psr_data_type_t;
 
 // Returns default options
 MARGAUX_C_API psr_database_options_t psr_database_options_default(void);
@@ -292,4 +292,4 @@ MARGAUX_C_API void psr_free_string_vectors(char*** vectors, size_t* sizes, size_
 }
 #endif
 
-#endif  // PSR_C_DATABASE_H
+#endif  // MARGAUX_C_DATABASE_H

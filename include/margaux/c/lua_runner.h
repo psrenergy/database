@@ -1,5 +1,5 @@
-#ifndef PSR_C_LUA_RUNNER_H
-#define PSR_C_LUA_RUNNER_H
+#ifndef MARGAUX_C_LUA_RUNNER_H
+#define MARGAUX_C_LUA_RUNNER_H
 
 #include "common.h"
 #include "database.h"
@@ -31,4 +31,4 @@ MARGAUX_C_API const char* psr_lua_runner_get_error(psr_lua_runner_t* runner);
 }
 #endif
 
-#endif  // PSR_C_LUA_RUNNER_H
+#endif  // MARGAUX_C_LUA_RUNNER_H

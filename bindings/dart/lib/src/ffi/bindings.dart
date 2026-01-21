@@ -1479,11 +1479,11 @@ abstract class margaux_error_t {
 }
 
 abstract class psr_log_level_t {
-  static const int PSR_LOG_DEBUG = 0;
-  static const int PSR_LOG_INFO = 1;
-  static const int PSR_LOG_WARN = 2;
-  static const int PSR_LOG_ERROR = 3;
-  static const int PSR_LOG_OFF = 4;
+  static const int MARGAUX_LOG_DEBUG = 0;
+  static const int MARGAUX_LOG_INFO = 1;
+  static const int MARGAUX_LOG_WARN = 2;
+  static const int MARGAUX_LOG_ERROR = 3;
+  static const int MARGAUX_LOG_OFF = 4;
 }
 
 final class psr_database_options_t extends ffi.Struct {
@@ -1495,15 +1495,15 @@ final class psr_database_options_t extends ffi.Struct {
 }
 
 abstract class psr_data_structure_t {
-  static const int PSR_DATA_STRUCTURE_SCALAR = 0;
-  static const int PSR_DATA_STRUCTURE_VECTOR = 1;
-  static const int PSR_DATA_STRUCTURE_SET = 2;
+  static const int MARGAUX_DATA_STRUCTURE_SCALAR = 0;
+  static const int MARGAUX_DATA_STRUCTURE_VECTOR = 1;
+  static const int MARGAUX_DATA_STRUCTURE_SET = 2;
 }
 
 abstract class psr_data_type_t {
-  static const int PSR_DATA_TYPE_INTEGER = 0;
-  static const int PSR_DATA_TYPE_FLOAT = 1;
-  static const int PSR_DATA_TYPE_STRING = 2;
+  static const int MARGAUX_DATA_TYPE_INTEGER = 0;
+  static const int MARGAUX_DATA_TYPE_FLOAT = 1;
+  static const int MARGAUX_DATA_TYPE_STRING = 2;
 }
 
 final class psr_database extends ffi.Opaque {}

@@ -19,7 +19,7 @@ protected:
 
 TEST_F(TempFileFixture, OpenAndClose) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_open(path.c_str(), &options);
 
     ASSERT_NE(db, nullptr);
@@ -30,7 +30,7 @@ TEST_F(TempFileFixture, OpenAndClose) {
 
 TEST_F(TempFileFixture, OpenInMemory) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_open(":memory:", &options);
 
     ASSERT_NE(db, nullptr);
@@ -41,7 +41,7 @@ TEST_F(TempFileFixture, OpenInMemory) {
 
 TEST_F(TempFileFixture, OpenNullPath) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_open(nullptr, &options);
 
     EXPECT_EQ(db, nullptr);
@@ -49,7 +49,7 @@ TEST_F(TempFileFixture, OpenNullPath) {
 
 TEST_F(TempFileFixture, DatabasePath) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_open(path.c_str(), &options);
 
     ASSERT_NE(db, nullptr);
@@ -60,7 +60,7 @@ TEST_F(TempFileFixture, DatabasePath) {
 
 TEST_F(TempFileFixture, DatabasePathInMemory) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_open(":memory:", &options);
 
     ASSERT_NE(db, nullptr);
@@ -100,7 +100,7 @@ TEST_F(TempFileFixture, Version) {
 
 TEST_F(TempFileFixture, LogLevelDebug) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_DEBUG;
+    options.console_level = MARGAUX_LOG_DEBUG;
     auto db = psr_database_open(":memory:", &options);
 
     ASSERT_NE(db, nullptr);
@@ -110,7 +110,7 @@ TEST_F(TempFileFixture, LogLevelDebug) {
 
 TEST_F(TempFileFixture, LogLevelInfo) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_INFO;
+    options.console_level = MARGAUX_LOG_INFO;
     auto db = psr_database_open(":memory:", &options);
 
     ASSERT_NE(db, nullptr);
@@ -120,7 +120,7 @@ TEST_F(TempFileFixture, LogLevelInfo) {
 
 TEST_F(TempFileFixture, LogLevelWarn) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_WARN;
+    options.console_level = MARGAUX_LOG_WARN;
     auto db = psr_database_open(":memory:", &options);
 
     ASSERT_NE(db, nullptr);
@@ -130,7 +130,7 @@ TEST_F(TempFileFixture, LogLevelWarn) {
 
 TEST_F(TempFileFixture, LogLevelError) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_ERROR;
+    options.console_level = MARGAUX_LOG_ERROR;
     auto db = psr_database_open(":memory:", &options);
 
     ASSERT_NE(db, nullptr);
@@ -140,7 +140,7 @@ TEST_F(TempFileFixture, LogLevelError) {
 
 TEST_F(TempFileFixture, CreatesFileOnDisk) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_open(path.c_str(), &options);
 
     ASSERT_NE(db, nullptr);
@@ -153,7 +153,7 @@ TEST_F(TempFileFixture, DefaultOptions) {
     auto options = psr_database_options_default();
 
     EXPECT_EQ(options.read_only, 0);
-    EXPECT_EQ(options.console_level, PSR_LOG_INFO);
+    EXPECT_EQ(options.console_level, MARGAUX_LOG_INFO);
 }
 
 TEST_F(TempFileFixture, OpenWithNullOptions) {
@@ -166,7 +166,7 @@ TEST_F(TempFileFixture, OpenWithNullOptions) {
 
 TEST_F(TempFileFixture, OpenReadOnly) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_open(path.c_str(), &options);
     ASSERT_NE(db, nullptr);
     psr_database_close(db);
@@ -189,7 +189,7 @@ TEST_F(TempFileFixture, CurrentVersionNullDb) {
 
 TEST_F(TempFileFixture, CurrentVersionValid) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_open(":memory:", &options);
     ASSERT_NE(db, nullptr);
 
@@ -205,21 +205,21 @@ TEST_F(TempFileFixture, CurrentVersionValid) {
 
 TEST_F(TempFileFixture, FromSchemaNullDbPath) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(nullptr, "schema.sql", &options);
     EXPECT_EQ(db, nullptr);
 }
 
 TEST_F(TempFileFixture, FromSchemaNullSchemaPath) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", nullptr, &options);
     EXPECT_EQ(db, nullptr);
 }
 
 TEST_F(TempFileFixture, FromSchemaInvalidPath) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", "nonexistent/path/schema.sql", &options);
     EXPECT_EQ(db, nullptr);
 }
@@ -230,21 +230,21 @@ TEST_F(TempFileFixture, FromSchemaInvalidPath) {
 
 TEST_F(TempFileFixture, FromMigrationsNullDbPath) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_migrations(nullptr, "migrations/", &options);
     EXPECT_EQ(db, nullptr);
 }
 
 TEST_F(TempFileFixture, FromMigrationsNullMigrationsPath) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_migrations(":memory:", nullptr, &options);
     EXPECT_EQ(db, nullptr);
 }
 
 TEST_F(TempFileFixture, FromMigrationsInvalidPath) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_migrations(":memory:", "nonexistent/migrations/", &options);
     // Invalid migrations path results in database with version 0 (no migrations applied)
     ASSERT_NE(db, nullptr);
@@ -263,7 +263,7 @@ TEST_F(TempFileFixture, SetScalarRelationNullDb) {
 
 TEST_F(TempFileFixture, SetScalarRelationNullCollection) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("relations.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -275,7 +275,7 @@ TEST_F(TempFileFixture, SetScalarRelationNullCollection) {
 
 TEST_F(TempFileFixture, SetScalarRelationNullAttribute) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("relations.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -287,7 +287,7 @@ TEST_F(TempFileFixture, SetScalarRelationNullAttribute) {
 
 TEST_F(TempFileFixture, SetScalarRelationNullFromLabel) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("relations.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -299,7 +299,7 @@ TEST_F(TempFileFixture, SetScalarRelationNullFromLabel) {
 
 TEST_F(TempFileFixture, SetScalarRelationNullToLabel) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("relations.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -311,7 +311,7 @@ TEST_F(TempFileFixture, SetScalarRelationNullToLabel) {
 
 TEST_F(TempFileFixture, SetScalarRelationValid) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("relations.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -343,7 +343,7 @@ TEST_F(TempFileFixture, ReadScalarRelationNullDb) {
 
 TEST_F(TempFileFixture, ReadScalarRelationNullCollection) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("relations.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -357,7 +357,7 @@ TEST_F(TempFileFixture, ReadScalarRelationNullCollection) {
 
 TEST_F(TempFileFixture, ReadScalarRelationNullAttribute) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("relations.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -371,7 +371,7 @@ TEST_F(TempFileFixture, ReadScalarRelationNullAttribute) {
 
 TEST_F(TempFileFixture, ReadScalarRelationNullOutput) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("relations.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -388,7 +388,7 @@ TEST_F(TempFileFixture, ReadScalarRelationNullOutput) {
 
 TEST_F(TempFileFixture, ReadScalarRelationValid) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("relations.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -426,7 +426,7 @@ TEST_F(TempFileFixture, ReadScalarRelationValid) {
 
 TEST_F(TempFileFixture, CreateElementInNonExistentCollection) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -443,7 +443,7 @@ TEST_F(TempFileFixture, CreateElementInNonExistentCollection) {
 
 TEST_F(TempFileFixture, OpenReadOnlyNonExistentPath) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     options.read_only = 1;
 
     // Try to open non-existent file as read-only
@@ -455,7 +455,7 @@ TEST_F(TempFileFixture, OpenReadOnlyNonExistentPath) {
 
 TEST_F(TempFileFixture, FromSchemaValidPath) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
 
     ASSERT_NE(db, nullptr);
@@ -477,7 +477,7 @@ TEST_F(TempFileFixture, ReadElementIdsNullDb) {
 
 TEST_F(TempFileFixture, ReadElementIdsNullCollection) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -491,7 +491,7 @@ TEST_F(TempFileFixture, ReadElementIdsNullCollection) {
 
 TEST_F(TempFileFixture, ReadElementIdsNullOutput) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -508,7 +508,7 @@ TEST_F(TempFileFixture, ReadElementIdsNullOutput) {
 
 TEST_F(TempFileFixture, ReadElementIdsValid) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -551,7 +551,7 @@ TEST_F(TempFileFixture, DeleteElementNullDb) {
 
 TEST_F(TempFileFixture, DeleteElementNullCollection) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -563,7 +563,7 @@ TEST_F(TempFileFixture, DeleteElementNullCollection) {
 
 TEST_F(TempFileFixture, DeleteElementValid) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -614,7 +614,7 @@ TEST_F(TempFileFixture, UpdateElementNullDb) {
 
 TEST_F(TempFileFixture, UpdateElementNullCollection) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -630,7 +630,7 @@ TEST_F(TempFileFixture, UpdateElementNullCollection) {
 
 TEST_F(TempFileFixture, UpdateElementNullElement) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 

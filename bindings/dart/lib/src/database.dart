@@ -889,16 +889,16 @@ class Database {
       }
 
       final dataStructure = switch (outDataStructure.value) {
-        psr_data_structure_t.PSR_DATA_STRUCTURE_SCALAR => 'scalar',
-        psr_data_structure_t.PSR_DATA_STRUCTURE_VECTOR => 'vector',
-        psr_data_structure_t.PSR_DATA_STRUCTURE_SET => 'set',
+        psr_data_structure_t.MARGAUX_DATA_STRUCTURE_SCALAR => 'scalar',
+        psr_data_structure_t.MARGAUX_DATA_STRUCTURE_VECTOR => 'vector',
+        psr_data_structure_t.MARGAUX_DATA_STRUCTURE_SET => 'set',
         _ => 'unknown',
       };
 
       final dataType = switch (outDataType.value) {
-        psr_data_type_t.PSR_DATA_TYPE_INTEGER => 'integer',
-        psr_data_type_t.PSR_DATA_TYPE_FLOAT => 'real',
-        psr_data_type_t.PSR_DATA_TYPE_STRING => 'text',
+        psr_data_type_t.MARGAUX_DATA_TYPE_INTEGER => 'integer',
+        psr_data_type_t.MARGAUX_DATA_TYPE_FLOAT => 'real',
+        psr_data_type_t.MARGAUX_DATA_TYPE_STRING => 'text',
         _ => 'unknown',
       };
 

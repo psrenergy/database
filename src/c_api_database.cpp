@@ -9,15 +9,15 @@ namespace {
 
 margaux::LogLevel to_cpp_log_level(psr_log_level_t level) {
     switch (level) {
-    case PSR_LOG_DEBUG:
+    case MARGAUX_LOG_DEBUG:
         return margaux::LogLevel::debug;
-    case PSR_LOG_INFO:
+    case MARGAUX_LOG_INFO:
         return margaux::LogLevel::info;
-    case PSR_LOG_WARN:
+    case MARGAUX_LOG_WARN:
         return margaux::LogLevel::warn;
-    case PSR_LOG_ERROR:
+    case MARGAUX_LOG_ERROR:
         return margaux::LogLevel::error;
-    case PSR_LOG_OFF:
+    case MARGAUX_LOG_OFF:
         return margaux::LogLevel::off;
     default:
         return margaux::LogLevel::info;
@@ -90,7 +90,7 @@ extern "C" {
 MARGAUX_C_API psr_database_options_t psr_database_options_default(void) {
     psr_database_options_t options;
     options.read_only = 0;
-    options.console_level = PSR_LOG_INFO;
+    options.console_level = MARGAUX_LOG_INFO;
     return options;
 }
 
@@ -896,25 +896,25 @@ MARGAUX_C_API margaux_error_t psr_database_get_attribute_type(psr_database_t* db
 
         switch (attr_type.data_structure) {
         case margaux::DataStructure::Scalar:
-            *out_data_structure = PSR_DATA_STRUCTURE_SCALAR;
+            *out_data_structure = MARGAUX_DATA_STRUCTURE_SCALAR;
             break;
         case margaux::DataStructure::Vector:
-            *out_data_structure = PSR_DATA_STRUCTURE_VECTOR;
+            *out_data_structure = MARGAUX_DATA_STRUCTURE_VECTOR;
             break;
         case margaux::DataStructure::Set:
-            *out_data_structure = PSR_DATA_STRUCTURE_SET;
+            *out_data_structure = MARGAUX_DATA_STRUCTURE_SET;
             break;
         }
 
         switch (attr_type.data_type) {
         case margaux::DataType::Integer:
-            *out_data_type = PSR_DATA_TYPE_INTEGER;
+            *out_data_type = MARGAUX_DATA_TYPE_INTEGER;
             break;
         case margaux::DataType::Real:
-            *out_data_type = PSR_DATA_TYPE_FLOAT;
+            *out_data_type = MARGAUX_DATA_TYPE_FLOAT;
             break;
         case margaux::DataType::Text:
-            *out_data_type = PSR_DATA_TYPE_STRING;
+            *out_data_type = MARGAUX_DATA_TYPE_STRING;
             break;
         }
 
