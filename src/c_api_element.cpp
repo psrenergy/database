@@ -7,25 +7,25 @@
 
 extern "C" {
 
-MARGAUX_C_API margaux_element_t* margaux_element_create(void) {
+MARGAUX_C_API element_t* element_create(void) {
     try {
-        return new margaux_element();
+        return new element();
     } catch (const std::bad_alloc&) {
         return nullptr;
     }
 }
 
-MARGAUX_C_API void margaux_element_destroy(margaux_element_t* element) {
+MARGAUX_C_API void element_destroy(element_t* element) {
     delete element;
 }
 
-MARGAUX_C_API void margaux_element_clear(margaux_element_t* element) {
+MARGAUX_C_API void element_clear(element_t* element) {
     if (element) {
         element->element.clear();
     }
 }
 
-MARGAUX_C_API margaux_error_t margaux_element_set_integer(margaux_element_t* element, const char* name, int64_t value) {
+MARGAUX_C_API margaux_error_t element_set_integer(element_t* element, const char* name, int64_t value) {
     if (!element || !name) {
         return MARGAUX_ERROR_INVALID_ARGUMENT;
     }
@@ -33,7 +33,7 @@ MARGAUX_C_API margaux_error_t margaux_element_set_integer(margaux_element_t* ele
     return MARGAUX_OK;
 }
 
-MARGAUX_C_API margaux_error_t margaux_element_set_float(margaux_element_t* element, const char* name, double value) {
+MARGAUX_C_API margaux_error_t element_set_float(element_t* element, const char* name, double value) {
     if (!element || !name) {
         return MARGAUX_ERROR_INVALID_ARGUMENT;
     }
@@ -41,7 +41,7 @@ MARGAUX_C_API margaux_error_t margaux_element_set_float(margaux_element_t* eleme
     return MARGAUX_OK;
 }
 
-MARGAUX_C_API margaux_error_t margaux_element_set_string(margaux_element_t* element,
+MARGAUX_C_API margaux_error_t element_set_string(element_t* element,
                                                          const char* name,
                                                          const char* value) {
     if (!element || !name || !value) {
@@ -51,7 +51,7 @@ MARGAUX_C_API margaux_error_t margaux_element_set_string(margaux_element_t* elem
     return MARGAUX_OK;
 }
 
-MARGAUX_C_API margaux_error_t margaux_element_set_null(margaux_element_t* element, const char* name) {
+MARGAUX_C_API margaux_error_t element_set_null(element_t* element, const char* name) {
     if (!element || !name) {
         return MARGAUX_ERROR_INVALID_ARGUMENT;
     }
@@ -59,7 +59,7 @@ MARGAUX_C_API margaux_error_t margaux_element_set_null(margaux_element_t* elemen
     return MARGAUX_OK;
 }
 
-MARGAUX_C_API margaux_error_t margaux_element_set_array_integer(margaux_element_t* element,
+MARGAUX_C_API margaux_error_t element_set_array_integer(element_t* element,
                                                                 const char* name,
                                                                 const int64_t* values,
                                                                 int32_t count) {
@@ -71,7 +71,7 @@ MARGAUX_C_API margaux_error_t margaux_element_set_array_integer(margaux_element_
     return MARGAUX_OK;
 }
 
-MARGAUX_C_API margaux_error_t margaux_element_set_array_float(margaux_element_t* element,
+MARGAUX_C_API margaux_error_t element_set_array_float(element_t* element,
                                                               const char* name,
                                                               const double* values,
                                                               int32_t count) {
@@ -83,7 +83,7 @@ MARGAUX_C_API margaux_error_t margaux_element_set_array_float(margaux_element_t*
     return MARGAUX_OK;
 }
 
-MARGAUX_C_API margaux_error_t margaux_element_set_array_string(margaux_element_t* element,
+MARGAUX_C_API margaux_error_t element_set_array_string(element_t* element,
                                                                const char* name,
                                                                const char* const* values,
                                                                int32_t count) {
@@ -99,35 +99,35 @@ MARGAUX_C_API margaux_error_t margaux_element_set_array_string(margaux_element_t
     return MARGAUX_OK;
 }
 
-MARGAUX_C_API int margaux_element_has_scalars(margaux_element_t* element) {
+MARGAUX_C_API int element_has_scalars(element_t* element) {
     if (!element) {
         return 0;
     }
     return element->element.has_scalars() ? 1 : 0;
 }
 
-MARGAUX_C_API int margaux_element_has_arrays(margaux_element_t* element) {
+MARGAUX_C_API int element_has_arrays(element_t* element) {
     if (!element) {
         return 0;
     }
     return element->element.has_arrays() ? 1 : 0;
 }
 
-MARGAUX_C_API size_t margaux_element_scalar_count(margaux_element_t* element) {
+MARGAUX_C_API size_t element_scalar_count(element_t* element) {
     if (!element) {
         return 0;
     }
     return element->element.scalars().size();
 }
 
-MARGAUX_C_API size_t margaux_element_array_count(margaux_element_t* element) {
+MARGAUX_C_API size_t element_array_count(element_t* element) {
     if (!element) {
         return 0;
     }
     return element->element.arrays().size();
 }
 
-MARGAUX_C_API char* margaux_element_to_string(margaux_element_t* element) {
+MARGAUX_C_API char* element_to_string(element_t* element) {
     if (!element) {
         return nullptr;
     }
