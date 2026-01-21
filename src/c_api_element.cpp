@@ -25,7 +25,7 @@ PSR_C_API void psr_element_clear(psr_element_t* element) {
     }
 }
 
-PSR_C_API psr_error_t psr_element_set_integer(psr_element_t* element, const char* name, int64_t value) {
+PSR_C_API margaux_error_t psr_element_set_integer(psr_element_t* element, const char* name, int64_t value) {
     if (!element || !name) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }
@@ -33,7 +33,7 @@ PSR_C_API psr_error_t psr_element_set_integer(psr_element_t* element, const char
     return PSR_OK;
 }
 
-PSR_C_API psr_error_t psr_element_set_float(psr_element_t* element, const char* name, double value) {
+PSR_C_API margaux_error_t psr_element_set_float(psr_element_t* element, const char* name, double value) {
     if (!element || !name) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }
@@ -41,7 +41,7 @@ PSR_C_API psr_error_t psr_element_set_float(psr_element_t* element, const char* 
     return PSR_OK;
 }
 
-PSR_C_API psr_error_t psr_element_set_string(psr_element_t* element, const char* name, const char* value) {
+PSR_C_API margaux_error_t psr_element_set_string(psr_element_t* element, const char* name, const char* value) {
     if (!element || !name || !value) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }
@@ -49,7 +49,7 @@ PSR_C_API psr_error_t psr_element_set_string(psr_element_t* element, const char*
     return PSR_OK;
 }
 
-PSR_C_API psr_error_t psr_element_set_null(psr_element_t* element, const char* name) {
+PSR_C_API margaux_error_t psr_element_set_null(psr_element_t* element, const char* name) {
     if (!element || !name) {
         return PSR_ERROR_INVALID_ARGUMENT;
     }
@@ -57,7 +57,7 @@ PSR_C_API psr_error_t psr_element_set_null(psr_element_t* element, const char* n
     return PSR_OK;
 }
 
-PSR_C_API psr_error_t psr_element_set_array_integer(psr_element_t* element,
+PSR_C_API margaux_error_t psr_element_set_array_integer(psr_element_t* element,
                                                     const char* name,
                                                     const int64_t* values,
                                                     int32_t count) {
@@ -69,7 +69,7 @@ PSR_C_API psr_error_t psr_element_set_array_integer(psr_element_t* element,
     return PSR_OK;
 }
 
-PSR_C_API psr_error_t psr_element_set_array_float(psr_element_t* element,
+PSR_C_API margaux_error_t psr_element_set_array_float(psr_element_t* element,
                                                   const char* name,
                                                   const double* values,
                                                   int32_t count) {
@@ -81,7 +81,7 @@ PSR_C_API psr_error_t psr_element_set_array_float(psr_element_t* element,
     return PSR_OK;
 }
 
-PSR_C_API psr_error_t psr_element_set_array_string(psr_element_t* element,
+PSR_C_API margaux_error_t psr_element_set_array_string(psr_element_t* element,
                                                    const char* name,
                                                    const char* const* values,
                                                    int32_t count) {
