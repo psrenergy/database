@@ -6,7 +6,7 @@
 
 #include <vector>
 
-namespace psr {
+namespace margaux {
 
 class MARGAUX_API Result {
 public:

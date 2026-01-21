@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-namespace psr {
+namespace margaux {
 
 TypeValidator::TypeValidator(const Schema& schema) : schema_(schema) {}
 

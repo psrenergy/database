@@ -4,7 +4,7 @@
 #include "data_type.h"
 #include "export.h"
 
-namespace psr {
+namespace margaux {
 
 enum class DataStructure { Scalar, Vector, Set };
 

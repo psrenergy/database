@@ -6,7 +6,7 @@
 #include <sol/sol.hpp>
 #include <stdexcept>
 
-namespace psr {
+namespace margaux {
 
 struct LuaRunner::Impl {
     Database& db;

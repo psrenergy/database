@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-namespace psr {
+namespace margaux {
 
 struct MARGAUX_API DatabaseOptions {
     bool read_only = false;

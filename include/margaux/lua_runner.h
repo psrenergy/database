@@ -6,7 +6,7 @@
 #include <memory>
 #include <string>
 
-namespace psr {
+namespace margaux {
 
 class Database;
 

@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-namespace psr {
+namespace margaux {
 
 class MARGAUX_API Element {
 public:

@@ -11,7 +11,7 @@
 
 struct sqlite3;
 
-namespace psr {
+namespace margaux {
 
 struct ColumnDefinition {
     std::string name;

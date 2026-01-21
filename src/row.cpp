@@ -2,7 +2,7 @@
 
 #include "margaux/value.h"
 
-namespace psr {
+namespace margaux {
 
 Row::Row(std::vector<Value> values) : values_(std::move(values)) {}
 

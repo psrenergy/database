@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <filesystem>
 
-namespace psr {
+namespace margaux {
 
 namespace fs = std::filesystem;
 

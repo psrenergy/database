@@ -3,7 +3,7 @@
 #include <sqlite3.h>
 #include <stdexcept>
 
-namespace psr {
+namespace margaux {
 
 // TableDefinition methods
 

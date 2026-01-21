@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-namespace psr {
+namespace margaux {
 
 namespace {
 

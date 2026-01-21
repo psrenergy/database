@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-namespace psr {
+namespace margaux {
 
 // Validates that a schema follows PSR conventions:
 // - Configuration table exists

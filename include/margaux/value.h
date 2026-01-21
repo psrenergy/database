@@ -5,7 +5,7 @@
 #include <string>
 #include <variant>
 
-namespace psr {
+namespace margaux {
 
 using Value = std::variant<std::nullptr_t, int64_t, double, std::string>;
 

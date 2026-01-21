@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace psr {
+namespace margaux {
 
 enum class DataType { Integer, Real, Text };
 

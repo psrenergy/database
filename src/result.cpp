@@ -2,7 +2,7 @@
 
 #include "margaux/row.h"
 
-namespace psr {
+namespace margaux {
 
 Result::Result() : columns_(), rows_() {}
 

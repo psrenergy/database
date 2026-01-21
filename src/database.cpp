@@ -92,7 +92,7 @@ std::shared_ptr<spdlog::logger> create_database_logger(const std::string& db_pat
 
 }  // anonymous namespace
 
-namespace psr {
+namespace margaux {
 
 struct Database::Impl {
     sqlite3* db = nullptr;

@@ -4,7 +4,7 @@
 #include <fstream>
 #include <sstream>
 
-namespace psr {
+namespace margaux {
 
 namespace fs = std::filesystem;
 
