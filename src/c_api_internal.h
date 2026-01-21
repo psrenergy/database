@@ -1,5 +1,5 @@
-#ifndef PSR_C_API_INTERNAL_H
-#define PSR_C_API_INTERNAL_H
+#ifndef MARGAUX_C_API_INTERNAL_H
+#define MARGAUX_C_API_INTERNAL_H
 
 #include "margaux/database.h"
 #include "margaux/element.h"
@@ -18,4 +18,4 @@ struct psr_element {
     margaux::Element element;
 };
 
-#endif  // PSR_C_API_INTERNAL_H
+#endif  // MARGAUX_C_API_INTERNAL_H

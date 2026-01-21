@@ -24,7 +24,7 @@ MARGAUX_C_API const char* psr_error_string(margaux_error_t error) {
 }
 
 MARGAUX_C_API const char* psr_version(void) {
-    return PSR_VERSION;
+    return MARGAUX_VERSION;
 }
 
 }  // extern "C"

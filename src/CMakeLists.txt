@@ -1,5 +1,5 @@
 # Core library sources
-set(PSR_SOURCES
+set(MARGAUX_SOURCES
     database.cpp
     element.cpp
     lua_runner.cpp
@@ -14,11 +14,11 @@ set(PSR_SOURCES
 
 # Build type
 if(MARGAUX_BUILD_SHARED)
-    add_library(psr_database SHARED ${PSR_SOURCES})
-    target_compile_definitions(psr_database PRIVATE PSR_DATABASE_EXPORTS)
+    add_library(psr_database SHARED ${MARGAUX_SOURCES})
+    target_compile_definitions(psr_database PRIVATE MARGAUX_DATABASE_EXPORTS)
 else()
-    add_library(psr_database STATIC ${PSR_SOURCES})
-    target_compile_definitions(psr_database PUBLIC PSR_DATABASE_STATIC)
+    add_library(psr_database STATIC ${MARGAUX_SOURCES})
+    target_compile_definitions(psr_database PUBLIC MARGAUX_DATABASE_STATIC)
 endif()
 
 # Include directories
@@ -81,8 +81,8 @@ if(MARGAUX_BUILD_C_API)
     )
 
     target_compile_definitions(psr_database_c PRIVATE
-        PSR_DATABASE_C_EXPORTS
-        PSR_VERSION="${PROJECT_VERSION}"
+        MARGAUX_DATABASE_C_EXPORTS
+        MARGAUX_VERSION="${PROJECT_VERSION}"
     )
 
     target_include_directories(psr_database_c PUBLIC

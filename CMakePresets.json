@@ -78,7 +78,7 @@
         "CMAKE_BUILD_TYPE": "Release",
         "MARGAUX_BUILD_TESTS": "ON",
         "MARGAUX_BUILD_C_API": "ON",
-        "PSR_BUILD_PYTHON_BINDING": "ON"
+        "MARGAUX_BUILD_PYTHON_BINDING": "ON"
       }
     }
   ],

@@ -6,7 +6,7 @@
 
 TEST(DatabaseCApi, DeleteElementById) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -39,7 +39,7 @@ TEST(DatabaseCApi, DeleteElementById) {
 
 TEST(DatabaseCApi, DeleteElementByIdWithVectorData) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -89,7 +89,7 @@ TEST(DatabaseCApi, DeleteElementByIdWithVectorData) {
 
 TEST(DatabaseCApi, DeleteElementByIdWithSetData) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -139,7 +139,7 @@ TEST(DatabaseCApi, DeleteElementByIdWithSetData) {
 
 TEST(DatabaseCApi, DeleteElementByIdNonExistent) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -166,7 +166,7 @@ TEST(DatabaseCApi, DeleteElementByIdNonExistent) {
 
 TEST(DatabaseCApi, DeleteElementByIdOtherElementsUnchanged) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -222,7 +222,7 @@ TEST(DatabaseCApi, DeleteElementByIdOtherElementsUnchanged) {
 
 TEST(DatabaseCApi, DeleteElementByIdNullArguments) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 

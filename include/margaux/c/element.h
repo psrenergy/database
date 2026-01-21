@@ -1,5 +1,5 @@
-#ifndef PSR_C_ELEMENT_H
-#define PSR_C_ELEMENT_H
+#ifndef MARGAUX_C_ELEMENT_H
+#define MARGAUX_C_ELEMENT_H
 
 #include "common.h"
 
@@ -49,4 +49,4 @@ MARGAUX_C_API void psr_string_free(char* str);
 }
 #endif
 
-#endif  // PSR_C_ELEMENT_H
+#endif  // MARGAUX_C_ELEMENT_H

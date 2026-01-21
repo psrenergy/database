@@ -13,7 +13,7 @@
 
 TEST(DatabaseCApi, ReadScalarIntegers) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -44,7 +44,7 @@ TEST(DatabaseCApi, ReadScalarIntegers) {
 
 TEST(DatabaseCApi, ReadScalarFloats) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -75,7 +75,7 @@ TEST(DatabaseCApi, ReadScalarFloats) {
 
 TEST(DatabaseCApi, ReadScalarStrings) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -106,7 +106,7 @@ TEST(DatabaseCApi, ReadScalarStrings) {
 
 TEST(DatabaseCApi, ReadScalarEmpty) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -138,7 +138,7 @@ TEST(DatabaseCApi, ReadScalarEmpty) {
 
 TEST(DatabaseCApi, ReadVectorIntegers) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -182,7 +182,7 @@ TEST(DatabaseCApi, ReadVectorIntegers) {
 
 TEST(DatabaseCApi, ReadVectorFloats) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -226,7 +226,7 @@ TEST(DatabaseCApi, ReadVectorFloats) {
 
 TEST(DatabaseCApi, ReadVectorEmpty) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -259,7 +259,7 @@ TEST(DatabaseCApi, ReadVectorEmpty) {
 
 TEST(DatabaseCApi, ReadVectorOnlyReturnsElementsWithData) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -316,7 +316,7 @@ TEST(DatabaseCApi, ReadVectorOnlyReturnsElementsWithData) {
 
 TEST(DatabaseCApi, ReadSetStrings) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -366,7 +366,7 @@ TEST(DatabaseCApi, ReadSetStrings) {
 
 TEST(DatabaseCApi, ReadSetEmpty) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -390,7 +390,7 @@ TEST(DatabaseCApi, ReadSetEmpty) {
 
 TEST(DatabaseCApi, ReadSetOnlyReturnsElementsWithData) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -442,7 +442,7 @@ TEST(DatabaseCApi, ReadSetOnlyReturnsElementsWithData) {
 
 TEST(DatabaseCApi, ReadScalarIntegerById) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -477,7 +477,7 @@ TEST(DatabaseCApi, ReadScalarIntegerById) {
 
 TEST(DatabaseCApi, ReadScalarFloatById) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -500,7 +500,7 @@ TEST(DatabaseCApi, ReadScalarFloatById) {
 
 TEST(DatabaseCApi, ReadScalarStringById) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -524,7 +524,7 @@ TEST(DatabaseCApi, ReadScalarStringById) {
 
 TEST(DatabaseCApi, ReadScalarByIdNotFound) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -551,7 +551,7 @@ TEST(DatabaseCApi, ReadScalarByIdNotFound) {
 
 TEST(DatabaseCApi, ReadVectorIntegerById) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -597,7 +597,7 @@ TEST(DatabaseCApi, ReadVectorIntegerById) {
 
 TEST(DatabaseCApi, ReadVectorFloatById) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -629,7 +629,7 @@ TEST(DatabaseCApi, ReadVectorFloatById) {
 
 TEST(DatabaseCApi, ReadVectorByIdEmpty) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -660,7 +660,7 @@ TEST(DatabaseCApi, ReadVectorByIdEmpty) {
 
 TEST(DatabaseCApi, ReadSetStringById) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -709,7 +709,7 @@ TEST(DatabaseCApi, ReadSetStringById) {
 
 TEST(DatabaseCApi, ReadSetByIdEmpty) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -740,7 +740,7 @@ TEST(DatabaseCApi, ReadSetByIdEmpty) {
 
 TEST(DatabaseCApi, ReadElementIds) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -778,7 +778,7 @@ TEST(DatabaseCApi, ReadElementIds) {
 
 TEST(DatabaseCApi, ReadElementIdsEmpty) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -805,7 +805,7 @@ TEST(DatabaseCApi, ReadElementIdsEmpty) {
 
 TEST(DatabaseCApi, GetAttributeTypeScalarInteger) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -814,15 +814,15 @@ TEST(DatabaseCApi, GetAttributeTypeScalarInteger) {
     auto err = psr_database_get_attribute_type(db, "Configuration", "integer_attribute", &data_structure, &data_type);
 
     EXPECT_EQ(err, MARGAUX_OK);
-    EXPECT_EQ(data_structure, PSR_DATA_STRUCTURE_SCALAR);
-    EXPECT_EQ(data_type, PSR_DATA_TYPE_INTEGER);
+    EXPECT_EQ(data_structure, MARGAUX_DATA_STRUCTURE_SCALAR);
+    EXPECT_EQ(data_type, MARGAUX_DATA_TYPE_INTEGER);
 
     psr_database_close(db);
 }
 
 TEST(DatabaseCApi, GetAttributeTypeScalarReal) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -831,15 +831,15 @@ TEST(DatabaseCApi, GetAttributeTypeScalarReal) {
     auto err = psr_database_get_attribute_type(db, "Configuration", "float_attribute", &data_structure, &data_type);
 
     EXPECT_EQ(err, MARGAUX_OK);
-    EXPECT_EQ(data_structure, PSR_DATA_STRUCTURE_SCALAR);
-    EXPECT_EQ(data_type, PSR_DATA_TYPE_FLOAT);
+    EXPECT_EQ(data_structure, MARGAUX_DATA_STRUCTURE_SCALAR);
+    EXPECT_EQ(data_type, MARGAUX_DATA_TYPE_FLOAT);
 
     psr_database_close(db);
 }
 
 TEST(DatabaseCApi, GetAttributeTypeScalarText) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -848,15 +848,15 @@ TEST(DatabaseCApi, GetAttributeTypeScalarText) {
     auto err = psr_database_get_attribute_type(db, "Configuration", "string_attribute", &data_structure, &data_type);
 
     EXPECT_EQ(err, MARGAUX_OK);
-    EXPECT_EQ(data_structure, PSR_DATA_STRUCTURE_SCALAR);
-    EXPECT_EQ(data_type, PSR_DATA_TYPE_STRING);
+    EXPECT_EQ(data_structure, MARGAUX_DATA_STRUCTURE_SCALAR);
+    EXPECT_EQ(data_type, MARGAUX_DATA_TYPE_STRING);
 
     psr_database_close(db);
 }
 
 TEST(DatabaseCApi, GetAttributeTypeVectorInteger) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -865,15 +865,15 @@ TEST(DatabaseCApi, GetAttributeTypeVectorInteger) {
     auto err = psr_database_get_attribute_type(db, "Collection", "value_int", &data_structure, &data_type);
 
     EXPECT_EQ(err, MARGAUX_OK);
-    EXPECT_EQ(data_structure, PSR_DATA_STRUCTURE_VECTOR);
-    EXPECT_EQ(data_type, PSR_DATA_TYPE_INTEGER);
+    EXPECT_EQ(data_structure, MARGAUX_DATA_STRUCTURE_VECTOR);
+    EXPECT_EQ(data_type, MARGAUX_DATA_TYPE_INTEGER);
 
     psr_database_close(db);
 }
 
 TEST(DatabaseCApi, GetAttributeTypeVectorReal) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -882,15 +882,15 @@ TEST(DatabaseCApi, GetAttributeTypeVectorReal) {
     auto err = psr_database_get_attribute_type(db, "Collection", "value_float", &data_structure, &data_type);
 
     EXPECT_EQ(err, MARGAUX_OK);
-    EXPECT_EQ(data_structure, PSR_DATA_STRUCTURE_VECTOR);
-    EXPECT_EQ(data_type, PSR_DATA_TYPE_FLOAT);
+    EXPECT_EQ(data_structure, MARGAUX_DATA_STRUCTURE_VECTOR);
+    EXPECT_EQ(data_type, MARGAUX_DATA_TYPE_FLOAT);
 
     psr_database_close(db);
 }
 
 TEST(DatabaseCApi, GetAttributeTypeSetText) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -899,15 +899,15 @@ TEST(DatabaseCApi, GetAttributeTypeSetText) {
     auto err = psr_database_get_attribute_type(db, "Collection", "tag", &data_structure, &data_type);
 
     EXPECT_EQ(err, MARGAUX_OK);
-    EXPECT_EQ(data_structure, PSR_DATA_STRUCTURE_SET);
-    EXPECT_EQ(data_type, PSR_DATA_TYPE_STRING);
+    EXPECT_EQ(data_structure, MARGAUX_DATA_STRUCTURE_SET);
+    EXPECT_EQ(data_type, MARGAUX_DATA_TYPE_STRING);
 
     psr_database_close(db);
 }
 
 TEST(DatabaseCApi, GetAttributeTypeNotFound) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -922,7 +922,7 @@ TEST(DatabaseCApi, GetAttributeTypeNotFound) {
 
 TEST(DatabaseCApi, GetAttributeTypeInvalidArgument) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -965,7 +965,7 @@ TEST(DatabaseCApi, ReadScalarIntegersNullDb) {
 
 TEST(DatabaseCApi, ReadScalarIntegersNullCollection) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -979,7 +979,7 @@ TEST(DatabaseCApi, ReadScalarIntegersNullCollection) {
 
 TEST(DatabaseCApi, ReadScalarIntegersNullAttribute) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -993,7 +993,7 @@ TEST(DatabaseCApi, ReadScalarIntegersNullAttribute) {
 
 TEST(DatabaseCApi, ReadScalarIntegersNullOutput) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -1017,7 +1017,7 @@ TEST(DatabaseCApi, ReadScalarFloatsNullDb) {
 
 TEST(DatabaseCApi, ReadScalarFloatsNullCollection) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -1031,7 +1031,7 @@ TEST(DatabaseCApi, ReadScalarFloatsNullCollection) {
 
 TEST(DatabaseCApi, ReadScalarFloatsNullOutput) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -1055,7 +1055,7 @@ TEST(DatabaseCApi, ReadScalarStringsNullDb) {
 
 TEST(DatabaseCApi, ReadScalarStringsNullCollection) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -1069,7 +1069,7 @@ TEST(DatabaseCApi, ReadScalarStringsNullCollection) {
 
 TEST(DatabaseCApi, ReadScalarStringsNullOutput) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -1098,7 +1098,7 @@ TEST(DatabaseCApi, ReadScalarIntegersByIdNullDb) {
 
 TEST(DatabaseCApi, ReadScalarIntegersByIdNullCollection) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -1112,7 +1112,7 @@ TEST(DatabaseCApi, ReadScalarIntegersByIdNullCollection) {
 
 TEST(DatabaseCApi, ReadScalarIntegersByIdNullOutput) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -1138,7 +1138,7 @@ TEST(DatabaseCApi, ReadScalarFloatsByIdNullDb) {
 
 TEST(DatabaseCApi, ReadScalarFloatsByIdNullOutput) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -1163,7 +1163,7 @@ TEST(DatabaseCApi, ReadScalarStringsByIdNullDb) {
 
 TEST(DatabaseCApi, ReadScalarStringsByIdNullOutput) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -1192,7 +1192,7 @@ TEST(DatabaseCApi, ReadVectorIntegersNullDb) {
 
 TEST(DatabaseCApi, ReadVectorIntegersNullCollection) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -1207,7 +1207,7 @@ TEST(DatabaseCApi, ReadVectorIntegersNullCollection) {
 
 TEST(DatabaseCApi, ReadVectorIntegersNullOutput) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -1236,7 +1236,7 @@ TEST(DatabaseCApi, ReadVectorFloatsNullDb) {
 
 TEST(DatabaseCApi, ReadVectorFloatsNullOutput) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -1276,7 +1276,7 @@ TEST(DatabaseCApi, ReadVectorIntegersByIdNullDb) {
 
 TEST(DatabaseCApi, ReadVectorIntegersByIdNullCollection) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -1290,7 +1290,7 @@ TEST(DatabaseCApi, ReadVectorIntegersByIdNullCollection) {
 
 TEST(DatabaseCApi, ReadVectorIntegersByIdNullOutput) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -1314,7 +1314,7 @@ TEST(DatabaseCApi, ReadVectorFloatsByIdNullDb) {
 
 TEST(DatabaseCApi, ReadVectorFloatsByIdNullOutput) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -1350,7 +1350,7 @@ TEST(DatabaseCApi, ReadSetIntegersNullDb) {
 
 TEST(DatabaseCApi, ReadSetIntegersNullCollection) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -1365,7 +1365,7 @@ TEST(DatabaseCApi, ReadSetIntegersNullCollection) {
 
 TEST(DatabaseCApi, ReadSetIntegersNullOutput) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -1402,7 +1402,7 @@ TEST(DatabaseCApi, ReadSetStringsNullDb) {
 
 TEST(DatabaseCApi, ReadSetStringsNullCollection) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -1417,7 +1417,7 @@ TEST(DatabaseCApi, ReadSetStringsNullCollection) {
 
 TEST(DatabaseCApi, ReadSetStringsNullOutput) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -1463,7 +1463,7 @@ TEST(DatabaseCApi, ReadSetStringsByIdNullDb) {
 
 TEST(DatabaseCApi, ReadSetStringsByIdNullCollection) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -1477,7 +1477,7 @@ TEST(DatabaseCApi, ReadSetStringsByIdNullCollection) {
 
 TEST(DatabaseCApi, ReadSetStringsByIdNullOutput) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("collections.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -1505,7 +1505,7 @@ TEST(DatabaseCApi, ReadElementIdsNullDb) {
 
 TEST(DatabaseCApi, ReadElementIdsNullCollection) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 
@@ -1519,7 +1519,7 @@ TEST(DatabaseCApi, ReadElementIdsNullCollection) {
 
 TEST(DatabaseCApi, ReadElementIdsNullOutput) {
     auto options = psr_database_options_default();
-    options.console_level = PSR_LOG_OFF;
+    options.console_level = MARGAUX_LOG_OFF;
     auto db = psr_database_from_schema(":memory:", VALID_SCHEMA("basic.sql").c_str(), &options);
     ASSERT_NE(db, nullptr);
 

@@ -46,11 +46,11 @@ function psr_version()
 end
 
 @cenum psr_log_level_t::UInt32 begin
-    PSR_LOG_DEBUG = 0
-    PSR_LOG_INFO = 1
-    PSR_LOG_WARN = 2
-    PSR_LOG_ERROR = 3
-    PSR_LOG_OFF = 4
+    MARGAUX_LOG_DEBUG = 0
+    MARGAUX_LOG_INFO = 1
+    MARGAUX_LOG_WARN = 2
+    MARGAUX_LOG_ERROR = 3
+    MARGAUX_LOG_OFF = 4
 end
 
 struct psr_database_options_t
@@ -59,15 +59,15 @@ struct psr_database_options_t
 end
 
 @cenum psr_data_structure_t::UInt32 begin
-    PSR_DATA_STRUCTURE_SCALAR = 0
-    PSR_DATA_STRUCTURE_VECTOR = 1
-    PSR_DATA_STRUCTURE_SET = 2
+    MARGAUX_DATA_STRUCTURE_SCALAR = 0
+    MARGAUX_DATA_STRUCTURE_VECTOR = 1
+    MARGAUX_DATA_STRUCTURE_SET = 2
 end
 
 @cenum psr_data_type_t::UInt32 begin
-    PSR_DATA_TYPE_INTEGER = 0
-    PSR_DATA_TYPE_FLOAT = 1
-    PSR_DATA_TYPE_STRING = 2
+    MARGAUX_DATA_TYPE_INTEGER = 0
+    MARGAUX_DATA_TYPE_FLOAT = 1
+    MARGAUX_DATA_TYPE_STRING = 2
 end
 
 function psr_database_options_default()
