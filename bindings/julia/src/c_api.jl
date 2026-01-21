@@ -334,24 +334,24 @@ function psr_string_free(str)
     @ccall libmargaux_c.psr_string_free(str::Ptr{Cchar})::Cvoid
 end
 
-mutable struct psr_lua_runner end
+mutable struct lua_runner end
 
-const psr_lua_runner_t = psr_lua_runner
+const lua_runner_t = lua_runner
 
-function psr_lua_runner_new(db)
-    @ccall libmargaux_c.psr_lua_runner_new(db::Ptr{database_t})::Ptr{psr_lua_runner_t}
+function lua_runner_new(db)
+    @ccall libmargaux_c.lua_runner_new(db::Ptr{database_t})::Ptr{lua_runner_t}
 end
 
-function psr_lua_runner_free(runner)
-    @ccall libmargaux_c.psr_lua_runner_free(runner::Ptr{psr_lua_runner_t})::Cvoid
+function lua_runner_free(runner)
+    @ccall libmargaux_c.lua_runner_free(runner::Ptr{lua_runner_t})::Cvoid
 end
 
-function psr_lua_runner_run(runner, script)
-    @ccall libmargaux_c.psr_lua_runner_run(runner::Ptr{psr_lua_runner_t}, script::Ptr{Cchar})::margaux_error_t
+function lua_runner_run(runner, script)
+    @ccall libmargaux_c.lua_runner_run(runner::Ptr{lua_runner_t}, script::Ptr{Cchar})::margaux_error_t
 end
 
-function psr_lua_runner_get_error(runner)
-    @ccall libmargaux_c.psr_lua_runner_get_error(runner::Ptr{psr_lua_runner_t})::Ptr{Cchar}
+function lua_runner_get_error(runner)
+    @ccall libmargaux_c.lua_runner_get_error(runner::Ptr{lua_runner_t})::Ptr{Cchar}
 end
 
 #! format: on

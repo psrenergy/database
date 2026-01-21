@@ -17,19 +17,19 @@ TEST_F(LuaRunnerCApiTest, CreateAndDestroy) {
     auto db = database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
-    auto lua = psr_lua_runner_new(db);
+    auto lua = lua_runner_new(db);
     ASSERT_NE(lua, nullptr);
 
-    psr_lua_runner_free(lua);
+    lua_runner_free(lua);
     database_close(db);
 }
 
 TEST_F(LuaRunnerCApiTest, FreeNull) {
-    psr_lua_runner_free(nullptr);
+    lua_runner_free(nullptr);
 }
 
 TEST_F(LuaRunnerCApiTest, CreateWithNullDb) {
-    auto lua = psr_lua_runner_new(nullptr);
+    auto lua = lua_runner_new(nullptr);
     EXPECT_EQ(lua, nullptr);
 }
 
@@ -39,13 +39,13 @@ TEST_F(LuaRunnerCApiTest, RunSimpleScript) {
     auto db = database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
-    auto lua = psr_lua_runner_new(db);
+    auto lua = lua_runner_new(db);
     ASSERT_NE(lua, nullptr);
 
-    auto result = psr_lua_runner_run(lua, "local x = 1 + 1");
+    auto result = lua_runner_run(lua, "local x = 1 + 1");
     EXPECT_EQ(result, MARGAUX_OK);
 
-    psr_lua_runner_free(lua);
+    lua_runner_free(lua);
     database_close(db);
 }
 
@@ -55,18 +55,18 @@ TEST_F(LuaRunnerCApiTest, RunNullScript) {
     auto db = database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
-    auto lua = psr_lua_runner_new(db);
+    auto lua = lua_runner_new(db);
     ASSERT_NE(lua, nullptr);
 
-    auto result = psr_lua_runner_run(lua, nullptr);
+    auto result = lua_runner_run(lua, nullptr);
     EXPECT_EQ(result, MARGAUX_ERROR_INVALID_ARGUMENT);
 
-    psr_lua_runner_free(lua);
+    lua_runner_free(lua);
     database_close(db);
 }
 
 TEST_F(LuaRunnerCApiTest, RunWithNullRunner) {
-    auto result = psr_lua_runner_run(nullptr, "local x = 1");
+    auto result = lua_runner_run(nullptr, "local x = 1");
     EXPECT_EQ(result, MARGAUX_ERROR_INVALID_ARGUMENT);
 }
 
@@ -76,10 +76,10 @@ TEST_F(LuaRunnerCApiTest, CreateElement) {
     auto db = database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
-    auto lua = psr_lua_runner_new(db);
+    auto lua = lua_runner_new(db);
     ASSERT_NE(lua, nullptr);
 
-    auto result = psr_lua_runner_run(lua, R"(
+    auto result = lua_runner_run(lua, R"(
         db:create_element("Configuration", { label = "Test Config" })
         db:create_element("Collection", { label = "Item 1", some_integer = 42 })
     )");
@@ -94,7 +94,7 @@ TEST_F(LuaRunnerCApiTest, CreateElement) {
     EXPECT_EQ(values[0], 42);
     psr_free_integer_array(values);
 
-    psr_lua_runner_free(lua);
+    lua_runner_free(lua);
     database_close(db);
 }
 
@@ -104,16 +104,16 @@ TEST_F(LuaRunnerCApiTest, SyntaxError) {
     auto db = database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
-    auto lua = psr_lua_runner_new(db);
+    auto lua = lua_runner_new(db);
     ASSERT_NE(lua, nullptr);
 
-    auto result = psr_lua_runner_run(lua, "invalid lua syntax !!!");
+    auto result = lua_runner_run(lua, "invalid lua syntax !!!");
     EXPECT_NE(result, MARGAUX_OK);
 
-    auto error = psr_lua_runner_get_error(lua);
+    auto error = lua_runner_get_error(lua);
     EXPECT_NE(error, nullptr);
 
-    psr_lua_runner_free(lua);
+    lua_runner_free(lua);
     database_close(db);
 }
 
@@ -123,21 +123,21 @@ TEST_F(LuaRunnerCApiTest, RuntimeError) {
     auto db = database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
-    auto lua = psr_lua_runner_new(db);
+    auto lua = lua_runner_new(db);
     ASSERT_NE(lua, nullptr);
 
-    auto result = psr_lua_runner_run(lua, "error('This is a runtime error')");
+    auto result = lua_runner_run(lua, "error('This is a runtime error')");
     EXPECT_NE(result, MARGAUX_OK);
 
-    auto error = psr_lua_runner_get_error(lua);
+    auto error = lua_runner_get_error(lua);
     EXPECT_NE(error, nullptr);
 
-    psr_lua_runner_free(lua);
+    lua_runner_free(lua);
     database_close(db);
 }
 
 TEST_F(LuaRunnerCApiTest, GetErrorNull) {
-    auto error = psr_lua_runner_get_error(nullptr);
+    auto error = lua_runner_get_error(nullptr);
     EXPECT_EQ(error, nullptr);
 }
 
@@ -147,13 +147,13 @@ TEST_F(LuaRunnerCApiTest, ReuseRunner) {
     auto db = database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
-    auto lua = psr_lua_runner_new(db);
+    auto lua = lua_runner_new(db);
     ASSERT_NE(lua, nullptr);
 
     // Run multiple scripts
-    EXPECT_EQ(psr_lua_runner_run(lua, R"(db:create_element("Configuration", { label = "Config" }))"), MARGAUX_OK);
-    EXPECT_EQ(psr_lua_runner_run(lua, R"(db:create_element("Collection", { label = "Item 1" }))"), MARGAUX_OK);
-    EXPECT_EQ(psr_lua_runner_run(lua, R"(db:create_element("Collection", { label = "Item 2" }))"), MARGAUX_OK);
+    EXPECT_EQ(lua_runner_run(lua, R"(db:create_element("Configuration", { label = "Config" }))"), MARGAUX_OK);
+    EXPECT_EQ(lua_runner_run(lua, R"(db:create_element("Collection", { label = "Item 1" }))"), MARGAUX_OK);
+    EXPECT_EQ(lua_runner_run(lua, R"(db:create_element("Collection", { label = "Item 2" }))"), MARGAUX_OK);
 
     // Verify count
     char** labels = nullptr;
@@ -163,7 +163,7 @@ TEST_F(LuaRunnerCApiTest, ReuseRunner) {
     EXPECT_EQ(count, 2);
     psr_free_string_array(labels, count);
 
-    psr_lua_runner_free(lua);
+    lua_runner_free(lua);
     database_close(db);
 }
 
@@ -185,18 +185,18 @@ TEST_F(LuaRunnerCApiTest, ReadScalarIntegers) {
     database_create_element(db, "Collection", elem);
     element_destroy(elem);
 
-    auto lua = psr_lua_runner_new(db);
+    auto lua = lua_runner_new(db);
     ASSERT_NE(lua, nullptr);
 
     // Read and verify from Lua
-    auto result = psr_lua_runner_run(lua, R"(
+    auto result = lua_runner_run(lua, R"(
         local integers = db:read_scalar_integers("Collection", "some_integer")
         assert(#integers == 1, "Expected 1 integer")
         assert(integers[1] == 100, "Expected 100")
     )");
     EXPECT_EQ(result, MARGAUX_OK);
 
-    psr_lua_runner_free(lua);
+    lua_runner_free(lua);
     database_close(db);
 }
 
@@ -206,10 +206,10 @@ TEST_F(LuaRunnerCApiTest, CreateElementWithVectors) {
     auto db = database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
-    auto lua = psr_lua_runner_new(db);
+    auto lua = lua_runner_new(db);
     ASSERT_NE(lua, nullptr);
 
-    auto result = psr_lua_runner_run(lua, R"(
+    auto result = lua_runner_run(lua, R"(
         db:create_element("Configuration", { label = "Config" })
         db:create_element("Collection", {
             label = "Item 1",
@@ -232,7 +232,7 @@ TEST_F(LuaRunnerCApiTest, CreateElementWithVectors) {
     EXPECT_EQ(vectors[0][2], 3);
     psr_free_integer_vectors(vectors, sizes, count);
 
-    psr_lua_runner_free(lua);
+    lua_runner_free(lua);
     database_close(db);
 }
 
@@ -242,11 +242,11 @@ TEST_F(LuaRunnerCApiTest, DeleteElement) {
     auto db = database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
-    auto lua = psr_lua_runner_new(db);
+    auto lua = lua_runner_new(db);
     ASSERT_NE(lua, nullptr);
 
     // Create and delete elements
-    auto result = psr_lua_runner_run(lua, R"(
+    auto result = lua_runner_run(lua, R"(
         db:create_element("Configuration", { label = "Config" })
         db:create_element("Collection", { label = "Item 1" })
         db:create_element("Collection", { label = "Item 2" })
@@ -261,7 +261,7 @@ TEST_F(LuaRunnerCApiTest, DeleteElement) {
     )");
     EXPECT_EQ(result, MARGAUX_OK);
 
-    psr_lua_runner_free(lua);
+    lua_runner_free(lua);
     database_close(db);
 }
 
@@ -271,10 +271,10 @@ TEST_F(LuaRunnerCApiTest, UpdateElement) {
     auto db = database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
-    auto lua = psr_lua_runner_new(db);
+    auto lua = lua_runner_new(db);
     ASSERT_NE(lua, nullptr);
 
-    auto result = psr_lua_runner_run(lua, R"(
+    auto result = lua_runner_run(lua, R"(
         db:create_element("Configuration", { label = "Config" })
         db:create_element("Collection", { label = "Item 1", some_integer = 100 })
 
@@ -293,7 +293,7 @@ TEST_F(LuaRunnerCApiTest, UpdateElement) {
     EXPECT_EQ(has_value, 1);
     EXPECT_EQ(value, 999);
 
-    psr_lua_runner_free(lua);
+    lua_runner_free(lua);
     database_close(db);
 }
 
@@ -307,13 +307,13 @@ TEST_F(LuaRunnerCApiTest, EmptyScript) {
     auto db = database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
-    auto lua = psr_lua_runner_new(db);
+    auto lua = lua_runner_new(db);
     ASSERT_NE(lua, nullptr);
 
-    auto result = psr_lua_runner_run(lua, "");
+    auto result = lua_runner_run(lua, "");
     EXPECT_EQ(result, MARGAUX_OK);
 
-    psr_lua_runner_free(lua);
+    lua_runner_free(lua);
     database_close(db);
 }
 
@@ -323,13 +323,13 @@ TEST_F(LuaRunnerCApiTest, CommentOnlyScript) {
     auto db = database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
-    auto lua = psr_lua_runner_new(db);
+    auto lua = lua_runner_new(db);
     ASSERT_NE(lua, nullptr);
 
-    auto result = psr_lua_runner_run(lua, "-- this is a comment\n-- another comment");
+    auto result = lua_runner_run(lua, "-- this is a comment\n-- another comment");
     EXPECT_EQ(result, MARGAUX_OK);
 
-    psr_lua_runner_free(lua);
+    lua_runner_free(lua);
     database_close(db);
 }
 
@@ -339,17 +339,17 @@ TEST_F(LuaRunnerCApiTest, AssertionFailure) {
     auto db = database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
-    auto lua = psr_lua_runner_new(db);
+    auto lua = lua_runner_new(db);
     ASSERT_NE(lua, nullptr);
 
-    auto result = psr_lua_runner_run(lua, "assert(false, 'Test assertion failure')");
+    auto result = lua_runner_run(lua, "assert(false, 'Test assertion failure')");
     EXPECT_NE(result, MARGAUX_OK);
 
-    auto error = psr_lua_runner_get_error(lua);
+    auto error = lua_runner_get_error(lua);
     EXPECT_NE(error, nullptr);
     EXPECT_NE(std::string(error).find("assertion"), std::string::npos);
 
-    psr_lua_runner_free(lua);
+    lua_runner_free(lua);
     database_close(db);
 }
 
@@ -359,16 +359,16 @@ TEST_F(LuaRunnerCApiTest, UndefinedVariableError) {
     auto db = database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
-    auto lua = psr_lua_runner_new(db);
+    auto lua = lua_runner_new(db);
     ASSERT_NE(lua, nullptr);
 
-    auto result = psr_lua_runner_run(lua, "local x = undefined_variable + 1");
+    auto result = lua_runner_run(lua, "local x = undefined_variable + 1");
     EXPECT_NE(result, MARGAUX_OK);
 
-    auto error = psr_lua_runner_get_error(lua);
+    auto error = lua_runner_get_error(lua);
     EXPECT_NE(error, nullptr);
 
-    psr_lua_runner_free(lua);
+    lua_runner_free(lua);
     database_close(db);
 }
 
@@ -378,20 +378,20 @@ TEST_F(LuaRunnerCApiTest, ErrorClearedAfterSuccessfulRun) {
     auto db = database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
-    auto lua = psr_lua_runner_new(db);
+    auto lua = lua_runner_new(db);
     ASSERT_NE(lua, nullptr);
 
     // First, run a failing script
-    auto result = psr_lua_runner_run(lua, "invalid lua syntax !!!");
+    auto result = lua_runner_run(lua, "invalid lua syntax !!!");
     EXPECT_NE(result, MARGAUX_OK);
-    auto error1 = psr_lua_runner_get_error(lua);
+    auto error1 = lua_runner_get_error(lua);
     EXPECT_NE(error1, nullptr);
 
     // Now run a successful script
-    result = psr_lua_runner_run(lua, "local x = 1 + 1");
+    result = lua_runner_run(lua, "local x = 1 + 1");
     EXPECT_EQ(result, MARGAUX_OK);
 
-    psr_lua_runner_free(lua);
+    lua_runner_free(lua);
     database_close(db);
 }
 
@@ -401,10 +401,10 @@ TEST_F(LuaRunnerCApiTest, ReadVectorIntegersFromLua) {
     auto db = database_from_schema(":memory:", collections_schema.c_str(), &options);
     ASSERT_NE(db, nullptr);
 
-    auto lua = psr_lua_runner_new(db);
+    auto lua = lua_runner_new(db);
     ASSERT_NE(lua, nullptr);
 
-    auto result = psr_lua_runner_run(lua, R"(
+    auto result = lua_runner_run(lua, R"(
         db:create_element("Configuration", { label = "Config" })
         db:create_element("Collection", {
             label = "Item 1",
@@ -418,6 +418,6 @@ TEST_F(LuaRunnerCApiTest, ReadVectorIntegersFromLua) {
     )");
     EXPECT_EQ(result, MARGAUX_OK);
 
-    psr_lua_runner_free(lua);
+    lua_runner_free(lua);
     database_close(db);
 }
