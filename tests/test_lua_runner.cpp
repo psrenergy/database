@@ -552,8 +552,9 @@ TEST_F(LuaRunnerTest, UpdateElementMultipleScalarsFromLua) {
     auto db = quiver::Database::from_schema(":memory:", collections_schema);
 
     db.create_element("Configuration", quiver::Element().set("label", "Config"));
-    db.create_element("Collection",
-                      quiver::Element().set("label", "Item 1").set("some_integer", int64_t{100}).set("some_float", 1.5));
+    db.create_element(
+        "Collection",
+        quiver::Element().set("label", "Item 1").set("some_integer", int64_t{100}).set("some_float", 1.5));
 
     quiver::LuaRunner lua(db);
 

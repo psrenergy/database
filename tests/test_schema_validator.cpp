@@ -53,7 +53,8 @@ TEST_F(SchemaValidatorFixture, InvalidVectorNoIndex) {
 }
 
 TEST_F(SchemaValidatorFixture, InvalidSetNoUnique) {
-    EXPECT_THROW(quiver::Database::from_schema(":memory:", INVALID_SCHEMA("set_no_unique.sql"), opts), std::runtime_error);
+    EXPECT_THROW(quiver::Database::from_schema(":memory:", INVALID_SCHEMA("set_no_unique.sql"), opts),
+                 std::runtime_error);
 }
 
 TEST_F(SchemaValidatorFixture, InvalidFkNotNullSetNull) {

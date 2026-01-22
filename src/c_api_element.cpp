@@ -58,9 +58,9 @@ QUIVER_C_API quiver_error_t quiver_element_set_null(quiver_element_t* element, c
 }
 
 QUIVER_C_API quiver_error_t quiver_element_set_array_integer(quiver_element_t* element,
-                                                    const char* name,
-                                                    const int64_t* values,
-                                                    int32_t count) {
+                                                             const char* name,
+                                                             const int64_t* values,
+                                                             int32_t count) {
     if (!element || !name || (!values && count > 0) || count < 0) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -70,9 +70,9 @@ QUIVER_C_API quiver_error_t quiver_element_set_array_integer(quiver_element_t* e
 }
 
 QUIVER_C_API quiver_error_t quiver_element_set_array_float(quiver_element_t* element,
-                                                  const char* name,
-                                                  const double* values,
-                                                  int32_t count) {
+                                                           const char* name,
+                                                           const double* values,
+                                                           int32_t count) {
     if (!element || !name || (!values && count > 0) || count < 0) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -82,9 +82,9 @@ QUIVER_C_API quiver_error_t quiver_element_set_array_float(quiver_element_t* ele
 }
 
 QUIVER_C_API quiver_error_t quiver_element_set_array_string(quiver_element_t* element,
-                                                   const char* name,
-                                                   const char* const* values,
-                                                   int32_t count) {
+                                                            const char* name,
+                                                            const char* const* values,
+                                                            int32_t count) {
     if (!element || !name || (!values && count > 0) || count < 0) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }

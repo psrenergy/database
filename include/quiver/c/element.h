@@ -23,17 +23,17 @@ QUIVER_C_API quiver_error_t quiver_element_set_null(quiver_element_t* element, c
 
 // Array setters - C++ create_element routes these to vector/set tables based on schema
 QUIVER_C_API quiver_error_t quiver_element_set_array_integer(quiver_element_t* element,
-                                                    const char* name,
-                                                    const int64_t* values,
-                                                    int32_t count);
+                                                             const char* name,
+                                                             const int64_t* values,
+                                                             int32_t count);
 QUIVER_C_API quiver_error_t quiver_element_set_array_float(quiver_element_t* element,
-                                                  const char* name,
-                                                  const double* values,
-                                                  int32_t count);
+                                                           const char* name,
+                                                           const double* values,
+                                                           int32_t count);
 QUIVER_C_API quiver_error_t quiver_element_set_array_string(quiver_element_t* element,
-                                                   const char* name,
-                                                   const char* const* values,
-                                                   int32_t count);
+                                                            const char* name,
+                                                            const char* const* values,
+                                                            int32_t count);
 
 // Accessors
 QUIVER_C_API int quiver_element_has_scalars(quiver_element_t* element);

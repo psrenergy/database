@@ -127,8 +127,9 @@ QUIVER_C_API const char* quiver_database_path(quiver_database_t* db) {
     return db->db.path().c_str();
 }
 
-QUIVER_C_API quiver_database_t*
-quiver_database_from_migrations(const char* db_path, const char* migrations_path, const quiver_database_options_t* options) {
+QUIVER_C_API quiver_database_t* quiver_database_from_migrations(const char* db_path,
+                                                                const char* migrations_path,
+                                                                const quiver_database_options_t* options) {
     if (!db_path || !migrations_path) {
         return nullptr;
     }
@@ -155,7 +156,9 @@ QUIVER_C_API int64_t quiver_database_current_version(quiver_database_t* db) {
     }
 }
 
-QUIVER_C_API int64_t quiver_database_create_element(quiver_database_t* db, const char* collection, quiver_element_t* element) {
+QUIVER_C_API int64_t quiver_database_create_element(quiver_database_t* db,
+                                                    const char* collection,
+                                                    quiver_element_t* element) {
     if (!db || !collection || !element) {
         return -1;
     }
@@ -167,9 +170,9 @@ QUIVER_C_API int64_t quiver_database_create_element(quiver_database_t* db, const
 }
 
 QUIVER_C_API quiver_error_t quiver_database_update_element(quiver_database_t* db,
-                                                  const char* collection,
-                                                  int64_t id,
-                                                  const quiver_element_t* element) {
+                                                           const char* collection,
+                                                           int64_t id,
+                                                           const quiver_element_t* element) {
     if (!db || !collection || !element) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -181,7 +184,9 @@ QUIVER_C_API quiver_error_t quiver_database_update_element(quiver_database_t* db
     }
 }
 
-QUIVER_C_API quiver_error_t quiver_database_delete_element_by_id(quiver_database_t* db, const char* collection, int64_t id) {
+QUIVER_C_API quiver_error_t quiver_database_delete_element_by_id(quiver_database_t* db,
+                                                                 const char* collection,
+                                                                 int64_t id) {
     if (!db || !collection) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -194,10 +199,10 @@ QUIVER_C_API quiver_error_t quiver_database_delete_element_by_id(quiver_database
 }
 
 QUIVER_C_API quiver_error_t quiver_database_set_scalar_relation(quiver_database_t* db,
-                                                       const char* collection,
-                                                       const char* attribute,
-                                                       const char* from_label,
-                                                       const char* to_label) {
+                                                                const char* collection,
+                                                                const char* attribute,
+                                                                const char* from_label,
+                                                                const char* to_label) {
     if (!db || !collection || !attribute || !from_label || !to_label) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -210,10 +215,10 @@ QUIVER_C_API quiver_error_t quiver_database_set_scalar_relation(quiver_database_
 }
 
 QUIVER_C_API quiver_error_t quiver_database_read_scalar_relation(quiver_database_t* db,
-                                                        const char* collection,
-                                                        const char* attribute,
-                                                        char*** out_values,
-                                                        size_t* out_count) {
+                                                                 const char* collection,
+                                                                 const char* attribute,
+                                                                 char*** out_values,
+                                                                 size_t* out_count) {
     if (!db || !collection || !attribute || !out_values || !out_count) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -254,10 +259,10 @@ quiver_database_from_schema(const char* db_path, const char* schema_path, const 
 }
 
 QUIVER_C_API quiver_error_t quiver_database_read_scalar_integers(quiver_database_t* db,
-                                                        const char* collection,
-                                                        const char* attribute,
-                                                        int64_t** out_values,
-                                                        size_t* out_count) {
+                                                                 const char* collection,
+                                                                 const char* attribute,
+                                                                 int64_t** out_values,
+                                                                 size_t* out_count) {
     if (!db || !collection || !attribute || !out_values || !out_count) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -269,10 +274,10 @@ QUIVER_C_API quiver_error_t quiver_database_read_scalar_integers(quiver_database
 }
 
 QUIVER_C_API quiver_error_t quiver_database_read_scalar_floats(quiver_database_t* db,
-                                                      const char* collection,
-                                                      const char* attribute,
-                                                      double** out_values,
-                                                      size_t* out_count) {
+                                                               const char* collection,
+                                                               const char* attribute,
+                                                               double** out_values,
+                                                               size_t* out_count) {
     if (!db || !collection || !attribute || !out_values || !out_count) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -284,10 +289,10 @@ QUIVER_C_API quiver_error_t quiver_database_read_scalar_floats(quiver_database_t
 }
 
 QUIVER_C_API quiver_error_t quiver_database_read_scalar_strings(quiver_database_t* db,
-                                                       const char* collection,
-                                                       const char* attribute,
-                                                       char*** out_values,
-                                                       size_t* out_count) {
+                                                                const char* collection,
+                                                                const char* attribute,
+                                                                char*** out_values,
+                                                                size_t* out_count) {
     if (!db || !collection || !attribute || !out_values || !out_count) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -330,11 +335,11 @@ QUIVER_C_API void quiver_free_string_array(char** values, size_t count) {
 }
 
 QUIVER_C_API quiver_error_t quiver_database_read_vector_integers(quiver_database_t* db,
-                                                        const char* collection,
-                                                        const char* attribute,
-                                                        int64_t*** out_vectors,
-                                                        size_t** out_sizes,
-                                                        size_t* out_count) {
+                                                                 const char* collection,
+                                                                 const char* attribute,
+                                                                 int64_t*** out_vectors,
+                                                                 size_t** out_sizes,
+                                                                 size_t* out_count) {
     if (!db || !collection || !attribute || !out_vectors || !out_sizes || !out_count) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -346,11 +351,11 @@ QUIVER_C_API quiver_error_t quiver_database_read_vector_integers(quiver_database
 }
 
 QUIVER_C_API quiver_error_t quiver_database_read_vector_floats(quiver_database_t* db,
-                                                      const char* collection,
-                                                      const char* attribute,
-                                                      double*** out_vectors,
-                                                      size_t** out_sizes,
-                                                      size_t* out_count) {
+                                                               const char* collection,
+                                                               const char* attribute,
+                                                               double*** out_vectors,
+                                                               size_t** out_sizes,
+                                                               size_t* out_count) {
     if (!db || !collection || !attribute || !out_vectors || !out_sizes || !out_count) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -362,11 +367,11 @@ QUIVER_C_API quiver_error_t quiver_database_read_vector_floats(quiver_database_t
 }
 
 QUIVER_C_API quiver_error_t quiver_database_read_vector_strings(quiver_database_t* db,
-                                                       const char* collection,
-                                                       const char* attribute,
-                                                       char**** out_vectors,
-                                                       size_t** out_sizes,
-                                                       size_t* out_count) {
+                                                                const char* collection,
+                                                                const char* attribute,
+                                                                char**** out_vectors,
+                                                                size_t** out_sizes,
+                                                                size_t* out_count) {
     if (!db || !collection || !attribute || !out_vectors || !out_sizes || !out_count) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -426,11 +431,11 @@ QUIVER_C_API void quiver_free_string_vectors(char*** vectors, size_t* sizes, siz
 // Set read functions (reuse vector helpers since sets have same return structure)
 
 QUIVER_C_API quiver_error_t quiver_database_read_set_integers(quiver_database_t* db,
-                                                     const char* collection,
-                                                     const char* attribute,
-                                                     int64_t*** out_sets,
-                                                     size_t** out_sizes,
-                                                     size_t* out_count) {
+                                                              const char* collection,
+                                                              const char* attribute,
+                                                              int64_t*** out_sets,
+                                                              size_t** out_sizes,
+                                                              size_t* out_count) {
     if (!db || !collection || !attribute || !out_sets || !out_sizes || !out_count) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -442,11 +447,11 @@ QUIVER_C_API quiver_error_t quiver_database_read_set_integers(quiver_database_t*
 }
 
 QUIVER_C_API quiver_error_t quiver_database_read_set_floats(quiver_database_t* db,
-                                                   const char* collection,
-                                                   const char* attribute,
-                                                   double*** out_sets,
-                                                   size_t** out_sizes,
-                                                   size_t* out_count) {
+                                                            const char* collection,
+                                                            const char* attribute,
+                                                            double*** out_sets,
+                                                            size_t** out_sizes,
+                                                            size_t* out_count) {
     if (!db || !collection || !attribute || !out_sets || !out_sizes || !out_count) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -458,11 +463,11 @@ QUIVER_C_API quiver_error_t quiver_database_read_set_floats(quiver_database_t* d
 }
 
 QUIVER_C_API quiver_error_t quiver_database_read_set_strings(quiver_database_t* db,
-                                                    const char* collection,
-                                                    const char* attribute,
-                                                    char**** out_sets,
-                                                    size_t** out_sizes,
-                                                    size_t* out_count) {
+                                                             const char* collection,
+                                                             const char* attribute,
+                                                             char**** out_sets,
+                                                             size_t** out_sizes,
+                                                             size_t* out_count) {
     if (!db || !collection || !attribute || !out_sets || !out_sizes || !out_count) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -498,11 +503,11 @@ QUIVER_C_API quiver_error_t quiver_database_read_set_strings(quiver_database_t* 
 // Read scalar by ID functions
 
 QUIVER_C_API quiver_error_t quiver_database_read_scalar_integers_by_id(quiver_database_t* db,
-                                                              const char* collection,
-                                                              const char* attribute,
-                                                              int64_t id,
-                                                              int64_t* out_value,
-                                                              int* out_has_value) {
+                                                                       const char* collection,
+                                                                       const char* attribute,
+                                                                       int64_t id,
+                                                                       int64_t* out_value,
+                                                                       int* out_has_value) {
     if (!db || !collection || !attribute || !out_value || !out_has_value) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -521,11 +526,11 @@ QUIVER_C_API quiver_error_t quiver_database_read_scalar_integers_by_id(quiver_da
 }
 
 QUIVER_C_API quiver_error_t quiver_database_read_scalar_floats_by_id(quiver_database_t* db,
-                                                            const char* collection,
-                                                            const char* attribute,
-                                                            int64_t id,
-                                                            double* out_value,
-                                                            int* out_has_value) {
+                                                                     const char* collection,
+                                                                     const char* attribute,
+                                                                     int64_t id,
+                                                                     double* out_value,
+                                                                     int* out_has_value) {
     if (!db || !collection || !attribute || !out_value || !out_has_value) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -544,11 +549,11 @@ QUIVER_C_API quiver_error_t quiver_database_read_scalar_floats_by_id(quiver_data
 }
 
 QUIVER_C_API quiver_error_t quiver_database_read_scalar_strings_by_id(quiver_database_t* db,
-                                                             const char* collection,
-                                                             const char* attribute,
-                                                             int64_t id,
-                                                             char** out_value,
-                                                             int* out_has_value) {
+                                                                      const char* collection,
+                                                                      const char* attribute,
+                                                                      int64_t id,
+                                                                      char** out_value,
+                                                                      int* out_has_value) {
     if (!db || !collection || !attribute || !out_value || !out_has_value) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -572,11 +577,11 @@ QUIVER_C_API quiver_error_t quiver_database_read_scalar_strings_by_id(quiver_dat
 // Read vector by ID functions
 
 QUIVER_C_API quiver_error_t quiver_database_read_vector_integers_by_id(quiver_database_t* db,
-                                                              const char* collection,
-                                                              const char* attribute,
-                                                              int64_t id,
-                                                              int64_t** out_values,
-                                                              size_t* out_count) {
+                                                                       const char* collection,
+                                                                       const char* attribute,
+                                                                       int64_t id,
+                                                                       int64_t** out_values,
+                                                                       size_t* out_count) {
     if (!db || !collection || !attribute || !out_values || !out_count) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -589,11 +594,11 @@ QUIVER_C_API quiver_error_t quiver_database_read_vector_integers_by_id(quiver_da
 }
 
 QUIVER_C_API quiver_error_t quiver_database_read_vector_floats_by_id(quiver_database_t* db,
-                                                            const char* collection,
-                                                            const char* attribute,
-                                                            int64_t id,
-                                                            double** out_values,
-                                                            size_t* out_count) {
+                                                                     const char* collection,
+                                                                     const char* attribute,
+                                                                     int64_t id,
+                                                                     double** out_values,
+                                                                     size_t* out_count) {
     if (!db || !collection || !attribute || !out_values || !out_count) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -606,11 +611,11 @@ QUIVER_C_API quiver_error_t quiver_database_read_vector_floats_by_id(quiver_data
 }
 
 QUIVER_C_API quiver_error_t quiver_database_read_vector_strings_by_id(quiver_database_t* db,
-                                                             const char* collection,
-                                                             const char* attribute,
-                                                             int64_t id,
-                                                             char*** out_values,
-                                                             size_t* out_count) {
+                                                                      const char* collection,
+                                                                      const char* attribute,
+                                                                      int64_t id,
+                                                                      char*** out_values,
+                                                                      size_t* out_count) {
     if (!db || !collection || !attribute || !out_values || !out_count) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -636,11 +641,11 @@ QUIVER_C_API quiver_error_t quiver_database_read_vector_strings_by_id(quiver_dat
 // Read set by ID functions
 
 QUIVER_C_API quiver_error_t quiver_database_read_set_integers_by_id(quiver_database_t* db,
-                                                           const char* collection,
-                                                           const char* attribute,
-                                                           int64_t id,
-                                                           int64_t** out_values,
-                                                           size_t* out_count) {
+                                                                    const char* collection,
+                                                                    const char* attribute,
+                                                                    int64_t id,
+                                                                    int64_t** out_values,
+                                                                    size_t* out_count) {
     if (!db || !collection || !attribute || !out_values || !out_count) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -653,11 +658,11 @@ QUIVER_C_API quiver_error_t quiver_database_read_set_integers_by_id(quiver_datab
 }
 
 QUIVER_C_API quiver_error_t quiver_database_read_set_floats_by_id(quiver_database_t* db,
-                                                         const char* collection,
-                                                         const char* attribute,
-                                                         int64_t id,
-                                                         double** out_values,
-                                                         size_t* out_count) {
+                                                                  const char* collection,
+                                                                  const char* attribute,
+                                                                  int64_t id,
+                                                                  double** out_values,
+                                                                  size_t* out_count) {
     if (!db || !collection || !attribute || !out_values || !out_count) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -670,11 +675,11 @@ QUIVER_C_API quiver_error_t quiver_database_read_set_floats_by_id(quiver_databas
 }
 
 QUIVER_C_API quiver_error_t quiver_database_read_set_strings_by_id(quiver_database_t* db,
-                                                          const char* collection,
-                                                          const char* attribute,
-                                                          int64_t id,
-                                                          char*** out_values,
-                                                          size_t* out_count) {
+                                                                   const char* collection,
+                                                                   const char* attribute,
+                                                                   int64_t id,
+                                                                   char*** out_values,
+                                                                   size_t* out_count) {
     if (!db || !collection || !attribute || !out_values || !out_count) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -698,9 +703,9 @@ QUIVER_C_API quiver_error_t quiver_database_read_set_strings_by_id(quiver_databa
 }
 
 QUIVER_C_API quiver_error_t quiver_database_read_element_ids(quiver_database_t* db,
-                                                    const char* collection,
-                                                    int64_t** out_ids,
-                                                    size_t* out_count) {
+                                                             const char* collection,
+                                                             int64_t** out_ids,
+                                                             size_t* out_count) {
     if (!db || !collection || !out_ids || !out_count) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -714,10 +719,10 @@ QUIVER_C_API quiver_error_t quiver_database_read_element_ids(quiver_database_t* 
 // Update scalar functions
 
 QUIVER_C_API quiver_error_t quiver_database_update_scalar_integer(quiver_database_t* db,
-                                                         const char* collection,
-                                                         const char* attribute,
-                                                         int64_t id,
-                                                         int64_t value) {
+                                                                  const char* collection,
+                                                                  const char* attribute,
+                                                                  int64_t id,
+                                                                  int64_t value) {
     if (!db || !collection || !attribute) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -730,10 +735,10 @@ QUIVER_C_API quiver_error_t quiver_database_update_scalar_integer(quiver_databas
 }
 
 QUIVER_C_API quiver_error_t quiver_database_update_scalar_float(quiver_database_t* db,
-                                                       const char* collection,
-                                                       const char* attribute,
-                                                       int64_t id,
-                                                       double value) {
+                                                                const char* collection,
+                                                                const char* attribute,
+                                                                int64_t id,
+                                                                double value) {
     if (!db || !collection || !attribute) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -746,10 +751,10 @@ QUIVER_C_API quiver_error_t quiver_database_update_scalar_float(quiver_database_
 }
 
 QUIVER_C_API quiver_error_t quiver_database_update_scalar_string(quiver_database_t* db,
-                                                        const char* collection,
-                                                        const char* attribute,
-                                                        int64_t id,
-                                                        const char* value) {
+                                                                 const char* collection,
+                                                                 const char* attribute,
+                                                                 int64_t id,
+                                                                 const char* value) {
     if (!db || !collection || !attribute || !value) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -764,11 +769,11 @@ QUIVER_C_API quiver_error_t quiver_database_update_scalar_string(quiver_database
 // Update vector functions
 
 QUIVER_C_API quiver_error_t quiver_database_update_vector_integers(quiver_database_t* db,
-                                                          const char* collection,
-                                                          const char* attribute,
-                                                          int64_t id,
-                                                          const int64_t* values,
-                                                          size_t count) {
+                                                                   const char* collection,
+                                                                   const char* attribute,
+                                                                   int64_t id,
+                                                                   const int64_t* values,
+                                                                   size_t count) {
     if (!db || !collection || !attribute || (count > 0 && !values)) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -782,11 +787,11 @@ QUIVER_C_API quiver_error_t quiver_database_update_vector_integers(quiver_databa
 }
 
 QUIVER_C_API quiver_error_t quiver_database_update_vector_floats(quiver_database_t* db,
-                                                        const char* collection,
-                                                        const char* attribute,
-                                                        int64_t id,
-                                                        const double* values,
-                                                        size_t count) {
+                                                                 const char* collection,
+                                                                 const char* attribute,
+                                                                 int64_t id,
+                                                                 const double* values,
+                                                                 size_t count) {
     if (!db || !collection || !attribute || (count > 0 && !values)) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -800,11 +805,11 @@ QUIVER_C_API quiver_error_t quiver_database_update_vector_floats(quiver_database
 }
 
 QUIVER_C_API quiver_error_t quiver_database_update_vector_strings(quiver_database_t* db,
-                                                         const char* collection,
-                                                         const char* attribute,
-                                                         int64_t id,
-                                                         const char* const* values,
-                                                         size_t count) {
+                                                                  const char* collection,
+                                                                  const char* attribute,
+                                                                  int64_t id,
+                                                                  const char* const* values,
+                                                                  size_t count) {
     if (!db || !collection || !attribute || (count > 0 && !values)) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -824,11 +829,11 @@ QUIVER_C_API quiver_error_t quiver_database_update_vector_strings(quiver_databas
 // Update set functions
 
 QUIVER_C_API quiver_error_t quiver_database_update_set_integers(quiver_database_t* db,
-                                                       const char* collection,
-                                                       const char* attribute,
-                                                       int64_t id,
-                                                       const int64_t* values,
-                                                       size_t count) {
+                                                                const char* collection,
+                                                                const char* attribute,
+                                                                int64_t id,
+                                                                const int64_t* values,
+                                                                size_t count) {
     if (!db || !collection || !attribute || (count > 0 && !values)) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -842,11 +847,11 @@ QUIVER_C_API quiver_error_t quiver_database_update_set_integers(quiver_database_
 }
 
 QUIVER_C_API quiver_error_t quiver_database_update_set_floats(quiver_database_t* db,
-                                                     const char* collection,
-                                                     const char* attribute,
-                                                     int64_t id,
-                                                     const double* values,
-                                                     size_t count) {
+                                                              const char* collection,
+                                                              const char* attribute,
+                                                              int64_t id,
+                                                              const double* values,
+                                                              size_t count) {
     if (!db || !collection || !attribute || (count > 0 && !values)) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -860,11 +865,11 @@ QUIVER_C_API quiver_error_t quiver_database_update_set_floats(quiver_database_t*
 }
 
 QUIVER_C_API quiver_error_t quiver_database_update_set_strings(quiver_database_t* db,
-                                                      const char* collection,
-                                                      const char* attribute,
-                                                      int64_t id,
-                                                      const char* const* values,
-                                                      size_t count) {
+                                                               const char* collection,
+                                                               const char* attribute,
+                                                               int64_t id,
+                                                               const char* const* values,
+                                                               size_t count) {
     if (!db || !collection || !attribute || (count > 0 && !values)) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -882,10 +887,10 @@ QUIVER_C_API quiver_error_t quiver_database_update_set_strings(quiver_database_t
 }
 
 QUIVER_C_API quiver_error_t quiver_database_get_attribute_type(quiver_database_t* db,
-                                                      const char* collection,
-                                                      const char* attribute,
-                                                      quiver_data_structure_t* out_data_structure,
-                                                      quiver_data_type_t* out_data_type) {
+                                                               const char* collection,
+                                                               const char* attribute,
+                                                               quiver_data_structure_t* out_data_structure,
+                                                               quiver_data_type_t* out_data_type) {
     if (!db || !collection || !attribute || !out_data_structure || !out_data_type) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }

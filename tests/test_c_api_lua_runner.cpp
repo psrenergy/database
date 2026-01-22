@@ -288,7 +288,8 @@ TEST_F(LuaRunnerCApiTest, UpdateElement) {
     // Verify with C API
     int64_t value = 0;
     int has_value = 0;
-    auto read_result = quiver_database_read_scalar_integers_by_id(db, "Collection", "some_integer", 1, &value, &has_value);
+    auto read_result =
+        quiver_database_read_scalar_integers_by_id(db, "Collection", "some_integer", 1, &value, &has_value);
     EXPECT_EQ(read_result, QUIVER_OK);
     EXPECT_EQ(has_value, 1);
     EXPECT_EQ(value, 999);

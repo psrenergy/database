@@ -248,7 +248,8 @@ TEST(DatabaseCApi, ReadVectorEmpty) {
     double** float_vectors = nullptr;
     size_t* float_sizes = nullptr;
     size_t float_count = 0;
-    err = quiver_database_read_vector_floats(db, "Collection", "value_float", &float_vectors, &float_sizes, &float_count);
+    err =
+        quiver_database_read_vector_floats(db, "Collection", "value_float", &float_vectors, &float_sizes, &float_count);
     EXPECT_EQ(err, QUIVER_OK);
     EXPECT_EQ(float_count, 0);
     EXPECT_EQ(float_vectors, nullptr);
@@ -489,7 +490,8 @@ TEST(DatabaseCApi, ReadScalarFloatById) {
 
     double value;
     int has_value;
-    auto err = quiver_database_read_scalar_floats_by_id(db, "Configuration", "float_attribute", id1, &value, &has_value);
+    auto err =
+        quiver_database_read_scalar_floats_by_id(db, "Configuration", "float_attribute", id1, &value, &has_value);
 
     EXPECT_EQ(err, QUIVER_OK);
     EXPECT_EQ(has_value, 1);
@@ -512,7 +514,8 @@ TEST(DatabaseCApi, ReadScalarStringById) {
 
     char* value = nullptr;
     int has_value;
-    auto err = quiver_database_read_scalar_strings_by_id(db, "Configuration", "string_attribute", id1, &value, &has_value);
+    auto err =
+        quiver_database_read_scalar_strings_by_id(db, "Configuration", "string_attribute", id1, &value, &has_value);
 
     EXPECT_EQ(err, QUIVER_OK);
     EXPECT_EQ(has_value, 1);
@@ -811,7 +814,8 @@ TEST(DatabaseCApi, GetAttributeTypeScalarInteger) {
 
     quiver_data_structure_t data_structure;
     quiver_data_type_t data_type;
-    auto err = quiver_database_get_attribute_type(db, "Configuration", "integer_attribute", &data_structure, &data_type);
+    auto err =
+        quiver_database_get_attribute_type(db, "Configuration", "integer_attribute", &data_structure, &data_type);
 
     EXPECT_EQ(err, QUIVER_OK);
     EXPECT_EQ(data_structure, QUIVER_DATA_STRUCTURE_SCALAR);
@@ -1091,8 +1095,8 @@ TEST(DatabaseCApi, ReadScalarStringsNullOutput) {
 TEST(DatabaseCApi, ReadScalarIntegersByIdNullDb) {
     int64_t value;
     int has_value;
-    auto err =
-        quiver_database_read_scalar_integers_by_id(nullptr, "Configuration", "integer_attribute", 1, &value, &has_value);
+    auto err = quiver_database_read_scalar_integers_by_id(
+        nullptr, "Configuration", "integer_attribute", 1, &value, &has_value);
     EXPECT_EQ(err, QUIVER_ERROR_INVALID_ARGUMENT);
 }
 
@@ -1168,7 +1172,8 @@ TEST(DatabaseCApi, ReadScalarStringsByIdNullOutput) {
     ASSERT_NE(db, nullptr);
 
     int has_value;
-    auto err = quiver_database_read_scalar_strings_by_id(db, "Configuration", "string_attribute", 1, nullptr, &has_value);
+    auto err =
+        quiver_database_read_scalar_strings_by_id(db, "Configuration", "string_attribute", 1, nullptr, &has_value);
     EXPECT_EQ(err, QUIVER_ERROR_INVALID_ARGUMENT);
 
     char* value = nullptr;

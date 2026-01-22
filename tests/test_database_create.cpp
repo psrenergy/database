@@ -5,7 +5,8 @@
 #include <quiver/element.h>
 
 TEST(Database, CreateElementWithScalars) {
-    auto db = quiver::Database::from_schema(":memory:", VALID_SCHEMA("basic.sql"), {.console_level = quiver::LogLevel::off});
+    auto db =
+        quiver::Database::from_schema(":memory:", VALID_SCHEMA("basic.sql"), {.console_level = quiver::LogLevel::off});
 
     // Create element
     quiver::Element element;
@@ -26,8 +27,8 @@ TEST(Database, CreateElementWithScalars) {
 }
 
 TEST(Database, CreateElementWithVector) {
-    auto db =
-        quiver::Database::from_schema(":memory:", VALID_SCHEMA("collections.sql"), {.console_level = quiver::LogLevel::off});
+    auto db = quiver::Database::from_schema(
+        ":memory:", VALID_SCHEMA("collections.sql"), {.console_level = quiver::LogLevel::off});
 
     // Configuration required first
     quiver::Element config;
@@ -58,8 +59,8 @@ TEST(Database, CreateElementWithVector) {
 }
 
 TEST(Database, CreateElementWithVectorGroup) {
-    auto db =
-        quiver::Database::from_schema(":memory:", VALID_SCHEMA("collections.sql"), {.console_level = quiver::LogLevel::off});
+    auto db = quiver::Database::from_schema(
+        ":memory:", VALID_SCHEMA("collections.sql"), {.console_level = quiver::LogLevel::off});
 
     // Configuration required first
     quiver::Element config;
@@ -86,8 +87,8 @@ TEST(Database, CreateElementWithVectorGroup) {
 }
 
 TEST(Database, CreateElementWithSetGroup) {
-    auto db =
-        quiver::Database::from_schema(":memory:", VALID_SCHEMA("collections.sql"), {.console_level = quiver::LogLevel::off});
+    auto db = quiver::Database::from_schema(
+        ":memory:", VALID_SCHEMA("collections.sql"), {.console_level = quiver::LogLevel::off});
 
     // Configuration required first
     quiver::Element config;
@@ -110,7 +111,8 @@ TEST(Database, CreateElementWithSetGroup) {
 }
 
 TEST(Database, CreateMultipleElements) {
-    auto db = quiver::Database::from_schema(":memory:", VALID_SCHEMA("basic.sql"), {.console_level = quiver::LogLevel::off});
+    auto db =
+        quiver::Database::from_schema(":memory:", VALID_SCHEMA("basic.sql"), {.console_level = quiver::LogLevel::off});
 
     // Create multiple Configuration elements
     quiver::Element e1;
@@ -134,8 +136,8 @@ TEST(Database, CreateMultipleElements) {
 // ============================================================================
 
 TEST(Database, CreateElementSingleElementVector) {
-    auto db =
-        quiver::Database::from_schema(":memory:", VALID_SCHEMA("collections.sql"), {.console_level = quiver::LogLevel::off});
+    auto db = quiver::Database::from_schema(
+        ":memory:", VALID_SCHEMA("collections.sql"), {.console_level = quiver::LogLevel::off});
 
     quiver::Element config;
     config.set("label", std::string("Test Config"));
@@ -153,8 +155,8 @@ TEST(Database, CreateElementSingleElementVector) {
 }
 
 TEST(Database, CreateElementSingleElementSet) {
-    auto db =
-        quiver::Database::from_schema(":memory:", VALID_SCHEMA("collections.sql"), {.console_level = quiver::LogLevel::off});
+    auto db = quiver::Database::from_schema(
+        ":memory:", VALID_SCHEMA("collections.sql"), {.console_level = quiver::LogLevel::off});
 
     quiver::Element config;
     config.set("label", std::string("Test Config"));
@@ -172,7 +174,8 @@ TEST(Database, CreateElementSingleElementSet) {
 }
 
 TEST(Database, CreateElementInvalidCollection) {
-    auto db = quiver::Database::from_schema(":memory:", VALID_SCHEMA("basic.sql"), {.console_level = quiver::LogLevel::off});
+    auto db =
+        quiver::Database::from_schema(":memory:", VALID_SCHEMA("basic.sql"), {.console_level = quiver::LogLevel::off});
 
     quiver::Element element;
     element.set("label", std::string("Test"));
@@ -181,8 +184,8 @@ TEST(Database, CreateElementInvalidCollection) {
 }
 
 TEST(Database, CreateElementLargeVector) {
-    auto db =
-        quiver::Database::from_schema(":memory:", VALID_SCHEMA("collections.sql"), {.console_level = quiver::LogLevel::off});
+    auto db = quiver::Database::from_schema(
+        ":memory:", VALID_SCHEMA("collections.sql"), {.console_level = quiver::LogLevel::off});
 
     quiver::Element config;
     config.set("label", std::string("Test Config"));
@@ -208,8 +211,8 @@ TEST(Database, CreateElementLargeVector) {
 }
 
 TEST(Database, CreateElementWithNoOptionalAttributes) {
-    auto db =
-        quiver::Database::from_schema(":memory:", VALID_SCHEMA("collections.sql"), {.console_level = quiver::LogLevel::off});
+    auto db = quiver::Database::from_schema(
+        ":memory:", VALID_SCHEMA("collections.sql"), {.console_level = quiver::LogLevel::off});
 
     quiver::Element config;
     config.set("label", std::string("Test Config"));
