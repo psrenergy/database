@@ -10,7 +10,7 @@ extern "C" {
 
 // Platform-specific export macros
 #ifdef _WIN32
-#ifdef QUIVER_DATABASE_C_EXPORTS
+#ifdef QUIVER_C_EXPORTS
 #define QUIVER_C_API __declspec(dllexport)
 #else
 #define QUIVER_C_API __declspec(dllimport)

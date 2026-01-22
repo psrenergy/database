@@ -1,11 +1,11 @@
 #ifndef QUIVER_EXPORT_H
 #define QUIVER_EXPORT_H
 
-#ifdef QUIVER_DATABASE_STATIC
+#ifdef QUIVER_STATIC
 #define QUIVER_API
 #else
 #ifdef _WIN32
-#ifdef QUIVER_DATABASE_EXPORTS
+#ifdef QUIVER_EXPORTS
 #define QUIVER_API __declspec(dllexport)
 #else
 #define QUIVER_API __declspec(dllimport)
