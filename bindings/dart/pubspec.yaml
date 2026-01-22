@@ -1,5 +1,5 @@
-name: psr_database
-description: Dart FFI bindings for PSR Database - SQLite wrapper library
+name: quiver_db
+description: Dart bindings for Quiver
 version: 0.1.0
 
 environment:
@@ -15,20 +15,20 @@ dev_dependencies:
   test: ^1.24.0
 
 ffigen:
-  name: PsrDatabaseBindings
-  description: FFI bindings for PSR Database C API
+  name: QuiverDatabaseBindings
+  description: FFI bindings for Quiver C API
   output: 'lib/src/ffi/bindings.dart'
   headers:
     entry-points:
-      - '../../include/psr/c/common.h'
-      - '../../include/psr/c/database.h'
-      - '../../include/psr/c/element.h'
-      - '../../include/psr/c/lua_runner.h'
+      - '../../include/quiver/c/common.h'
+      - '../../include/quiver/c/database.h'
+      - '../../include/quiver/c/element.h'
+      - '../../include/quiver/c/lua_runner.h'
     include-directives:
-      - '../../include/psr/c/common.h'
-      - '../../include/psr/c/database.h'
-      - '../../include/psr/c/element.h'
-      - '../../include/psr/c/lua_runner.h'
+      - '../../include/quiver/c/common.h'
+      - '../../include/quiver/c/database.h'
+      - '../../include/quiver/c/element.h'
+      - '../../include/quiver/c/lua_runner.h'
   compiler-opts:
     - '-I../../include'
   preamble: |

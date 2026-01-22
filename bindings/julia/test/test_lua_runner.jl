@@ -1,6 +1,6 @@
 module TestLuaRunner
 
-using PSRDatabase
+using Quiver
 using Test
 
 include("fixture.jl")
@@ -8,11 +8,11 @@ include("fixture.jl")
 @testset "LuaRunner" begin
     @testset "Create Element" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
-        db = PSRDatabase.from_schema(":memory:", path_schema)
+        db = Quiver.from_schema(":memory:", path_schema)
 
-        lua = PSRDatabase.LuaRunner(db)
+        lua = Quiver.LuaRunner(db)
 
-        PSRDatabase.run!(
+        Quiver.run!(
             lua,
             """
         db:create_element("Configuration", { label = "Test Config" })
@@ -20,29 +20,29 @@ include("fixture.jl")
     """,
         )
 
-        labels = PSRDatabase.read_scalar_strings(db, "Collection", "label")
+        labels = Quiver.read_scalar_strings(db, "Collection", "label")
         @test length(labels) == 1
         @test labels[1] == "Item 1"
 
-        integers = PSRDatabase.read_scalar_integers(db, "Collection", "some_integer")
+        integers = Quiver.read_scalar_integers(db, "Collection", "some_integer")
         @test length(integers) == 1
         @test integers[1] == 42
 
-        PSRDatabase.close!(lua)
-        PSRDatabase.close!(db)
+        Quiver.close!(lua)
+        Quiver.close!(db)
     end
 
     @testset "Read from Lua" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
-        db = PSRDatabase.from_schema(":memory:", path_schema)
+        db = Quiver.from_schema(":memory:", path_schema)
 
-        PSRDatabase.create_element!(db, "Configuration"; label = "Config")
-        PSRDatabase.create_element!(db, "Collection"; label = "Item 1", some_integer = 10)
-        PSRDatabase.create_element!(db, "Collection"; label = "Item 2", some_integer = 20)
+        Quiver.create_element!(db, "Configuration"; label = "Config")
+        Quiver.create_element!(db, "Collection"; label = "Item 1", some_integer = 10)
+        Quiver.create_element!(db, "Collection"; label = "Item 2", some_integer = 20)
 
-        lua = PSRDatabase.LuaRunner(db)
+        lua = Quiver.LuaRunner(db)
 
-        PSRDatabase.run!(
+        Quiver.run!(
             lua,
             """
         local labels = db:read_scalar_strings("Collection", "label")
@@ -52,113 +52,113 @@ include("fixture.jl")
     """,
         )
 
-        PSRDatabase.close!(lua)
-        PSRDatabase.close!(db)
+        Quiver.close!(lua)
+        Quiver.close!(db)
     end
 
     @testset "Script Error" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
-        db = PSRDatabase.from_schema(":memory:", path_schema)
+        db = Quiver.from_schema(":memory:", path_schema)
 
-        lua = PSRDatabase.LuaRunner(db)
+        lua = Quiver.LuaRunner(db)
 
-        @test_throws PSRDatabase.DatabaseException PSRDatabase.run!(lua, "invalid syntax !!!")
+        @test_throws Quiver.DatabaseException Quiver.run!(lua, "invalid syntax !!!")
 
-        PSRDatabase.close!(lua)
-        PSRDatabase.close!(db)
+        Quiver.close!(lua)
+        Quiver.close!(db)
     end
 
     @testset "Reuse Runner" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
-        db = PSRDatabase.from_schema(":memory:", path_schema)
+        db = Quiver.from_schema(":memory:", path_schema)
 
-        lua = PSRDatabase.LuaRunner(db)
+        lua = Quiver.LuaRunner(db)
 
-        PSRDatabase.run!(lua, """db:create_element("Configuration", { label = "Config" })""")
-        PSRDatabase.run!(lua, """db:create_element("Collection", { label = "Item 1" })""")
-        PSRDatabase.run!(lua, """db:create_element("Collection", { label = "Item 2" })""")
+        Quiver.run!(lua, """db:create_element("Configuration", { label = "Config" })""")
+        Quiver.run!(lua, """db:create_element("Collection", { label = "Item 1" })""")
+        Quiver.run!(lua, """db:create_element("Collection", { label = "Item 2" })""")
 
-        labels = PSRDatabase.read_scalar_strings(db, "Collection", "label")
+        labels = Quiver.read_scalar_strings(db, "Collection", "label")
         @test length(labels) == 2
         @test labels[1] == "Item 1"
         @test labels[2] == "Item 2"
 
-        PSRDatabase.close!(lua)
-        PSRDatabase.close!(db)
+        Quiver.close!(lua)
+        Quiver.close!(db)
     end
 
     # Error handling tests
 
     @testset "Undefined Variable" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
-        db = PSRDatabase.from_schema(":memory:", path_schema)
+        db = Quiver.from_schema(":memory:", path_schema)
 
-        lua = PSRDatabase.LuaRunner(db)
+        lua = Quiver.LuaRunner(db)
 
         # Script that references undefined variable
-        @test_throws PSRDatabase.DatabaseException PSRDatabase.run!(lua, "print(undefined_variable.field)")
+        @test_throws Quiver.DatabaseException Quiver.run!(lua, "print(undefined_variable.field)")
 
-        PSRDatabase.close!(lua)
-        PSRDatabase.close!(db)
+        Quiver.close!(lua)
+        Quiver.close!(db)
     end
 
     @testset "Create Invalid Collection" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
-        db = PSRDatabase.from_schema(":memory:", path_schema)
+        db = Quiver.from_schema(":memory:", path_schema)
 
-        lua = PSRDatabase.LuaRunner(db)
+        lua = Quiver.LuaRunner(db)
 
-        PSRDatabase.run!(lua, """db:create_element("Configuration", { label = "Test Config" })""")
+        Quiver.run!(lua, """db:create_element("Configuration", { label = "Test Config" })""")
 
         # Script that creates element in nonexistent collection
-        @test_throws PSRDatabase.DatabaseException PSRDatabase.run!(
+        @test_throws Quiver.DatabaseException Quiver.run!(
             lua,
             """db:create_element("NonexistentCollection", { label = "Item" })""",
         )
 
-        PSRDatabase.close!(lua)
-        PSRDatabase.close!(db)
+        Quiver.close!(lua)
+        Quiver.close!(db)
     end
 
     @testset "Empty Script" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
-        db = PSRDatabase.from_schema(":memory:", path_schema)
+        db = Quiver.from_schema(":memory:", path_schema)
 
-        lua = PSRDatabase.LuaRunner(db)
+        lua = Quiver.LuaRunner(db)
 
         # Empty script should succeed without error
-        PSRDatabase.run!(lua, "")
+        Quiver.run!(lua, "")
         @test true  # If we get here, the empty script ran without error
 
-        PSRDatabase.close!(lua)
-        PSRDatabase.close!(db)
+        Quiver.close!(lua)
+        Quiver.close!(db)
     end
 
     @testset "Comment Only Script" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
-        db = PSRDatabase.from_schema(":memory:", path_schema)
+        db = Quiver.from_schema(":memory:", path_schema)
 
-        lua = PSRDatabase.LuaRunner(db)
+        lua = Quiver.LuaRunner(db)
 
         # Comment-only script should succeed
-        PSRDatabase.run!(lua, "-- this is just a comment")
+        Quiver.run!(lua, "-- this is just a comment")
         @test true
 
-        PSRDatabase.close!(lua)
-        PSRDatabase.close!(db)
+        Quiver.close!(lua)
+        Quiver.close!(db)
     end
 
     @testset "Read Integers" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
-        db = PSRDatabase.from_schema(":memory:", path_schema)
+        db = Quiver.from_schema(":memory:", path_schema)
 
-        PSRDatabase.create_element!(db, "Configuration"; label = "Config")
-        PSRDatabase.create_element!(db, "Collection"; label = "Item 1", some_integer = 100)
-        PSRDatabase.create_element!(db, "Collection"; label = "Item 2", some_integer = 200)
+        Quiver.create_element!(db, "Configuration"; label = "Config")
+        Quiver.create_element!(db, "Collection"; label = "Item 1", some_integer = 100)
+        Quiver.create_element!(db, "Collection"; label = "Item 2", some_integer = 200)
 
-        lua = PSRDatabase.LuaRunner(db)
+        lua = Quiver.LuaRunner(db)
 
-        PSRDatabase.run!(
+        Quiver.run!(
             lua,
             """
         local ints = db:read_scalar_integers("Collection", "some_integer")
@@ -168,21 +168,21 @@ include("fixture.jl")
     """,
         )
 
-        PSRDatabase.close!(lua)
-        PSRDatabase.close!(db)
+        Quiver.close!(lua)
+        Quiver.close!(db)
     end
 
     @testset "Read Floats" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
-        db = PSRDatabase.from_schema(":memory:", path_schema)
+        db = Quiver.from_schema(":memory:", path_schema)
 
-        PSRDatabase.create_element!(db, "Configuration"; label = "Config")
-        PSRDatabase.create_element!(db, "Collection"; label = "Item 1", some_float = 1.5)
-        PSRDatabase.create_element!(db, "Collection"; label = "Item 2", some_float = 2.5)
+        Quiver.create_element!(db, "Configuration"; label = "Config")
+        Quiver.create_element!(db, "Collection"; label = "Item 1", some_float = 1.5)
+        Quiver.create_element!(db, "Collection"; label = "Item 2", some_float = 2.5)
 
-        lua = PSRDatabase.LuaRunner(db)
+        lua = Quiver.LuaRunner(db)
 
-        PSRDatabase.run!(
+        Quiver.run!(
             lua,
             """
         local floats = db:read_scalar_floats("Collection", "some_float")
@@ -192,20 +192,20 @@ include("fixture.jl")
     """,
         )
 
-        PSRDatabase.close!(lua)
-        PSRDatabase.close!(db)
+        Quiver.close!(lua)
+        Quiver.close!(db)
     end
 
     @testset "Read Vectors" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
-        db = PSRDatabase.from_schema(":memory:", path_schema)
+        db = Quiver.from_schema(":memory:", path_schema)
 
-        PSRDatabase.create_element!(db, "Configuration"; label = "Config")
-        PSRDatabase.create_element!(db, "Collection"; label = "Item 1", value_int = [1, 2, 3])
+        Quiver.create_element!(db, "Configuration"; label = "Config")
+        Quiver.create_element!(db, "Collection"; label = "Item 1", value_int = [1, 2, 3])
 
-        lua = PSRDatabase.LuaRunner(db)
+        lua = Quiver.LuaRunner(db)
 
-        PSRDatabase.run!(
+        Quiver.run!(
             lua,
             """
         local vectors = db:read_vector_integers("Collection", "value_int")
@@ -217,17 +217,17 @@ include("fixture.jl")
     """,
         )
 
-        PSRDatabase.close!(lua)
-        PSRDatabase.close!(db)
+        Quiver.close!(lua)
+        Quiver.close!(db)
     end
 
     @testset "Create With Vector" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
-        db = PSRDatabase.from_schema(":memory:", path_schema)
+        db = Quiver.from_schema(":memory:", path_schema)
 
-        lua = PSRDatabase.LuaRunner(db)
+        lua = Quiver.LuaRunner(db)
 
-        PSRDatabase.run!(
+        Quiver.run!(
             lua,
             """
         db:create_element("Configuration", { label = "Config" })
@@ -235,12 +235,12 @@ include("fixture.jl")
     """,
         )
 
-        result = PSRDatabase.read_vector_integers(db, "Collection", "value_int")
+        result = Quiver.read_vector_integers(db, "Collection", "value_int")
         @test length(result) == 1
         @test result[1] == [10, 20, 30]
 
-        PSRDatabase.close!(lua)
-        PSRDatabase.close!(db)
+        Quiver.close!(lua)
+        Quiver.close!(db)
     end
 end
 

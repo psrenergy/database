@@ -1,6 +1,6 @@
 module TestCreate
 
-using PSRDatabase
+using Quiver
 using Test
 
 include("fixture.jl")
@@ -8,10 +8,10 @@ include("fixture.jl")
 @testset "Create" begin
     @testset "Scalar Attributes" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
-        db = PSRDatabase.from_schema(":memory:", path_schema)
+        db = Quiver.from_schema(":memory:", path_schema)
 
         # Create Configuration with various scalar types
-        PSRDatabase.create_element!(db, "Configuration";
+        Quiver.create_element!(db, "Configuration";
             label = "Test Config",
             integer_attribute = 42,
             float_attribute = 3.14,
@@ -21,19 +21,19 @@ include("fixture.jl")
         )
 
         # Test default value is used
-        PSRDatabase.create_element!(db, "Configuration"; label = "Config 2")
+        Quiver.create_element!(db, "Configuration"; label = "Config 2")
 
-        PSRDatabase.close!(db)
+        Quiver.close!(db)
     end
 
     @testset "Collections with Vectors" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
-        db = PSRDatabase.from_schema(":memory:", path_schema)
+        db = Quiver.from_schema(":memory:", path_schema)
 
-        PSRDatabase.create_element!(db, "Configuration"; label = "Test Config")
+        Quiver.create_element!(db, "Configuration"; label = "Test Config")
 
         # Create element with scalar and vector attributes
-        PSRDatabase.create_element!(db, "Collection";
+        Quiver.create_element!(db, "Collection";
             label = "Item 1",
             some_integer = 10,
             some_float = 1.5,
@@ -42,62 +42,62 @@ include("fixture.jl")
         )
 
         # Create element with only scalars
-        PSRDatabase.create_element!(db, "Collection"; label = "Item 2", some_integer = 20)
+        Quiver.create_element!(db, "Collection"; label = "Item 2", some_integer = 20)
 
         # Reject empty vector
-        @test_throws PSRDatabase.DatabaseException PSRDatabase.create_element!(
+        @test_throws Quiver.DatabaseException Quiver.create_element!(
             db,
             "Collection";
             label = "Item 3",
             value_int = Int64[],
         )
 
-        PSRDatabase.close!(db)
+        Quiver.close!(db)
     end
 
     @testset "Collections with Sets" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
-        db = PSRDatabase.from_schema(":memory:", path_schema)
+        db = Quiver.from_schema(":memory:", path_schema)
 
-        PSRDatabase.create_element!(db, "Configuration"; label = "Test Config")
+        Quiver.create_element!(db, "Configuration"; label = "Test Config")
 
         # Create element with set attribute
-        PSRDatabase.create_element!(db, "Collection"; label = "Item 1", tag = ["alpha", "beta", "gamma"])
+        Quiver.create_element!(db, "Collection"; label = "Item 1", tag = ["alpha", "beta", "gamma"])
 
-        PSRDatabase.close!(db)
+        Quiver.close!(db)
     end
 
     @testset "Relations" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "relations.sql")
-        db = PSRDatabase.from_schema(":memory:", path_schema)
+        db = Quiver.from_schema(":memory:", path_schema)
 
-        PSRDatabase.create_element!(db, "Configuration"; label = "Test Config")
+        Quiver.create_element!(db, "Configuration"; label = "Test Config")
 
         # Create parent elements
-        PSRDatabase.create_element!(db, "Parent"; label = "Parent 1")
-        PSRDatabase.create_element!(db, "Parent"; label = "Parent 2")
+        Quiver.create_element!(db, "Parent"; label = "Parent 1")
+        Quiver.create_element!(db, "Parent"; label = "Parent 2")
 
         # Create child with FK to parent
-        PSRDatabase.create_element!(db, "Child"; label = "Child 1", parent_id = 1)
+        Quiver.create_element!(db, "Child"; label = "Child 1", parent_id = 1)
 
         # Create child with self-reference
-        PSRDatabase.create_element!(db, "Child"; label = "Child 2", sibling_id = 1)
+        Quiver.create_element!(db, "Child"; label = "Child 2", sibling_id = 1)
 
         # Create child with vector containing FK refs
-        PSRDatabase.create_element!(db, "Child"; label = "Child 3", parent_ref = [1, 2])
+        Quiver.create_element!(db, "Child"; label = "Child 3", parent_ref = [1, 2])
 
-        PSRDatabase.close!(db)
+        Quiver.close!(db)
     end
 
     @testset "Reject Invalid Element" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
-        db = PSRDatabase.from_schema(":memory:", path_schema)
+        db = Quiver.from_schema(":memory:", path_schema)
 
         # Missing required label
-        @test_throws PSRDatabase.DatabaseException PSRDatabase.create_element!(db, "Configuration")
+        @test_throws Quiver.DatabaseException Quiver.create_element!(db, "Configuration")
 
         # Wrong type for attribute
-        @test_throws PSRDatabase.DatabaseException PSRDatabase.create_element!(
+        @test_throws Quiver.DatabaseException Quiver.create_element!(
             db,
             "Configuration";
             label = "Test",
@@ -105,137 +105,140 @@ include("fixture.jl")
         )
 
         # Unknown attribute
-        @test_throws PSRDatabase.DatabaseException PSRDatabase.create_element!(
+        @test_throws Quiver.DatabaseException Quiver.create_element!(
             db,
             "Configuration";
             label = "Test",
             unknown_attr = 123,
         )
 
-        PSRDatabase.close!(db)
+        Quiver.close!(db)
     end
 
     # Edge case tests
 
     @testset "Single Element Vector" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
-        db = PSRDatabase.from_schema(":memory:", path_schema)
+        db = Quiver.from_schema(":memory:", path_schema)
 
-        PSRDatabase.create_element!(db, "Configuration"; label = "Test Config")
+        Quiver.create_element!(db, "Configuration"; label = "Test Config")
 
         # Create element with single element vector
-        PSRDatabase.create_element!(db, "Collection"; label = "Item 1", value_int = [42])
+        Quiver.create_element!(db, "Collection"; label = "Item 1", value_int = [42])
 
-        result = PSRDatabase.read_vector_integers_by_id(db, "Collection", "value_int", Int64(1))
+        result = Quiver.read_vector_integers_by_id(db, "Collection", "value_int", Int64(1))
         @test length(result) == 1
         @test result[1] == 42
 
-        PSRDatabase.close!(db)
+        Quiver.close!(db)
     end
 
     @testset "Large Vector" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
-        db = PSRDatabase.from_schema(":memory:", path_schema)
+        db = Quiver.from_schema(":memory:", path_schema)
 
-        PSRDatabase.create_element!(db, "Configuration"; label = "Test Config")
+        Quiver.create_element!(db, "Configuration"; label = "Test Config")
 
         # Create element with 100+ element vector
         large_vector = collect(1:150)
-        PSRDatabase.create_element!(db, "Collection"; label = "Item 1", value_int = large_vector)
+        Quiver.create_element!(db, "Collection"; label = "Item 1", value_int = large_vector)
 
-        result = PSRDatabase.read_vector_integers_by_id(db, "Collection", "value_int", Int64(1))
+        result = Quiver.read_vector_integers_by_id(db, "Collection", "value_int", Int64(1))
         @test length(result) == 150
         @test result == large_vector
 
-        PSRDatabase.close!(db)
+        Quiver.close!(db)
     end
 
     @testset "Invalid Collection" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
-        db = PSRDatabase.from_schema(":memory:", path_schema)
+        db = Quiver.from_schema(":memory:", path_schema)
 
-        @test_throws PSRDatabase.DatabaseException PSRDatabase.create_element!(
+        @test_throws Quiver.DatabaseException Quiver.create_element!(
             db,
             "NonexistentCollection";
             label = "Test",
         )
 
-        PSRDatabase.close!(db)
+        Quiver.close!(db)
     end
 
     @testset "Only Required Label" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
-        db = PSRDatabase.from_schema(":memory:", path_schema)
+        db = Quiver.from_schema(":memory:", path_schema)
 
-        PSRDatabase.create_element!(db, "Configuration"; label = "Test Config")
+        Quiver.create_element!(db, "Configuration"; label = "Test Config")
 
         # Create with only required label, no optional attributes
-        PSRDatabase.create_element!(db, "Collection"; label = "Minimal Item")
+        Quiver.create_element!(db, "Collection"; label = "Minimal Item")
 
-        labels = PSRDatabase.read_scalar_strings(db, "Collection", "label")
+        labels = Quiver.read_scalar_strings(db, "Collection", "label")
         @test length(labels) == 1
         @test labels[1] == "Minimal Item"
 
-        PSRDatabase.close!(db)
+        Quiver.close!(db)
     end
 
     @testset "Multiple Sets" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
-        db = PSRDatabase.from_schema(":memory:", path_schema)
+        db = Quiver.from_schema(":memory:", path_schema)
 
-        PSRDatabase.create_element!(db, "Configuration"; label = "Test Config")
+        Quiver.create_element!(db, "Configuration"; label = "Test Config")
 
         # Create element with set attribute containing multiple values
-        PSRDatabase.create_element!(db, "Collection"; label = "Item 1", tag = ["a", "b", "c", "d", "e"])
+        Quiver.create_element!(db, "Collection"; label = "Item 1", tag = ["a", "b", "c", "d", "e"])
 
-        result = PSRDatabase.read_set_strings_by_id(db, "Collection", "tag", Int64(1))
+        result = Quiver.read_set_strings_by_id(db, "Collection", "tag", Int64(1))
         @test length(result) == 5
         @test sort(result) == ["a", "b", "c", "d", "e"]
 
-        PSRDatabase.close!(db)
+        Quiver.close!(db)
     end
 
     @testset "Duplicate Label Rejected" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
-        db = PSRDatabase.from_schema(":memory:", path_schema)
+        db = Quiver.from_schema(":memory:", path_schema)
 
-        PSRDatabase.create_element!(db, "Configuration"; label = "Config 1")
+        Quiver.create_element!(db, "Configuration"; label = "Config 1")
 
         # Trying to create with same label should fail
-        @test_throws PSRDatabase.DatabaseException PSRDatabase.create_element!(db, "Configuration"; label = "Config 1")
+        @test_throws Quiver.DatabaseException Quiver.create_element!(
+            db,
+            "Configuration";
+            label = "Config 1",
+        )
 
-        PSRDatabase.close!(db)
+        Quiver.close!(db)
     end
 
     @testset "Float Vector" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
-        db = PSRDatabase.from_schema(":memory:", path_schema)
+        db = Quiver.from_schema(":memory:", path_schema)
 
-        PSRDatabase.create_element!(db, "Configuration"; label = "Test Config")
+        Quiver.create_element!(db, "Configuration"; label = "Test Config")
 
-        PSRDatabase.create_element!(db, "Collection"; label = "Item 1", value_float = [1.1, 2.2, 3.3])
+        Quiver.create_element!(db, "Collection"; label = "Item 1", value_float = [1.1, 2.2, 3.3])
 
-        result = PSRDatabase.read_vector_floats_by_id(db, "Collection", "value_float", Int64(1))
+        result = Quiver.read_vector_floats_by_id(db, "Collection", "value_float", Int64(1))
         @test length(result) == 3
         @test result == [1.1, 2.2, 3.3]
 
-        PSRDatabase.close!(db)
+        Quiver.close!(db)
     end
 
     @testset "Special Characters" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
-        db = PSRDatabase.from_schema(":memory:", path_schema)
+        db = Quiver.from_schema(":memory:", path_schema)
 
         special_label = "ãçéóú\$/MWh"
-        PSRDatabase.create_element!(db, "Configuration"; label = special_label)
+        Quiver.create_element!(db, "Configuration"; label = special_label)
 
-        labels = PSRDatabase.read_scalar_strings(db, "Configuration", "label")
+        labels = Quiver.read_scalar_strings(db, "Configuration", "label")
         @test length(labels) == 1
         @test labels[1] == special_label
 
-        PSRDatabase.close!(db)
+        Quiver.close!(db)
     end
-
 end
 
 end
