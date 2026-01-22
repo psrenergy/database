@@ -5,11 +5,11 @@ using Libdl
 
 function library_name()
     if Sys.iswindows()
-        return "libquiver_database_c.dll"
+        return "libquiver_c.dll"
     elseif Sys.isapple()
-        return "libquiver_database_c.dylib"
+        return "libquiver_c.dylib"
     else
-        return "libquiver_database_c.so"
+        return "libquiver_c.so"
     end
 end
 
@@ -22,4 +22,4 @@ function library_dir()
     end
 end
 
-const libquiver_database_c = joinpath(@__DIR__, "..", "..", "..", "build", library_dir(), library_name())
+const libquiver_c = joinpath(@__DIR__, "..", "..", "..", "build", library_dir(), library_name())

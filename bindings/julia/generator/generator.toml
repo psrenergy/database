@@ -1,5 +1,5 @@
 [general]
-library_name = "libquiver_database_c"
+library_name = "libquiver_c"
 output_file_path = "../src/c_api.jl"
 module_name = "C"
 # jll_pkg_name = "Quiver_jll"

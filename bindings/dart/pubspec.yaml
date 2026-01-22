@@ -1,4 +1,4 @@
-name: quiver_database
+name: quiver
 description: Dart FFI bindings for QUIVER Database - SQLite wrapper library
 version: 0.1.0
 

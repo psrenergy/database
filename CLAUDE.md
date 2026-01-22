@@ -15,7 +15,7 @@ include/quiver/c/         # C API headers (for FFI)
   lua_runner.h
 src/                   # Implementation
 bindings/julia/        # Julia bindings (Quiver.jl)
-bindings/dart/         # Dart bindings (quiver_database)
+bindings/dart/         # Dart bindings (quiver)
 tests/                 # C++ tests and shared SQL schemas
 ```
 
@@ -49,8 +49,8 @@ test-all.bat             # Run all tests (assumes already built)
 
 C++ tests:
 ```bash
-./build/bin/quiver_database_tests.exe      # Core library tests
-./build/bin/quiver_database_c_tests.exe    # C API tests
+./build/bin/quiver_tests.exe      # Core library tests
+./build/bin/quiver_c_tests.exe    # C API tests
 ```
 
 Test files are organized by functionality:
@@ -121,7 +121,7 @@ bindings/dart/generator/generator.bat    # Dart
   ```
 
 ### Dart Notes
-- `libquiver_database_c.dll` depends on `libquiver_database.dll` - both must be in PATH
+- `libquiver_c.dll` depends on `libquiver.dll` - both must be in PATH
 - test.bat handles PATH setup automatically
 
 ## Schema Conventions

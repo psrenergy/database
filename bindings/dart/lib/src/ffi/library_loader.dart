@@ -4,9 +4,9 @@ import 'dart:io';
 import 'bindings.dart';
 
 String get _libraryName {
-  if (Platform.isWindows) return 'libquiver_database_c.dll';
-  if (Platform.isMacOS) return 'libquiver_database_c.dylib';
-  return 'libquiver_database_c.so'; // Linux and others
+  if (Platform.isWindows) return 'libquiver_c.dll';
+  if (Platform.isMacOS) return 'libquiver_c.dylib';
+  return 'libquiver_c.so'; // Linux and others
 }
 
 QuiverDatabaseBindings? _cachedBindings;

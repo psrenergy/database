@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(quiver_database
+project(quiver
     VERSION 1.0.0
     DESCRIPTION "Cross-platform C++ SQLite wrapper library"
     LANGUAGES CXX C
@@ -42,27 +42,27 @@ include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
 write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/quiver_databaseConfigVersion.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/quiverConfigVersion.cmake"
     VERSION ${PROJECT_VERSION}
     COMPATIBILITY SameMajorVersion
 )
 
 configure_package_config_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/quiver_databaseConfig.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/quiver_databaseConfig.cmake"
-    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/quiver_database
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/quiverConfig.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/quiverConfig.cmake"
+    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/quiver
 )
 
-install(EXPORT quiver_databaseTargets
-    FILE quiver_databaseTargets.cmake
+install(EXPORT quiverTargets
+    FILE quiverTargets.cmake
     NAMESPACE quiver::
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/quiver_database
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/quiver
 )
 
 install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/quiver_databaseConfig.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/quiver_databaseConfigVersion.cmake"
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/quiver_database
+    "${CMAKE_CURRENT_BINARY_DIR}/quiverConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/quiverConfigVersion.cmake"
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/quiver
 )
 
 # Format target
