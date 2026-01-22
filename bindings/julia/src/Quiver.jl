@@ -1,4 +1,4 @@
-module QUIVERDatabase
+module Quiver
 
 include("c_api.jl")
 import .C
