@@ -14,15 +14,15 @@ set(QUIVER_SOURCES
 
 # Build type
 if(QUIVER_BUILD_SHARED)
-    add_library(quiver_database SHARED ${QUIVER_SOURCES})
-    target_compile_definitions(quiver_database PRIVATE QUIVER_DATABASE_EXPORTS)
+    add_library(quiver SHARED ${QUIVER_SOURCES})
+    target_compile_definitions(quiver PRIVATE QUIVER_EXPORTS)
 else()
-    add_library(quiver_database STATIC ${QUIVER_SOURCES})
-    target_compile_definitions(quiver_database PUBLIC QUIVER_DATABASE_STATIC)
+    add_library(quiver STATIC ${QUIVER_SOURCES})
+    target_compile_definitions(quiver PUBLIC QUIVER_STATIC)
 endif()
 
 # Include directories
-target_include_directories(quiver_database
+target_include_directories(quiver
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
@@ -31,13 +31,13 @@ target_include_directories(quiver_database
 )
 
 # sol2 safety settings
-target_compile_definitions(quiver_database PRIVATE
+target_compile_definitions(quiver PRIVATE
     SOL_SAFE_NUMERICS=1
     SOL_SAFE_FUNCTION=1
 )
 
 # Link dependencies
-target_link_libraries(quiver_database
+target_link_libraries(quiver
     PUBLIC
         SQLite::SQLite3
     PRIVATE
@@ -50,18 +50,18 @@ target_link_libraries(quiver_database
 )
 
 # Set library properties
-set_target_properties(quiver_database PROPERTIES
+set_target_properties(quiver PROPERTIES
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
-    OUTPUT_NAME quiver_database
+    OUTPUT_NAME quiver
 )
 
 # Alias for use in subdirectories
-add_library(quiver::database ALIAS quiver_database)
+add_library(quiver::database ALIAS quiver)
 
 # Installation rules
 include(GNUInstallDirs)
-install(TARGETS quiver_database
+install(TARGETS quiver
     EXPORT quiverTargets
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -73,36 +73,36 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/quiver
 
 # C API wrapper (optional)
 if(QUIVER_BUILD_C_API)
-    add_library(quiver_database_c SHARED
+    add_library(quiver_c SHARED
         c_api_common.cpp
         c_api_database.cpp
         c_api_element.cpp
         c_api_lua_runner.cpp
     )
 
-    target_compile_definitions(quiver_database_c PRIVATE
-        QUIVER_DATABASE_C_EXPORTS
+    target_compile_definitions(quiver_c PRIVATE
+        QUIVER_C_EXPORTS
         QUIVER_VERSION="${PROJECT_VERSION}"
     )
 
-    target_include_directories(quiver_database_c PUBLIC
+    target_include_directories(quiver_c PUBLIC
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
     )
 
-    target_link_libraries(quiver_database_c PRIVATE
-        quiver_database
+    target_link_libraries(quiver_c PRIVATE
+        quiver
         quiver_compiler_options
     )
 
-    set_target_properties(quiver_database_c PROPERTIES
+    set_target_properties(quiver_c PROPERTIES
         VERSION ${PROJECT_VERSION}
         SOVERSION ${PROJECT_VERSION_MAJOR}
     )
 
-    add_library(quiver::database_c ALIAS quiver_database_c)
+    add_library(quiver::database_c ALIAS quiver_c)
 
-    install(TARGETS quiver_database_c
+    install(TARGETS quiver_c
         EXPORT quiverTargets
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
