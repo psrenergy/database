@@ -1546,6 +1546,79 @@ class Database {
     return result;
   }
 
+  String? _getValueDataType(
+    List<({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})> attributes,
+  ) {
+    for (final attr in attributes) {
+      if (!attr.primaryKey && attr.name != 'vector_index') {
+        return attr.dataType;
+      }
+    }
+    return attributes.isEmpty ? 'text' : attributes.first.dataType;
+  }
+
+  /// Reads all scalar attributes for an element by ID.
+  /// Returns a map of attribute name to value.
+  Map<String, Object?> readAllScalarsById(String collection, int id) {
+    _ensureNotClosed();
+
+    final result = <String, Object?>{};
+    for (final attr in listScalarAttributes(collection)) {
+      final name = attr.name;
+      switch (attr.dataType) {
+        case 'integer':
+          result[name] = readScalarIntegerById(collection, name, id);
+        case 'real':
+          result[name] = readScalarFloatById(collection, name, id);
+        case 'text':
+          result[name] = readScalarStringById(collection, name, id);
+      }
+    }
+    return result;
+  }
+
+  /// Reads all vector attributes for an element by ID.
+  /// Returns a map of group name to list of values.
+  Map<String, List<Object>> readAllVectorsById(String collection, int id) {
+    _ensureNotClosed();
+
+    final result = <String, List<Object>>{};
+    for (final group in listVectorGroups(collection)) {
+      final name = group.groupName;
+      final dataType = _getValueDataType(group.attributes);
+      switch (dataType) {
+        case 'integer':
+          result[name] = readVectorIntegersById(collection, name, id);
+        case 'real':
+          result[name] = readVectorFloatsById(collection, name, id);
+        case 'text':
+          result[name] = readVectorStringsById(collection, name, id);
+      }
+    }
+    return result;
+  }
+
+  /// Reads all set attributes for an element by ID.
+  /// Returns a map of group name to list of values.
+  Map<String, List<Object>> readAllSetsById(String collection, int id) {
+    _ensureNotClosed();
+
+    final result = <String, List<Object>>{};
+    for (final group in listSetGroups(collection)) {
+      final name = group.groupName;
+      final dataType = _getValueDataType(group.attributes);
+      switch (dataType) {
+        case 'integer':
+          result[name] = readSetIntegersById(collection, name, id);
+        case 'real':
+          result[name] = readSetFloatsById(collection, name, id);
+        case 'text':
+          result[name] = readSetStringsById(collection, name, id);
+      }
+    }
+    return result;
+  }
+
   /// Closes the database and frees native resources.
   void close() {
     if (_isClosed) return;
