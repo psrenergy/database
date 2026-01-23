@@ -47,19 +47,19 @@ include("fixture.jl")
         # Test vector metadata for 'values' group
         meta = Quiver.get_vector_metadata(db, "Collection", "values")
         @test meta.group_name == "values"
-        @test length(meta.attributes) == 2
+        @test length(meta.value_columns) == 2
 
         # Find the attributes by name
-        attr_names = [attr.name for attr in meta.attributes]
+        attr_names = [attr.name for attr in meta.value_columns]
         @test "value_int" in attr_names
         @test "value_float" in attr_names
 
         # Check value_int attribute
-        value_int_attr = first(filter(a -> a.name == "value_int", meta.attributes))
+        value_int_attr = first(filter(a -> a.name == "value_int", meta.value_columns))
         @test value_int_attr.data_type == :integer
 
         # Check value_float attribute
-        value_float_attr = first(filter(a -> a.name == "value_float", meta.attributes))
+        value_float_attr = first(filter(a -> a.name == "value_float", meta.value_columns))
         @test value_float_attr.data_type == :real
 
         Quiver.close!(db)
@@ -72,10 +72,10 @@ include("fixture.jl")
         # Test set metadata for 'tags' group
         meta = Quiver.get_set_metadata(db, "Collection", "tags")
         @test meta.group_name == "tags"
-        @test length(meta.attributes) == 1
+        @test length(meta.value_columns) == 1
 
         # Check tag attribute
-        tag_attr = meta.attributes[1]
+        tag_attr = meta.value_columns[1]
         @test tag_attr.name == "tag"
         @test tag_attr.data_type == :text
 
@@ -134,8 +134,8 @@ include("fixture.jl")
 
         # Verify metadata is included
         values_group = first(filter(g -> g.group_name == "values", groups))
-        @test length(values_group.attributes) == 2
-        attr_names = [a.name for a in values_group.attributes]
+        @test length(values_group.value_columns) == 2
+        attr_names = [a.name for a in values_group.value_columns]
         @test "value_int" in attr_names
         @test "value_float" in attr_names
 
@@ -152,9 +152,9 @@ include("fixture.jl")
 
         # Verify metadata is included
         tags_group = first(filter(g -> g.group_name == "tags", groups))
-        @test length(tags_group.attributes) == 1
-        @test tags_group.attributes[1].name == "tag"
-        @test tags_group.attributes[1].data_type == :text
+        @test length(tags_group.value_columns) == 1
+        @test tags_group.value_columns[1].name == "tag"
+        @test tags_group.value_columns[1].data_type == :text
 
         Quiver.close!(db)
     end
