@@ -224,6 +224,48 @@ QUIVER_C_API quiver_error_t quiver_database_get_attribute_type(quiver_database_t
                                                                quiver_data_structure_t* out_data_structure,
                                                                quiver_data_type_t* out_data_type);
 
+// Attribute metadata types
+typedef struct {
+    const char* name;
+    quiver_data_type_t data_type;
+    int not_null;
+    int primary_key;
+    const char* default_value;  // NULL if no default
+} quiver_scalar_metadata_t;
+
+typedef struct {
+    const char* group_name;
+    quiver_scalar_metadata_t* attributes;
+    size_t attribute_count;
+} quiver_vector_metadata_t;
+
+typedef struct {
+    const char* group_name;
+    quiver_scalar_metadata_t* attributes;
+    size_t attribute_count;
+} quiver_set_metadata_t;
+
+// Attribute metadata queries
+QUIVER_C_API quiver_error_t quiver_database_get_scalar_metadata(quiver_database_t* db,
+                                                                const char* collection,
+                                                                const char* attribute,
+                                                                quiver_scalar_metadata_t* out_metadata);
+
+QUIVER_C_API quiver_error_t quiver_database_get_vector_metadata(quiver_database_t* db,
+                                                                const char* collection,
+                                                                const char* group_name,
+                                                                quiver_vector_metadata_t* out_metadata);
+
+QUIVER_C_API quiver_error_t quiver_database_get_set_metadata(quiver_database_t* db,
+                                                             const char* collection,
+                                                             const char* group_name,
+                                                             quiver_set_metadata_t* out_metadata);
+
+// Free metadata
+QUIVER_C_API void quiver_free_scalar_metadata(quiver_scalar_metadata_t* metadata);
+QUIVER_C_API void quiver_free_vector_metadata(quiver_vector_metadata_t* metadata);
+QUIVER_C_API void quiver_free_set_metadata(quiver_set_metadata_t* metadata);
+
 // Update scalar attributes (by element ID)
 QUIVER_C_API quiver_error_t quiver_database_update_scalar_integer(quiver_database_t* db,
                                                                   const char* collection,

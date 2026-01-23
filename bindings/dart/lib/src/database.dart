@@ -933,6 +933,145 @@ class Database {
     }
   }
 
+  String _dataTypeToString(int dataType) {
+    return switch (dataType) {
+      quiver_data_type_t.QUIVER_DATA_TYPE_INTEGER => 'integer',
+      quiver_data_type_t.QUIVER_DATA_TYPE_FLOAT => 'real',
+      quiver_data_type_t.QUIVER_DATA_TYPE_STRING => 'text',
+      _ => 'unknown',
+    };
+  }
+
+  /// Returns metadata for a scalar attribute.
+  ({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue}) getScalarMetadata(
+      String collection, String attribute) {
+    _ensureNotClosed();
+
+    final arena = Arena();
+    try {
+      final outMetadata = arena<quiver_scalar_metadata_t>();
+
+      final err = bindings.quiver_database_get_scalar_metadata(
+        _ptr,
+        collection.toNativeUtf8(allocator: arena).cast(),
+        attribute.toNativeUtf8(allocator: arena).cast(),
+        outMetadata,
+      );
+
+      if (err != quiver_error_t.QUIVER_OK) {
+        throw DatabaseException.fromError(err, "Failed to get scalar metadata for '$collection.$attribute'");
+      }
+
+      final result = (
+        name: outMetadata.ref.name.cast<Utf8>().toDartString(),
+        dataType: _dataTypeToString(outMetadata.ref.data_type),
+        notNull: outMetadata.ref.not_null != 0,
+        primaryKey: outMetadata.ref.primary_key != 0,
+        defaultValue: outMetadata.ref.default_value == nullptr
+            ? null
+            : outMetadata.ref.default_value.cast<Utf8>().toDartString(),
+      );
+
+      bindings.quiver_free_scalar_metadata(outMetadata);
+      return result;
+    } finally {
+      arena.releaseAll();
+    }
+  }
+
+  ({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue}) _parseScalarMetadata(
+      quiver_scalar_metadata_t attr) {
+    return (
+      name: attr.name.cast<Utf8>().toDartString(),
+      dataType: _dataTypeToString(attr.data_type),
+      notNull: attr.not_null != 0,
+      primaryKey: attr.primary_key != 0,
+      defaultValue: attr.default_value == nullptr ? null : attr.default_value.cast<Utf8>().toDartString(),
+    );
+  }
+
+  /// Returns metadata for a vector group, including all scalar attributes in the group.
+  ({
+    String groupName,
+    List<({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})> attributes
+  }) getVectorMetadata(String collection, String groupName) {
+    _ensureNotClosed();
+
+    final arena = Arena();
+    try {
+      final outMetadata = arena<quiver_vector_metadata_t>();
+
+      final err = bindings.quiver_database_get_vector_metadata(
+        _ptr,
+        collection.toNativeUtf8(allocator: arena).cast(),
+        groupName.toNativeUtf8(allocator: arena).cast(),
+        outMetadata,
+      );
+
+      if (err != quiver_error_t.QUIVER_OK) {
+        throw DatabaseException.fromError(err, "Failed to get vector metadata for '$collection.$groupName'");
+      }
+
+      final attributes =
+          <({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})>[];
+      final count = outMetadata.ref.attribute_count;
+      for (var i = 0; i < count; i++) {
+        attributes.add(_parseScalarMetadata(outMetadata.ref.attributes[i]));
+      }
+
+      final result = (
+        groupName: outMetadata.ref.group_name.cast<Utf8>().toDartString(),
+        attributes: attributes,
+      );
+
+      bindings.quiver_free_vector_metadata(outMetadata);
+      return result;
+    } finally {
+      arena.releaseAll();
+    }
+  }
+
+  /// Returns metadata for a set group, including all scalar attributes in the group.
+  ({
+    String groupName,
+    List<({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})> attributes
+  }) getSetMetadata(String collection, String groupName) {
+    _ensureNotClosed();
+
+    final arena = Arena();
+    try {
+      final outMetadata = arena<quiver_set_metadata_t>();
+
+      final err = bindings.quiver_database_get_set_metadata(
+        _ptr,
+        collection.toNativeUtf8(allocator: arena).cast(),
+        groupName.toNativeUtf8(allocator: arena).cast(),
+        outMetadata,
+      );
+
+      if (err != quiver_error_t.QUIVER_OK) {
+        throw DatabaseException.fromError(err, "Failed to get set metadata for '$collection.$groupName'");
+      }
+
+      final attributes =
+          <({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})>[];
+      final count = outMetadata.ref.attribute_count;
+      for (var i = 0; i < count; i++) {
+        attributes.add(_parseScalarMetadata(outMetadata.ref.attributes[i]));
+      }
+
+      final result = (
+        groupName: outMetadata.ref.group_name.cast<Utf8>().toDartString(),
+        attributes: attributes,
+      );
+
+      bindings.quiver_free_set_metadata(outMetadata);
+      return result;
+    } finally {
+      arena.releaseAll();
+    }
+  }
+
   /// Deletes an element by ID from a collection.
   /// CASCADE DELETE handles cleanup of related vector/set tables.
   void deleteElementById(String collection, int id) {
