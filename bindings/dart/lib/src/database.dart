@@ -1145,10 +1145,12 @@ class Database {
       }
 
       final result =
-          <({
-            String groupName,
-            List<({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})> attributes,
-          })>[];
+          <
+            ({
+              String groupName,
+              List<({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})> attributes,
+            })
+          >[];
       for (var i = 0; i < count; i++) {
         final meta = outMetadata.value[i];
         final attributes = <({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})>[];
@@ -1196,10 +1198,12 @@ class Database {
       }
 
       final result =
-          <({
-            String groupName,
-            List<({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})> attributes,
-          })>[];
+          <
+            ({
+              String groupName,
+              List<({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})> attributes,
+            })
+          >[];
       for (var i = 0; i < count; i++) {
         final meta = outMetadata.value[i];
         final attributes = <({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})>[];
