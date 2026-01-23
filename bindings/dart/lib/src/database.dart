@@ -993,10 +993,10 @@ class Database {
     );
   }
 
-  /// Returns metadata for a vector group, including all scalar attributes in the group.
+  /// Returns metadata for a vector group, including all value columns in the group.
   ({
     String groupName,
-    List<({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})> attributes,
+    List<({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})> valueColumns,
   })
   getVectorMetadata(String collection, String groupName) {
     _ensureNotClosed();
@@ -1016,15 +1016,15 @@ class Database {
         throw DatabaseException.fromError(err, "Failed to get vector metadata for '$collection.$groupName'");
       }
 
-      final attributes = <({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})>[];
-      final count = outMetadata.ref.attribute_count;
+      final valueColumns = <({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})>[];
+      final count = outMetadata.ref.value_column_count;
       for (var i = 0; i < count; i++) {
-        attributes.add(_parseScalarMetadata(outMetadata.ref.attributes[i]));
+        valueColumns.add(_parseScalarMetadata(outMetadata.ref.value_columns[i]));
       }
 
       final result = (
         groupName: outMetadata.ref.group_name.cast<Utf8>().toDartString(),
-        attributes: attributes,
+        valueColumns: valueColumns,
       );
 
       bindings.quiver_free_vector_metadata(outMetadata);
@@ -1034,10 +1034,10 @@ class Database {
     }
   }
 
-  /// Returns metadata for a set group, including all scalar attributes in the group.
+  /// Returns metadata for a set group, including all value columns in the group.
   ({
     String groupName,
-    List<({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})> attributes,
+    List<({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})> valueColumns,
   })
   getSetMetadata(String collection, String groupName) {
     _ensureNotClosed();
@@ -1057,15 +1057,15 @@ class Database {
         throw DatabaseException.fromError(err, "Failed to get set metadata for '$collection.$groupName'");
       }
 
-      final attributes = <({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})>[];
-      final count = outMetadata.ref.attribute_count;
+      final valueColumns = <({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})>[];
+      final count = outMetadata.ref.value_column_count;
       for (var i = 0; i < count; i++) {
-        attributes.add(_parseScalarMetadata(outMetadata.ref.attributes[i]));
+        valueColumns.add(_parseScalarMetadata(outMetadata.ref.value_columns[i]));
       }
 
       final result = (
         groupName: outMetadata.ref.group_name.cast<Utf8>().toDartString(),
-        attributes: attributes,
+        valueColumns: valueColumns,
       );
 
       bindings.quiver_free_set_metadata(outMetadata);
@@ -1117,7 +1117,7 @@ class Database {
   List<
     ({
       String groupName,
-      List<({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})> attributes,
+      List<({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})> valueColumns,
     })
   >
   listVectorGroups(String collection) {
@@ -1148,16 +1148,16 @@ class Database {
           <
             ({
               String groupName,
-              List<({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})> attributes,
+              List<({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})> valueColumns,
             })
           >[];
       for (var i = 0; i < count; i++) {
         final meta = outMetadata.value[i];
-        final attributes = <({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})>[];
-        for (var j = 0; j < meta.attribute_count; j++) {
-          attributes.add(_parseScalarMetadata(meta.attributes[j]));
+        final valueColumns = <({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})>[];
+        for (var j = 0; j < meta.value_column_count; j++) {
+          valueColumns.add(_parseScalarMetadata(meta.value_columns[j]));
         }
-        result.add((groupName: meta.group_name.cast<Utf8>().toDartString(), attributes: attributes));
+        result.add((groupName: meta.group_name.cast<Utf8>().toDartString(), valueColumns: valueColumns));
       }
       bindings.quiver_free_vector_metadata_array(outMetadata.value, count);
       return result;
@@ -1170,7 +1170,7 @@ class Database {
   List<
     ({
       String groupName,
-      List<({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})> attributes,
+      List<({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})> valueColumns,
     })
   >
   listSetGroups(String collection) {
@@ -1201,16 +1201,16 @@ class Database {
           <
             ({
               String groupName,
-              List<({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})> attributes,
+              List<({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})> valueColumns,
             })
           >[];
       for (var i = 0; i < count; i++) {
         final meta = outMetadata.value[i];
-        final attributes = <({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})>[];
-        for (var j = 0; j < meta.attribute_count; j++) {
-          attributes.add(_parseScalarMetadata(meta.attributes[j]));
+        final valueColumns = <({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})>[];
+        for (var j = 0; j < meta.value_column_count; j++) {
+          valueColumns.add(_parseScalarMetadata(meta.value_columns[j]));
         }
-        result.add((groupName: meta.group_name.cast<Utf8>().toDartString(), attributes: attributes));
+        result.add((groupName: meta.group_name.cast<Utf8>().toDartString(), valueColumns: valueColumns));
       }
       bindings.quiver_free_set_metadata_array(outMetadata.value, count);
       return result;
@@ -1515,15 +1515,13 @@ class Database {
     }
   }
 
-  String? _getValueDataType(
-    List<({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})> attributes,
+  String _getValueDataType(
+    List<({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})> valueColumns,
   ) {
-    for (final attr in attributes) {
-      if (!attr.primaryKey && attr.name != 'vector_index') {
-        return attr.dataType;
-      }
+    if (valueColumns.isNotEmpty) {
+      return valueColumns.first.dataType;
     }
-    return attributes.isEmpty ? 'text' : attributes.first.dataType;
+    return 'text';
   }
 
   /// Reads all scalar attributes for an element by ID.

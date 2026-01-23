@@ -449,11 +449,11 @@ struct LuaRunner::Impl {
         for (size_t i = 0; i < metadata_list.size(); ++i) {
             sol::table meta = lua.create_table();
             meta["group_name"] = metadata_list[i].group_name;
-            sol::table attrs = lua.create_table();
-            for (size_t j = 0; j < metadata_list[i].attributes.size(); ++j) {
-                attrs[j + 1] = scalar_metadata_to_lua(lua, metadata_list[i].attributes[j]);
+            sol::table cols = lua.create_table();
+            for (size_t j = 0; j < metadata_list[i].value_columns.size(); ++j) {
+                cols[j + 1] = scalar_metadata_to_lua(lua, metadata_list[i].value_columns[j]);
             }
-            meta["attributes"] = attrs;
+            meta["value_columns"] = cols;
             t[i + 1] = meta;
         }
         return t;
@@ -466,11 +466,11 @@ struct LuaRunner::Impl {
         for (size_t i = 0; i < metadata_list.size(); ++i) {
             sol::table meta = lua.create_table();
             meta["group_name"] = metadata_list[i].group_name;
-            sol::table attrs = lua.create_table();
-            for (size_t j = 0; j < metadata_list[i].attributes.size(); ++j) {
-                attrs[j + 1] = scalar_metadata_to_lua(lua, metadata_list[i].attributes[j]);
+            sol::table cols = lua.create_table();
+            for (size_t j = 0; j < metadata_list[i].value_columns.size(); ++j) {
+                cols[j + 1] = scalar_metadata_to_lua(lua, metadata_list[i].value_columns[j]);
             }
-            meta["attributes"] = attrs;
+            meta["value_columns"] = cols;
             t[i + 1] = meta;
         }
         return t;
@@ -530,11 +530,11 @@ struct LuaRunner::Impl {
         sol::table t = lua.create_table();
         t["group_name"] = meta.group_name;
 
-        sol::table attrs = lua.create_table();
-        for (size_t i = 0; i < meta.attributes.size(); ++i) {
-            attrs[i + 1] = scalar_metadata_to_lua(lua, meta.attributes[i]);
+        sol::table cols = lua.create_table();
+        for (size_t i = 0; i < meta.value_columns.size(); ++i) {
+            cols[i + 1] = scalar_metadata_to_lua(lua, meta.value_columns[i]);
         }
-        t["attributes"] = attrs;
+        t["value_columns"] = cols;
 
         return t;
     }
@@ -548,22 +548,20 @@ struct LuaRunner::Impl {
         sol::table t = lua.create_table();
         t["group_name"] = meta.group_name;
 
-        sol::table attrs = lua.create_table();
-        for (size_t i = 0; i < meta.attributes.size(); ++i) {
-            attrs[i + 1] = scalar_metadata_to_lua(lua, meta.attributes[i]);
+        sol::table cols = lua.create_table();
+        for (size_t i = 0; i < meta.value_columns.size(); ++i) {
+            cols[i + 1] = scalar_metadata_to_lua(lua, meta.value_columns[i]);
         }
-        t["attributes"] = attrs;
+        t["value_columns"] = cols;
 
         return t;
     }
 
-    static DataType get_value_data_type(const std::vector<ScalarMetadata>& attributes) {
-        for (const auto& attr : attributes) {
-            if (!attr.primary_key && attr.name != "vector_index") {
-                return attr.data_type;
-            }
+    static DataType get_value_data_type(const std::vector<ScalarMetadata>& value_columns) {
+        if (!value_columns.empty()) {
+            return value_columns[0].data_type;
         }
-        return attributes.empty() ? DataType::Text : attributes[0].data_type;
+        return DataType::Text;
     }
 
     static sol::table read_all_scalars_by_id_to_lua(Database& db,
@@ -604,7 +602,7 @@ struct LuaRunner::Impl {
 
         for (const auto& group : db.list_vector_groups(collection)) {
             sol::table vec = lua.create_table();
-            DataType data_type = get_value_data_type(group.attributes);
+            DataType data_type = get_value_data_type(group.value_columns);
             switch (data_type) {
             case DataType::Integer: {
                 auto values = db.read_vector_integers_by_id(collection, group.group_name, id);
@@ -642,7 +640,7 @@ struct LuaRunner::Impl {
 
         for (const auto& group : db.list_set_groups(collection)) {
             sol::table set = lua.create_table();
-            DataType data_type = get_value_data_type(group.attributes);
+            DataType data_type = get_value_data_type(group.value_columns);
             switch (data_type) {
             case DataType::Integer: {
                 auto values = db.read_set_integers_by_id(collection, group.group_name, id);
