@@ -116,20 +116,17 @@ struct LuaRunner::Impl {
                 update_element_from_lua(self, collection, id, values);
             },
             "get_scalar_metadata",
-            [](Database& self,
-               const std::string& collection,
-               const std::string& attribute,
-               sol::this_state s) { return get_scalar_metadata_to_lua(self, collection, attribute, s); },
+            [](Database& self, const std::string& collection, const std::string& attribute, sol::this_state s) {
+                return get_scalar_metadata_to_lua(self, collection, attribute, s);
+            },
             "get_vector_metadata",
-            [](Database& self,
-               const std::string& collection,
-               const std::string& group_name,
-               sol::this_state s) { return get_vector_metadata_to_lua(self, collection, group_name, s); },
+            [](Database& self, const std::string& collection, const std::string& group_name, sol::this_state s) {
+                return get_vector_metadata_to_lua(self, collection, group_name, s);
+            },
             "get_set_metadata",
-            [](Database& self,
-               const std::string& collection,
-               const std::string& group_name,
-               sol::this_state s) { return get_set_metadata_to_lua(self, collection, group_name, s); },
+            [](Database& self, const std::string& collection, const std::string& group_name, sol::this_state s) {
+                return get_set_metadata_to_lua(self, collection, group_name, s);
+            },
             "list_scalar_attributes",
             [](Database& self, const std::string& collection, sol::this_state s) {
                 return list_strings_to_lua(self.list_scalar_attributes(collection), s);
@@ -444,8 +441,10 @@ struct LuaRunner::Impl {
         return "unknown";
     }
 
-    static sol::table
-    get_scalar_metadata_to_lua(Database& db, const std::string& collection, const std::string& attribute, sol::this_state s) {
+    static sol::table get_scalar_metadata_to_lua(Database& db,
+                                                 const std::string& collection,
+                                                 const std::string& attribute,
+                                                 sol::this_state s) {
         sol::state_view lua(s);
         auto meta = db.get_scalar_metadata(collection, attribute);
         sol::table t = lua.create_table();
@@ -475,8 +474,10 @@ struct LuaRunner::Impl {
         return t;
     }
 
-    static sol::table
-    get_vector_metadata_to_lua(Database& db, const std::string& collection, const std::string& group_name, sol::this_state s) {
+    static sol::table get_vector_metadata_to_lua(Database& db,
+                                                 const std::string& collection,
+                                                 const std::string& group_name,
+                                                 sol::this_state s) {
         sol::state_view lua(s);
         auto meta = db.get_vector_metadata(collection, group_name);
         sol::table t = lua.create_table();
@@ -491,8 +492,10 @@ struct LuaRunner::Impl {
         return t;
     }
 
-    static sol::table
-    get_set_metadata_to_lua(Database& db, const std::string& collection, const std::string& group_name, sol::this_state s) {
+    static sol::table get_set_metadata_to_lua(Database& db,
+                                              const std::string& collection,
+                                              const std::string& group_name,
+                                              sol::this_state s) {
         sol::state_view lua(s);
         auto meta = db.get_set_metadata(collection, group_name);
         sol::table t = lua.create_table();

@@ -40,7 +40,7 @@ function get_scalar_metadata(db::Database, collection::AbstractString, attribute
         _data_type_symbol(metadata[].data_type),
         metadata[].not_null != 0,
         metadata[].primary_key != 0,
-        metadata[].default_value == C_NULL ? nothing : unsafe_string(metadata[].default_value)
+        metadata[].default_value == C_NULL ? nothing : unsafe_string(metadata[].default_value),
     )
 
     C.quiver_free_scalar_metadata(metadata)
@@ -58,18 +58,21 @@ function get_vector_metadata(db::Database, collection::AbstractString, group_nam
     for i in 1:metadata[].attribute_count
         attr_ptr = metadata[].attributes + (i - 1) * sizeof(C.quiver_scalar_metadata_t)
         attr = unsafe_load(Ptr{C.quiver_scalar_metadata_t}(attr_ptr))
-        push!(attributes, ScalarMetadata(
-            unsafe_string(attr.name),
-            _data_type_symbol(attr.data_type),
-            attr.not_null != 0,
-            attr.primary_key != 0,
-            attr.default_value == C_NULL ? nothing : unsafe_string(attr.default_value)
-        ))
+        push!(
+            attributes,
+            ScalarMetadata(
+                unsafe_string(attr.name),
+                _data_type_symbol(attr.data_type),
+                attr.not_null != 0,
+                attr.primary_key != 0,
+                attr.default_value == C_NULL ? nothing : unsafe_string(attr.default_value),
+            ),
+        )
     end
 
     result = VectorMetadata(
         unsafe_string(metadata[].group_name),
-        attributes
+        attributes,
     )
 
     C.quiver_free_vector_metadata(metadata)
@@ -87,18 +90,21 @@ function get_set_metadata(db::Database, collection::AbstractString, group_name::
     for i in 1:metadata[].attribute_count
         attr_ptr = metadata[].attributes + (i - 1) * sizeof(C.quiver_scalar_metadata_t)
         attr = unsafe_load(Ptr{C.quiver_scalar_metadata_t}(attr_ptr))
-        push!(attributes, ScalarMetadata(
-            unsafe_string(attr.name),
-            _data_type_symbol(attr.data_type),
-            attr.not_null != 0,
-            attr.primary_key != 0,
-            attr.default_value == C_NULL ? nothing : unsafe_string(attr.default_value)
-        ))
+        push!(
+            attributes,
+            ScalarMetadata(
+                unsafe_string(attr.name),
+                _data_type_symbol(attr.data_type),
+                attr.not_null != 0,
+                attr.primary_key != 0,
+                attr.default_value == C_NULL ? nothing : unsafe_string(attr.default_value),
+            ),
+        )
     end
 
     result = SetMetadata(
         unsafe_string(metadata[].group_name),
-        attributes
+        attributes,
     )
 
     C.quiver_free_set_metadata(metadata)
