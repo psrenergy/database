@@ -892,47 +892,6 @@ class Database {
     }
   }
 
-  /// Returns the structure and data type of an attribute.
-  ({String dataStructure, String dataType}) getAttributeType(String collection, String attribute) {
-    _ensureNotClosed();
-
-    final arena = Arena();
-    try {
-      final outDataStructure = arena<Int32>();
-      final outDataType = arena<Int32>();
-
-      final err = bindings.quiver_database_get_attribute_type(
-        _ptr,
-        collection.toNativeUtf8(allocator: arena).cast(),
-        attribute.toNativeUtf8(allocator: arena).cast(),
-        outDataStructure,
-        outDataType,
-      );
-
-      if (err != quiver_error_t.QUIVER_OK) {
-        throw DatabaseException.fromError(err, "Failed to get attribute type for '$collection.$attribute'");
-      }
-
-      final dataStructure = switch (outDataStructure.value) {
-        quiver_data_structure_t.QUIVER_DATA_STRUCTURE_SCALAR => 'scalar',
-        quiver_data_structure_t.QUIVER_DATA_STRUCTURE_VECTOR => 'vector',
-        quiver_data_structure_t.QUIVER_DATA_STRUCTURE_SET => 'set',
-        _ => 'unknown',
-      };
-
-      final dataType = switch (outDataType.value) {
-        quiver_data_type_t.QUIVER_DATA_TYPE_INTEGER => 'integer',
-        quiver_data_type_t.QUIVER_DATA_TYPE_FLOAT => 'real',
-        quiver_data_type_t.QUIVER_DATA_TYPE_STRING => 'text',
-        _ => 'unknown',
-      };
-
-      return (dataStructure: dataStructure, dataType: dataType);
-    } finally {
-      arena.releaseAll();
-    }
-  }
-
   String _dataTypeToString(int dataType) {
     return switch (dataType) {
       quiver_data_type_t.QUIVER_DATA_TYPE_INTEGER => 'integer',
@@ -1552,7 +1511,7 @@ class Database {
     final result = <String, List<Object>>{};
     for (final group in listVectorGroups(collection)) {
       final name = group.groupName;
-      final dataType = _getValueDataType(group.attributes);
+      final dataType = _getValueDataType(group.valueColumns);
       switch (dataType) {
         case 'integer':
           result[name] = readVectorIntegersById(collection, name, id);
@@ -1573,7 +1532,7 @@ class Database {
     final result = <String, List<Object>>{};
     for (final group in listSetGroups(collection)) {
       final name = group.groupName;
-      final dataType = _getValueDataType(group.attributes);
+      final dataType = _getValueDataType(group.valueColumns);
       switch (dataType) {
         case 'integer':
           result[name] = readSetIntegersById(collection, name, id);

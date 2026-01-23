@@ -206,10 +206,6 @@ function quiver_database_read_element_ids(db, collection, out_ids, out_count)
     @ccall libquiver_c.quiver_database_read_element_ids(db::Ptr{quiver_database_t}, collection::Ptr{Cchar}, out_ids::Ptr{Ptr{Int64}}, out_count::Ptr{Csize_t})::quiver_error_t
 end
 
-function quiver_database_get_attribute_type(db, collection, attribute, out_data_structure, out_data_type)
-    @ccall libquiver_c.quiver_database_get_attribute_type(db::Ptr{quiver_database_t}, collection::Ptr{Cchar}, attribute::Ptr{Cchar}, out_data_structure::Ptr{quiver_data_structure_t}, out_data_type::Ptr{quiver_data_type_t})::quiver_error_t
-end
-
 struct quiver_scalar_metadata_t
     name::Ptr{Cchar}
     data_type::quiver_data_type_t
@@ -220,14 +216,14 @@ end
 
 struct quiver_vector_metadata_t
     group_name::Ptr{Cchar}
-    attributes::Ptr{quiver_scalar_metadata_t}
-    attribute_count::Csize_t
+    value_columns::Ptr{quiver_scalar_metadata_t}
+    value_column_count::Csize_t
 end
 
 struct quiver_set_metadata_t
     group_name::Ptr{Cchar}
-    attributes::Ptr{quiver_scalar_metadata_t}
-    attribute_count::Csize_t
+    value_columns::Ptr{quiver_scalar_metadata_t}
+    value_column_count::Csize_t
 end
 
 function quiver_database_get_scalar_metadata(db, collection, attribute, out_metadata)
