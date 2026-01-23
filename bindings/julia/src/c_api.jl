@@ -254,16 +254,28 @@ function quiver_free_set_metadata(metadata)
     @ccall libquiver_c.quiver_free_set_metadata(metadata::Ptr{quiver_set_metadata_t})::Cvoid
 end
 
-function quiver_database_list_scalar_attributes(db, collection, out_attributes, out_count)
-    @ccall libquiver_c.quiver_database_list_scalar_attributes(db::Ptr{quiver_database_t}, collection::Ptr{Cchar}, out_attributes::Ptr{Ptr{Ptr{Cchar}}}, out_count::Ptr{Csize_t})::quiver_error_t
+function quiver_database_list_scalar_attributes(db, collection, out_metadata, out_count)
+    @ccall libquiver_c.quiver_database_list_scalar_attributes(db::Ptr{quiver_database_t}, collection::Ptr{Cchar}, out_metadata::Ptr{Ptr{quiver_scalar_metadata_t}}, out_count::Ptr{Csize_t})::quiver_error_t
 end
 
-function quiver_database_list_vector_groups(db, collection, out_groups, out_count)
-    @ccall libquiver_c.quiver_database_list_vector_groups(db::Ptr{quiver_database_t}, collection::Ptr{Cchar}, out_groups::Ptr{Ptr{Ptr{Cchar}}}, out_count::Ptr{Csize_t})::quiver_error_t
+function quiver_database_list_vector_groups(db, collection, out_metadata, out_count)
+    @ccall libquiver_c.quiver_database_list_vector_groups(db::Ptr{quiver_database_t}, collection::Ptr{Cchar}, out_metadata::Ptr{Ptr{quiver_vector_metadata_t}}, out_count::Ptr{Csize_t})::quiver_error_t
 end
 
-function quiver_database_list_set_groups(db, collection, out_groups, out_count)
-    @ccall libquiver_c.quiver_database_list_set_groups(db::Ptr{quiver_database_t}, collection::Ptr{Cchar}, out_groups::Ptr{Ptr{Ptr{Cchar}}}, out_count::Ptr{Csize_t})::quiver_error_t
+function quiver_database_list_set_groups(db, collection, out_metadata, out_count)
+    @ccall libquiver_c.quiver_database_list_set_groups(db::Ptr{quiver_database_t}, collection::Ptr{Cchar}, out_metadata::Ptr{Ptr{quiver_set_metadata_t}}, out_count::Ptr{Csize_t})::quiver_error_t
+end
+
+function quiver_free_scalar_metadata_array(metadata, count)
+    @ccall libquiver_c.quiver_free_scalar_metadata_array(metadata::Ptr{quiver_scalar_metadata_t}, count::Csize_t)::Cvoid
+end
+
+function quiver_free_vector_metadata_array(metadata, count)
+    @ccall libquiver_c.quiver_free_vector_metadata_array(metadata::Ptr{quiver_vector_metadata_t}, count::Csize_t)::Cvoid
+end
+
+function quiver_free_set_metadata_array(metadata, count)
+    @ccall libquiver_c.quiver_free_set_metadata_array(metadata::Ptr{quiver_set_metadata_t}, count::Csize_t)::Cvoid
 end
 
 function quiver_database_update_scalar_integer(db, collection, attribute, id, value)
