@@ -1324,13 +1324,13 @@ class QuiverDatabaseBindings {
   int quiver_database_list_scalar_attributes(
     ffi.Pointer<quiver_database_t> db,
     ffi.Pointer<ffi.Char> collection,
-    ffi.Pointer<ffi.Pointer<ffi.Pointer<ffi.Char>>> out_attributes,
+    ffi.Pointer<ffi.Pointer<quiver_scalar_metadata_t>> out_metadata,
     ffi.Pointer<ffi.Size> out_count,
   ) {
     return _quiver_database_list_scalar_attributes(
       db,
       collection,
-      out_attributes,
+      out_metadata,
       out_count,
     );
   }
@@ -1341,7 +1341,7 @@ class QuiverDatabaseBindings {
           ffi.Int32 Function(
             ffi.Pointer<quiver_database_t>,
             ffi.Pointer<ffi.Char>,
-            ffi.Pointer<ffi.Pointer<ffi.Pointer<ffi.Char>>>,
+            ffi.Pointer<ffi.Pointer<quiver_scalar_metadata_t>>,
             ffi.Pointer<ffi.Size>,
           )
         >
@@ -1351,7 +1351,7 @@ class QuiverDatabaseBindings {
         int Function(
           ffi.Pointer<quiver_database_t>,
           ffi.Pointer<ffi.Char>,
-          ffi.Pointer<ffi.Pointer<ffi.Pointer<ffi.Char>>>,
+          ffi.Pointer<ffi.Pointer<quiver_scalar_metadata_t>>,
           ffi.Pointer<ffi.Size>,
         )
       >();
@@ -1359,13 +1359,13 @@ class QuiverDatabaseBindings {
   int quiver_database_list_vector_groups(
     ffi.Pointer<quiver_database_t> db,
     ffi.Pointer<ffi.Char> collection,
-    ffi.Pointer<ffi.Pointer<ffi.Pointer<ffi.Char>>> out_groups,
+    ffi.Pointer<ffi.Pointer<quiver_vector_metadata_t>> out_metadata,
     ffi.Pointer<ffi.Size> out_count,
   ) {
     return _quiver_database_list_vector_groups(
       db,
       collection,
-      out_groups,
+      out_metadata,
       out_count,
     );
   }
@@ -1376,7 +1376,7 @@ class QuiverDatabaseBindings {
           ffi.Int32 Function(
             ffi.Pointer<quiver_database_t>,
             ffi.Pointer<ffi.Char>,
-            ffi.Pointer<ffi.Pointer<ffi.Pointer<ffi.Char>>>,
+            ffi.Pointer<ffi.Pointer<quiver_vector_metadata_t>>,
             ffi.Pointer<ffi.Size>,
           )
         >
@@ -1386,7 +1386,7 @@ class QuiverDatabaseBindings {
         int Function(
           ffi.Pointer<quiver_database_t>,
           ffi.Pointer<ffi.Char>,
-          ffi.Pointer<ffi.Pointer<ffi.Pointer<ffi.Char>>>,
+          ffi.Pointer<ffi.Pointer<quiver_vector_metadata_t>>,
           ffi.Pointer<ffi.Size>,
         )
       >();
@@ -1394,13 +1394,13 @@ class QuiverDatabaseBindings {
   int quiver_database_list_set_groups(
     ffi.Pointer<quiver_database_t> db,
     ffi.Pointer<ffi.Char> collection,
-    ffi.Pointer<ffi.Pointer<ffi.Pointer<ffi.Char>>> out_groups,
+    ffi.Pointer<ffi.Pointer<quiver_set_metadata_t>> out_metadata,
     ffi.Pointer<ffi.Size> out_count,
   ) {
     return _quiver_database_list_set_groups(
       db,
       collection,
-      out_groups,
+      out_metadata,
       out_count,
     );
   }
@@ -1411,7 +1411,7 @@ class QuiverDatabaseBindings {
           ffi.Int32 Function(
             ffi.Pointer<quiver_database_t>,
             ffi.Pointer<ffi.Char>,
-            ffi.Pointer<ffi.Pointer<ffi.Pointer<ffi.Char>>>,
+            ffi.Pointer<ffi.Pointer<quiver_set_metadata_t>>,
             ffi.Pointer<ffi.Size>,
           )
         >
@@ -1421,10 +1421,61 @@ class QuiverDatabaseBindings {
         int Function(
           ffi.Pointer<quiver_database_t>,
           ffi.Pointer<ffi.Char>,
-          ffi.Pointer<ffi.Pointer<ffi.Pointer<ffi.Char>>>,
+          ffi.Pointer<ffi.Pointer<quiver_set_metadata_t>>,
           ffi.Pointer<ffi.Size>,
         )
       >();
+
+  void quiver_free_scalar_metadata_array(
+    ffi.Pointer<quiver_scalar_metadata_t> metadata,
+    int count,
+  ) {
+    return _quiver_free_scalar_metadata_array(
+      metadata,
+      count,
+    );
+  }
+
+  late final _quiver_free_scalar_metadata_arrayPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<quiver_scalar_metadata_t>, ffi.Size)>>(
+        'quiver_free_scalar_metadata_array',
+      );
+  late final _quiver_free_scalar_metadata_array = _quiver_free_scalar_metadata_arrayPtr
+      .asFunction<void Function(ffi.Pointer<quiver_scalar_metadata_t>, int)>();
+
+  void quiver_free_vector_metadata_array(
+    ffi.Pointer<quiver_vector_metadata_t> metadata,
+    int count,
+  ) {
+    return _quiver_free_vector_metadata_array(
+      metadata,
+      count,
+    );
+  }
+
+  late final _quiver_free_vector_metadata_arrayPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<quiver_vector_metadata_t>, ffi.Size)>>(
+        'quiver_free_vector_metadata_array',
+      );
+  late final _quiver_free_vector_metadata_array = _quiver_free_vector_metadata_arrayPtr
+      .asFunction<void Function(ffi.Pointer<quiver_vector_metadata_t>, int)>();
+
+  void quiver_free_set_metadata_array(
+    ffi.Pointer<quiver_set_metadata_t> metadata,
+    int count,
+  ) {
+    return _quiver_free_set_metadata_array(
+      metadata,
+      count,
+    );
+  }
+
+  late final _quiver_free_set_metadata_arrayPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<quiver_set_metadata_t>, ffi.Size)>>(
+        'quiver_free_set_metadata_array',
+      );
+  late final _quiver_free_set_metadata_array = _quiver_free_set_metadata_arrayPtr
+      .asFunction<void Function(ffi.Pointer<quiver_set_metadata_t>, int)>();
 
   int quiver_database_update_scalar_integer(
     ffi.Pointer<quiver_database_t> db,
