@@ -104,3 +104,69 @@ function get_set_metadata(db::Database, collection::AbstractString, group_name::
     C.quiver_free_set_metadata(metadata)
     return result
 end
+
+function list_scalar_attributes(db::Database, collection::AbstractString)
+    out_attrs = Ref(Ptr{Ptr{Cchar}}(C_NULL))
+    out_count = Ref(Csize_t(0))
+    err = C.quiver_database_list_scalar_attributes(db.ptr, collection, out_attrs, out_count)
+    if err != C.QUIVER_OK
+        throw(DatabaseException("Failed to list scalar attributes for '$collection'"))
+    end
+
+    count = out_count[]
+    if count == 0 || out_attrs[] == C_NULL
+        return String[]
+    end
+
+    result = String[]
+    for i in 1:count
+        ptr = unsafe_load(out_attrs[], i)
+        push!(result, unsafe_string(ptr))
+    end
+    C.quiver_free_string_array(out_attrs[], count)
+    return result
+end
+
+function list_vector_groups(db::Database, collection::AbstractString)
+    out_groups = Ref(Ptr{Ptr{Cchar}}(C_NULL))
+    out_count = Ref(Csize_t(0))
+    err = C.quiver_database_list_vector_groups(db.ptr, collection, out_groups, out_count)
+    if err != C.QUIVER_OK
+        throw(DatabaseException("Failed to list vector groups for '$collection'"))
+    end
+
+    count = out_count[]
+    if count == 0 || out_groups[] == C_NULL
+        return String[]
+    end
+
+    result = String[]
+    for i in 1:count
+        ptr = unsafe_load(out_groups[], i)
+        push!(result, unsafe_string(ptr))
+    end
+    C.quiver_free_string_array(out_groups[], count)
+    return result
+end
+
+function list_set_groups(db::Database, collection::AbstractString)
+    out_groups = Ref(Ptr{Ptr{Cchar}}(C_NULL))
+    out_count = Ref(Csize_t(0))
+    err = C.quiver_database_list_set_groups(db.ptr, collection, out_groups, out_count)
+    if err != C.QUIVER_OK
+        throw(DatabaseException("Failed to list set groups for '$collection'"))
+    end
+
+    count = out_count[]
+    if count == 0 || out_groups[] == C_NULL
+        return String[]
+    end
+
+    result = String[]
+    for i in 1:count
+        ptr = unsafe_load(out_groups[], i)
+        push!(result, unsafe_string(ptr))
+    end
+    C.quiver_free_string_array(out_groups[], count)
+    return result
+end

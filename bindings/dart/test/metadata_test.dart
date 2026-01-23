@@ -181,4 +181,52 @@ void main() {
       }
     });
   });
+
+  group('List Scalar Attributes', () {
+    test('returns all scalar attribute names', () {
+      final db = Database.fromSchema(
+        ':memory:',
+        path.join(testsPath, 'schemas', 'valid', 'collections.sql'),
+      );
+      try {
+        final attrs = db.listScalarAttributes('Collection');
+        expect(attrs, contains('id'));
+        expect(attrs, contains('label'));
+        expect(attrs, contains('some_integer'));
+        expect(attrs, contains('some_float'));
+      } finally {
+        db.close();
+      }
+    });
+  });
+
+  group('List Vector Groups', () {
+    test('returns all vector group names', () {
+      final db = Database.fromSchema(
+        ':memory:',
+        path.join(testsPath, 'schemas', 'valid', 'collections.sql'),
+      );
+      try {
+        final groups = db.listVectorGroups('Collection');
+        expect(groups, contains('values'));
+      } finally {
+        db.close();
+      }
+    });
+  });
+
+  group('List Set Groups', () {
+    test('returns all set group names', () {
+      final db = Database.fromSchema(
+        ':memory:',
+        path.join(testsPath, 'schemas', 'valid', 'collections.sql'),
+      );
+      try {
+        final groups = db.listSetGroups('Collection');
+        expect(groups, contains('tags'));
+      } finally {
+        db.close();
+      }
+    });
+  });
 }

@@ -100,6 +100,39 @@ include("fixture.jl")
 
         Quiver.close!(db)
     end
+
+    @testset "List Scalar Attributes" begin
+        path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
+        db = Quiver.from_schema(":memory:", path_schema)
+
+        attrs = Quiver.list_scalar_attributes(db, "Collection")
+        @test "id" in attrs
+        @test "label" in attrs
+        @test "some_integer" in attrs
+        @test "some_float" in attrs
+
+        Quiver.close!(db)
+    end
+
+    @testset "List Vector Groups" begin
+        path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
+        db = Quiver.from_schema(":memory:", path_schema)
+
+        groups = Quiver.list_vector_groups(db, "Collection")
+        @test "values" in groups
+
+        Quiver.close!(db)
+    end
+
+    @testset "List Set Groups" begin
+        path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
+        db = Quiver.from_schema(":memory:", path_schema)
+
+        groups = Quiver.list_set_groups(db, "Collection")
+        @test "tags" in groups
+
+        Quiver.close!(db)
+    end
 end
 
 end # module

@@ -1072,6 +1072,105 @@ class Database {
     }
   }
 
+  /// Lists all scalar attribute names for a collection.
+  List<String> listScalarAttributes(String collection) {
+    _ensureNotClosed();
+
+    final arena = Arena();
+    try {
+      final outAttrs = arena<Pointer<Pointer<Char>>>();
+      final outCount = arena<Size>();
+
+      final err = bindings.quiver_database_list_scalar_attributes(
+        _ptr,
+        collection.toNativeUtf8(allocator: arena).cast(),
+        outAttrs,
+        outCount,
+      );
+
+      if (err != quiver_error_t.QUIVER_OK) {
+        throw DatabaseException.fromError(err, "Failed to list scalar attributes for '$collection'");
+      }
+
+      final count = outCount.value;
+      if (count == 0 || outAttrs.value == nullptr) {
+        return [];
+      }
+
+      final result = List<String>.generate(count, (i) => outAttrs.value[i].cast<Utf8>().toDartString());
+      bindings.quiver_free_string_array(outAttrs.value, count);
+      return result;
+    } finally {
+      arena.releaseAll();
+    }
+  }
+
+  /// Lists all vector group names for a collection.
+  List<String> listVectorGroups(String collection) {
+    _ensureNotClosed();
+
+    final arena = Arena();
+    try {
+      final outGroups = arena<Pointer<Pointer<Char>>>();
+      final outCount = arena<Size>();
+
+      final err = bindings.quiver_database_list_vector_groups(
+        _ptr,
+        collection.toNativeUtf8(allocator: arena).cast(),
+        outGroups,
+        outCount,
+      );
+
+      if (err != quiver_error_t.QUIVER_OK) {
+        throw DatabaseException.fromError(err, "Failed to list vector groups for '$collection'");
+      }
+
+      final count = outCount.value;
+      if (count == 0 || outGroups.value == nullptr) {
+        return [];
+      }
+
+      final result = List<String>.generate(count, (i) => outGroups.value[i].cast<Utf8>().toDartString());
+      bindings.quiver_free_string_array(outGroups.value, count);
+      return result;
+    } finally {
+      arena.releaseAll();
+    }
+  }
+
+  /// Lists all set group names for a collection.
+  List<String> listSetGroups(String collection) {
+    _ensureNotClosed();
+
+    final arena = Arena();
+    try {
+      final outGroups = arena<Pointer<Pointer<Char>>>();
+      final outCount = arena<Size>();
+
+      final err = bindings.quiver_database_list_set_groups(
+        _ptr,
+        collection.toNativeUtf8(allocator: arena).cast(),
+        outGroups,
+        outCount,
+      );
+
+      if (err != quiver_error_t.QUIVER_OK) {
+        throw DatabaseException.fromError(err, "Failed to list set groups for '$collection'");
+      }
+
+      final count = outCount.value;
+      if (count == 0 || outGroups.value == nullptr) {
+        return [];
+      }
+
+      final result = List<String>.generate(count, (i) => outGroups.value[i].cast<Utf8>().toDartString());
+      bindings.quiver_free_string_array(outGroups.value, count);
+      return result;
+    } finally {
+      arena.releaseAll();
+    }
+  }
+
   /// Deletes an element by ID from a collection.
   /// CASCADE DELETE handles cleanup of related vector/set tables.
   void deleteElementById(String collection, int id) {
