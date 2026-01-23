@@ -1546,15 +1546,13 @@ class Database {
     return result;
   }
 
-  String? _getValueDataType(
-    List<({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})> attributes,
+  String _getValueDataType(
+    List<({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})> valueColumns,
   ) {
-    for (final attr in attributes) {
-      if (!attr.primaryKey && attr.name != 'vector_index') {
-        return attr.dataType;
-      }
+    if (valueColumns.isNotEmpty) {
+      return valueColumns.first.dataType;
     }
-    return attributes.isEmpty ? 'text' : attributes.first.dataType;
+    return 'text';
   }
 
   /// Reads all scalar attributes for an element by ID.
