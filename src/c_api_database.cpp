@@ -83,6 +83,22 @@ void free_vectors_impl(T** vectors, size_t* sizes, size_t count) {
     delete[] sizes;
 }
 
+// Helper to copy a vector of strings to C-style array
+quiver_error_t copy_strings_to_c(const std::vector<std::string>& values, char*** out_values, size_t* out_count) {
+    *out_count = values.size();
+    if (values.empty()) {
+        *out_values = nullptr;
+        return QUIVER_OK;
+    }
+    *out_values = new char*[values.size()];
+    for (size_t i = 0; i < values.size(); ++i) {
+        (*out_values)[i] = new char[values[i].size() + 1];
+        std::copy(values[i].begin(), values[i].end(), (*out_values)[i]);
+        (*out_values)[i][values[i].size()] = '\0';
+    }
+    return QUIVER_OK;
+}
+
 }  // namespace
 
 extern "C" {
@@ -104,7 +120,8 @@ QUIVER_C_API quiver_database_t* quiver_database_open(const char* path, const qui
         return new quiver_database(path, cpp_options);
     } catch (const std::bad_alloc&) {
         return nullptr;
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return nullptr;
     }
 }
@@ -140,7 +157,8 @@ QUIVER_C_API quiver_database_t* quiver_database_from_migrations(const char* db_p
         return new quiver_database(std::move(db));
     } catch (const std::bad_alloc&) {
         return nullptr;
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return nullptr;
     }
 }
@@ -151,7 +169,8 @@ QUIVER_C_API int64_t quiver_database_current_version(quiver_database_t* db) {
     }
     try {
         return db->db.current_version();
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return -1;
     }
 }
@@ -164,7 +183,8 @@ QUIVER_C_API int64_t quiver_database_create_element(quiver_database_t* db,
     }
     try {
         return db->db.create_element(collection, element->element);
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return -1;
     }
 }
@@ -179,7 +199,8 @@ QUIVER_C_API quiver_error_t quiver_database_update_element(quiver_database_t* db
     try {
         db->db.update_element(collection, id, element->element);
         return QUIVER_OK;
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -193,7 +214,8 @@ QUIVER_C_API quiver_error_t quiver_database_delete_element_by_id(quiver_database
     try {
         db->db.delete_element_by_id(collection, id);
         return QUIVER_OK;
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -209,7 +231,8 @@ QUIVER_C_API quiver_error_t quiver_database_set_scalar_relation(quiver_database_
     try {
         db->db.set_scalar_relation(collection, attribute, from_label, to_label);
         return QUIVER_OK;
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -223,20 +246,9 @@ QUIVER_C_API quiver_error_t quiver_database_read_scalar_relation(quiver_database
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
     try {
-        auto values = db->db.read_scalar_relation(collection, attribute);
-        *out_count = values.size();
-        if (values.empty()) {
-            *out_values = nullptr;
-            return QUIVER_OK;
-        }
-        *out_values = new char*[values.size()];
-        for (size_t i = 0; i < values.size(); ++i) {
-            (*out_values)[i] = new char[values[i].size() + 1];
-            std::copy(values[i].begin(), values[i].end(), (*out_values)[i]);
-            (*out_values)[i][values[i].size()] = '\0';
-        }
-        return QUIVER_OK;
-    } catch (const std::exception&) {
+        return copy_strings_to_c(db->db.read_scalar_relation(collection, attribute), out_values, out_count);
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -253,7 +265,8 @@ quiver_database_from_schema(const char* db_path, const char* schema_path, const 
         return new quiver_database(std::move(db));
     } catch (const std::bad_alloc&) {
         return nullptr;
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return nullptr;
     }
 }
@@ -268,7 +281,8 @@ QUIVER_C_API quiver_error_t quiver_database_read_scalar_integers(quiver_database
     }
     try {
         return read_scalars_impl(db->db.read_scalar_integers(collection, attribute), out_values, out_count);
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -283,7 +297,8 @@ QUIVER_C_API quiver_error_t quiver_database_read_scalar_floats(quiver_database_t
     }
     try {
         return read_scalars_impl(db->db.read_scalar_floats(collection, attribute), out_values, out_count);
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -311,7 +326,8 @@ QUIVER_C_API quiver_error_t quiver_database_read_scalar_strings(quiver_database_
             (*out_values)[i][values[i].size()] = '\0';
         }
         return QUIVER_OK;
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -345,7 +361,8 @@ QUIVER_C_API quiver_error_t quiver_database_read_vector_integers(quiver_database
     }
     try {
         return read_vectors_impl(db->db.read_vector_integers(collection, attribute), out_vectors, out_sizes, out_count);
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -361,7 +378,8 @@ QUIVER_C_API quiver_error_t quiver_database_read_vector_floats(quiver_database_t
     }
     try {
         return read_vectors_impl(db->db.read_vector_floats(collection, attribute), out_vectors, out_sizes, out_count);
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -399,7 +417,8 @@ QUIVER_C_API quiver_error_t quiver_database_read_vector_strings(quiver_database_
             }
         }
         return QUIVER_OK;
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -441,7 +460,8 @@ QUIVER_C_API quiver_error_t quiver_database_read_set_integers(quiver_database_t*
     }
     try {
         return read_vectors_impl(db->db.read_set_integers(collection, attribute), out_sets, out_sizes, out_count);
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -457,7 +477,8 @@ QUIVER_C_API quiver_error_t quiver_database_read_set_floats(quiver_database_t* d
     }
     try {
         return read_vectors_impl(db->db.read_set_floats(collection, attribute), out_sets, out_sizes, out_count);
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -495,7 +516,8 @@ QUIVER_C_API quiver_error_t quiver_database_read_set_strings(quiver_database_t* 
             }
         }
         return QUIVER_OK;
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -520,7 +542,8 @@ QUIVER_C_API quiver_error_t quiver_database_read_scalar_integers_by_id(quiver_da
             *out_has_value = 0;
         }
         return QUIVER_OK;
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -543,7 +566,8 @@ QUIVER_C_API quiver_error_t quiver_database_read_scalar_floats_by_id(quiver_data
             *out_has_value = 0;
         }
         return QUIVER_OK;
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -569,7 +593,8 @@ QUIVER_C_API quiver_error_t quiver_database_read_scalar_strings_by_id(quiver_dat
             *out_has_value = 0;
         }
         return QUIVER_OK;
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -588,7 +613,8 @@ QUIVER_C_API quiver_error_t quiver_database_read_vector_integers_by_id(quiver_da
     try {
         auto values = db->db.read_vector_integers_by_id(collection, attribute, id);
         return read_scalars_impl(values, out_values, out_count);
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -605,7 +631,8 @@ QUIVER_C_API quiver_error_t quiver_database_read_vector_floats_by_id(quiver_data
     try {
         auto values = db->db.read_vector_floats_by_id(collection, attribute, id);
         return read_scalars_impl(values, out_values, out_count);
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -633,7 +660,8 @@ QUIVER_C_API quiver_error_t quiver_database_read_vector_strings_by_id(quiver_dat
             (*out_values)[i][values[i].size()] = '\0';
         }
         return QUIVER_OK;
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -652,7 +680,8 @@ QUIVER_C_API quiver_error_t quiver_database_read_set_integers_by_id(quiver_datab
     try {
         auto values = db->db.read_set_integers_by_id(collection, attribute, id);
         return read_scalars_impl(values, out_values, out_count);
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -669,7 +698,8 @@ QUIVER_C_API quiver_error_t quiver_database_read_set_floats_by_id(quiver_databas
     try {
         auto values = db->db.read_set_floats_by_id(collection, attribute, id);
         return read_scalars_impl(values, out_values, out_count);
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -697,7 +727,8 @@ QUIVER_C_API quiver_error_t quiver_database_read_set_strings_by_id(quiver_databa
             (*out_values)[i][values[i].size()] = '\0';
         }
         return QUIVER_OK;
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -711,7 +742,8 @@ QUIVER_C_API quiver_error_t quiver_database_read_element_ids(quiver_database_t* 
     }
     try {
         return read_scalars_impl(db->db.read_element_ids(collection), out_ids, out_count);
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -729,7 +761,8 @@ QUIVER_C_API quiver_error_t quiver_database_update_scalar_integer(quiver_databas
     try {
         db->db.update_scalar_integer(collection, attribute, id, value);
         return QUIVER_OK;
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -745,7 +778,8 @@ QUIVER_C_API quiver_error_t quiver_database_update_scalar_float(quiver_database_
     try {
         db->db.update_scalar_float(collection, attribute, id, value);
         return QUIVER_OK;
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -761,7 +795,8 @@ QUIVER_C_API quiver_error_t quiver_database_update_scalar_string(quiver_database
     try {
         db->db.update_scalar_string(collection, attribute, id, value);
         return QUIVER_OK;
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -781,7 +816,8 @@ QUIVER_C_API quiver_error_t quiver_database_update_vector_integers(quiver_databa
         std::vector<int64_t> vec(values, values + count);
         db->db.update_vector_integers(collection, attribute, id, vec);
         return QUIVER_OK;
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -799,7 +835,8 @@ QUIVER_C_API quiver_error_t quiver_database_update_vector_floats(quiver_database
         std::vector<double> vec(values, values + count);
         db->db.update_vector_floats(collection, attribute, id, vec);
         return QUIVER_OK;
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -821,7 +858,8 @@ QUIVER_C_API quiver_error_t quiver_database_update_vector_strings(quiver_databas
         }
         db->db.update_vector_strings(collection, attribute, id, vec);
         return QUIVER_OK;
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -841,7 +879,8 @@ QUIVER_C_API quiver_error_t quiver_database_update_set_integers(quiver_database_
         std::vector<int64_t> vec(values, values + count);
         db->db.update_set_integers(collection, attribute, id, vec);
         return QUIVER_OK;
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -859,7 +898,8 @@ QUIVER_C_API quiver_error_t quiver_database_update_set_floats(quiver_database_t*
         std::vector<double> vec(values, values + count);
         db->db.update_set_floats(collection, attribute, id, vec);
         return QUIVER_OK;
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -881,7 +921,8 @@ QUIVER_C_API quiver_error_t quiver_database_update_set_strings(quiver_database_t
         }
         db->db.update_set_strings(collection, attribute, id, vec);
         return QUIVER_OK;
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -929,7 +970,8 @@ QUIVER_C_API quiver_error_t quiver_database_get_scalar_metadata(quiver_database_
         }
 
         return QUIVER_OK;
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -965,7 +1007,8 @@ QUIVER_C_API quiver_error_t quiver_database_get_vector_metadata(quiver_database_
         }
 
         return QUIVER_OK;
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -1001,7 +1044,8 @@ QUIVER_C_API quiver_error_t quiver_database_get_set_metadata(quiver_database_t* 
         }
 
         return QUIVER_OK;
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -1074,7 +1118,8 @@ QUIVER_C_API quiver_error_t quiver_database_list_scalar_attributes(quiver_databa
             }
         }
         return QUIVER_OK;
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -1117,7 +1162,8 @@ QUIVER_C_API quiver_error_t quiver_database_list_vector_groups(quiver_database_t
             }
         }
         return QUIVER_OK;
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
@@ -1160,7 +1206,8 @@ QUIVER_C_API quiver_error_t quiver_database_list_set_groups(quiver_database_t* d
             }
         }
         return QUIVER_OK;
-    } catch (const std::exception&) {
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
         return QUIVER_ERROR_DATABASE;
     }
 }
