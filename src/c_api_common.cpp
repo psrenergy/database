@@ -1,5 +1,5 @@
-#include "quiver/c/common.h"
 #include "c_api_internal.h"
+#include "quiver/c/common.h"
 
 #include <string>
 
