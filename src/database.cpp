@@ -168,10 +168,34 @@ struct Database::Impl {
 
     ~Impl() {
         if (db) {
+            logger->debug("Closing database: {}", path);
             sqlite3_close_v2(db);
             db = nullptr;
+            logger->info("Database closed");
         }
     }
+};
+
+class TransactionGuard {
+    Database& db_;
+    bool committed_ = false;
+
+public:
+    explicit TransactionGuard(Database& db) : db_(db) { db_.begin_transaction(); }
+
+    void commit() {
+        db_.commit();
+        committed_ = true;
+    }
+
+    ~TransactionGuard() {
+        if (!committed_) {
+            db_.rollback();
+        }
+    }
+
+    TransactionGuard(const TransactionGuard&) = delete;
+    TransactionGuard& operator=(const TransactionGuard&) = delete;
 };
 
 Database::Database(const std::string& path, const DatabaseOptions& options) : impl_(std::make_unique<Impl>()) {
@@ -202,14 +226,7 @@ Database::Database(const std::string& path, const DatabaseOptions& options) : im
     impl_->logger->info("Database opened successfully: {}", path);
 }
 
-Database::~Database() {
-    if (impl_ && impl_->db) {
-        impl_->logger->debug("Closing database: {}", impl_->path);
-        sqlite3_close_v2(impl_->db);
-        impl_->db = nullptr;
-        impl_->logger->info("Database closed");
-    }
-}
+Database::~Database() = default;
 
 Database::Database(Database&& other) noexcept = default;
 Database& Database::operator=(Database&& other) noexcept = default;
@@ -319,8 +336,7 @@ int64_t Database::current_version() const {
 }
 
 const std::string& Database::path() const {
-    static const std::string empty;
-    return impl_ ? impl_->path : empty;
+    return impl_->path;
 }
 
 Database Database::from_migrations(const std::string& db_path,
@@ -486,14 +502,7 @@ void Database::apply_schema(const std::string& schema_path) {
 
 int64_t Database::create_element(const std::string& collection, const Element& element) {
     impl_->logger->debug("Creating element in collection: {}", collection);
-
-    // Require schema to be loaded
-    if (!impl_->schema) {
-        throw std::runtime_error("Cannot create element: no schema loaded");
-    }
-    if (!impl_->schema->has_table(collection)) {
-        throw std::runtime_error("Collection not found in schema: " + collection);
-    }
+    impl_->require_collection(collection, "create element");
 
     const auto& scalars = element.scalars();
     if (scalars.empty()) {
@@ -687,14 +696,7 @@ int64_t Database::create_element(const std::string& collection, const Element& e
 
 void Database::update_element(const std::string& collection, int64_t id, const Element& element) {
     impl_->logger->debug("Updating element {} in collection: {}", id, collection);
-
-    // Require schema to be loaded
-    if (!impl_->schema) {
-        throw std::runtime_error("Cannot update element: no schema loaded");
-    }
-    if (!impl_->schema->has_table(collection)) {
-        throw std::runtime_error("Collection not found in schema: " + collection);
-    }
+    impl_->require_collection(collection, "update element");
 
     const auto& scalars = element.scalars();
     if (scalars.empty()) {
@@ -729,13 +731,7 @@ void Database::update_element(const std::string& collection, int64_t id, const E
 
 void Database::delete_element_by_id(const std::string& collection, int64_t id) {
     impl_->logger->debug("Deleting element {} from collection: {}", id, collection);
-
-    if (!impl_->schema) {
-        throw std::runtime_error("Cannot delete element: no schema loaded");
-    }
-    if (!impl_->schema->has_table(collection)) {
-        throw std::runtime_error("Collection not found in schema: " + collection);
-    }
+    impl_->require_collection(collection, "delete element");
 
     auto sql = "DELETE FROM " + collection + " WHERE id = ?";
     execute(sql, {id});
@@ -1043,24 +1039,18 @@ void Database::update_vector_integers(const std::string& collection,
 
     auto vector_table = impl_->schema->find_vector_table(collection, attribute);
 
-    begin_transaction();
-    try {
-        auto delete_sql = "DELETE FROM " + vector_table + " WHERE id = ?";
-        execute(delete_sql, {id});
+    TransactionGuard txn(*this);
 
-        for (size_t i = 0; i < values.size(); ++i) {
-            auto insert_sql = "INSERT INTO " + vector_table + " (id, vector_index, " + attribute + ") VALUES (?, ?, ?)";
-            int64_t vector_index = static_cast<int64_t>(i + 1);
-            execute(insert_sql, {id, vector_index, values[i]});
-        }
+    auto delete_sql = "DELETE FROM " + vector_table + " WHERE id = ?";
+    execute(delete_sql, {id});
 
-        commit();
-    } catch (const std::exception& e) {
-        rollback();
-        impl_->logger->error("Failed to update vector {}.{} for id {}: {}", collection, attribute, id, e.what());
-        throw;
+    for (size_t i = 0; i < values.size(); ++i) {
+        auto insert_sql = "INSERT INTO " + vector_table + " (id, vector_index, " + attribute + ") VALUES (?, ?, ?)";
+        int64_t vector_index = static_cast<int64_t>(i + 1);
+        execute(insert_sql, {id, vector_index, values[i]});
     }
 
+    txn.commit();
     impl_->logger->info("Updated vector {}.{} for id {} with {} values", collection, attribute, id, values.size());
 }
 
@@ -1073,24 +1063,18 @@ void Database::update_vector_floats(const std::string& collection,
 
     auto vector_table = impl_->schema->find_vector_table(collection, attribute);
 
-    begin_transaction();
-    try {
-        auto delete_sql = "DELETE FROM " + vector_table + " WHERE id = ?";
-        execute(delete_sql, {id});
+    TransactionGuard txn(*this);
 
-        for (size_t i = 0; i < values.size(); ++i) {
-            auto insert_sql = "INSERT INTO " + vector_table + " (id, vector_index, " + attribute + ") VALUES (?, ?, ?)";
-            int64_t vector_index = static_cast<int64_t>(i + 1);
-            execute(insert_sql, {id, vector_index, values[i]});
-        }
+    auto delete_sql = "DELETE FROM " + vector_table + " WHERE id = ?";
+    execute(delete_sql, {id});
 
-        commit();
-    } catch (const std::exception& e) {
-        rollback();
-        impl_->logger->error("Failed to update vector {}.{} for id {}: {}", collection, attribute, id, e.what());
-        throw;
+    for (size_t i = 0; i < values.size(); ++i) {
+        auto insert_sql = "INSERT INTO " + vector_table + " (id, vector_index, " + attribute + ") VALUES (?, ?, ?)";
+        int64_t vector_index = static_cast<int64_t>(i + 1);
+        execute(insert_sql, {id, vector_index, values[i]});
     }
 
+    txn.commit();
     impl_->logger->info("Updated vector {}.{} for id {} with {} values", collection, attribute, id, values.size());
 }
 
@@ -1103,24 +1087,18 @@ void Database::update_vector_strings(const std::string& collection,
 
     auto vector_table = impl_->schema->find_vector_table(collection, attribute);
 
-    begin_transaction();
-    try {
-        auto delete_sql = "DELETE FROM " + vector_table + " WHERE id = ?";
-        execute(delete_sql, {id});
+    TransactionGuard txn(*this);
 
-        for (size_t i = 0; i < values.size(); ++i) {
-            auto insert_sql = "INSERT INTO " + vector_table + " (id, vector_index, " + attribute + ") VALUES (?, ?, ?)";
-            int64_t vector_index = static_cast<int64_t>(i + 1);
-            execute(insert_sql, {id, vector_index, values[i]});
-        }
+    auto delete_sql = "DELETE FROM " + vector_table + " WHERE id = ?";
+    execute(delete_sql, {id});
 
-        commit();
-    } catch (const std::exception& e) {
-        rollback();
-        impl_->logger->error("Failed to update vector {}.{} for id {}: {}", collection, attribute, id, e.what());
-        throw;
+    for (size_t i = 0; i < values.size(); ++i) {
+        auto insert_sql = "INSERT INTO " + vector_table + " (id, vector_index, " + attribute + ") VALUES (?, ?, ?)";
+        int64_t vector_index = static_cast<int64_t>(i + 1);
+        execute(insert_sql, {id, vector_index, values[i]});
     }
 
+    txn.commit();
     impl_->logger->info("Updated vector {}.{} for id {} with {} values", collection, attribute, id, values.size());
 }
 
@@ -1133,23 +1111,17 @@ void Database::update_set_integers(const std::string& collection,
 
     auto set_table = impl_->schema->find_set_table(collection, attribute);
 
-    begin_transaction();
-    try {
-        auto delete_sql = "DELETE FROM " + set_table + " WHERE id = ?";
-        execute(delete_sql, {id});
+    TransactionGuard txn(*this);
 
-        for (const auto& value : values) {
-            auto insert_sql = "INSERT INTO " + set_table + " (id, " + attribute + ") VALUES (?, ?)";
-            execute(insert_sql, {id, value});
-        }
+    auto delete_sql = "DELETE FROM " + set_table + " WHERE id = ?";
+    execute(delete_sql, {id});
 
-        commit();
-    } catch (const std::exception& e) {
-        rollback();
-        impl_->logger->error("Failed to update set {}.{} for id {}: {}", collection, attribute, id, e.what());
-        throw;
+    for (const auto& value : values) {
+        auto insert_sql = "INSERT INTO " + set_table + " (id, " + attribute + ") VALUES (?, ?)";
+        execute(insert_sql, {id, value});
     }
 
+    txn.commit();
     impl_->logger->info("Updated set {}.{} for id {} with {} values", collection, attribute, id, values.size());
 }
 
@@ -1162,23 +1134,17 @@ void Database::update_set_floats(const std::string& collection,
 
     auto set_table = impl_->schema->find_set_table(collection, attribute);
 
-    begin_transaction();
-    try {
-        auto delete_sql = "DELETE FROM " + set_table + " WHERE id = ?";
-        execute(delete_sql, {id});
+    TransactionGuard txn(*this);
 
-        for (const auto& value : values) {
-            auto insert_sql = "INSERT INTO " + set_table + " (id, " + attribute + ") VALUES (?, ?)";
-            execute(insert_sql, {id, value});
-        }
+    auto delete_sql = "DELETE FROM " + set_table + " WHERE id = ?";
+    execute(delete_sql, {id});
 
-        commit();
-    } catch (const std::exception& e) {
-        rollback();
-        impl_->logger->error("Failed to update set {}.{} for id {}: {}", collection, attribute, id, e.what());
-        throw;
+    for (const auto& value : values) {
+        auto insert_sql = "INSERT INTO " + set_table + " (id, " + attribute + ") VALUES (?, ?)";
+        execute(insert_sql, {id, value});
     }
 
+    txn.commit();
     impl_->logger->info("Updated set {}.{} for id {} with {} values", collection, attribute, id, values.size());
 }
 
@@ -1191,23 +1157,17 @@ void Database::update_set_strings(const std::string& collection,
 
     auto set_table = impl_->schema->find_set_table(collection, attribute);
 
-    begin_transaction();
-    try {
-        auto delete_sql = "DELETE FROM " + set_table + " WHERE id = ?";
-        execute(delete_sql, {id});
+    TransactionGuard txn(*this);
 
-        for (const auto& value : values) {
-            auto insert_sql = "INSERT INTO " + set_table + " (id, " + attribute + ") VALUES (?, ?)";
-            execute(insert_sql, {id, value});
-        }
+    auto delete_sql = "DELETE FROM " + set_table + " WHERE id = ?";
+    execute(delete_sql, {id});
 
-        commit();
-    } catch (const std::exception& e) {
-        rollback();
-        impl_->logger->error("Failed to update set {}.{} for id {}: {}", collection, attribute, id, e.what());
-        throw;
+    for (const auto& value : values) {
+        auto insert_sql = "INSERT INTO " + set_table + " (id, " + attribute + ") VALUES (?, ?)";
+        execute(insert_sql, {id, value});
     }
 
+    txn.commit();
     impl_->logger->info("Updated set {}.{} for id {} with {} values", collection, attribute, id, values.size());
 }
 
