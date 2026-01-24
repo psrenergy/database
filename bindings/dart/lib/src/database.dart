@@ -1546,13 +1546,13 @@ class Database {
     return result;
   }
 
-  String _getValueDataType(
-    List<({String name, String dataType, bool notNull, bool primaryKey, String? defaultValue})> valueColumns,
+  int _getValueDataType(
+    List<({String name, int dataType, bool notNull, bool primaryKey, String? defaultValue})> valueColumns,
   ) {
     if (valueColumns.isNotEmpty) {
       return valueColumns.first.dataType;
     }
-    return 'text';
+    return quiver_data_type_t.QUIVER_DATA_TYPE_STRING;
   }
 
   /// Reads all scalar attributes for an element by ID.
@@ -1564,11 +1564,11 @@ class Database {
     for (final attr in listScalarAttributes(collection)) {
       final name = attr.name;
       switch (attr.dataType) {
-        case 'integer':
+        case quiver_data_type_t.QUIVER_DATA_TYPE_INTEGER:
           result[name] = readScalarIntegerById(collection, name, id);
-        case 'real':
+        case quiver_data_type_t.QUIVER_DATA_TYPE_FLOAT:
           result[name] = readScalarFloatById(collection, name, id);
-        case 'text':
+        case quiver_data_type_t.QUIVER_DATA_TYPE_STRING:
           result[name] = readScalarStringById(collection, name, id);
       }
     }
@@ -1585,11 +1585,11 @@ class Database {
       final name = group.groupName;
       final dataType = _getValueDataType(group.attributes);
       switch (dataType) {
-        case 'integer':
+        case quiver_data_type_t.QUIVER_DATA_TYPE_INTEGER:
           result[name] = readVectorIntegersById(collection, name, id);
-        case 'real':
+        case quiver_data_type_t.QUIVER_DATA_TYPE_FLOAT:
           result[name] = readVectorFloatsById(collection, name, id);
-        case 'text':
+        case quiver_data_type_t.QUIVER_DATA_TYPE_STRING:
           result[name] = readVectorStringsById(collection, name, id);
       }
     }
@@ -1606,11 +1606,11 @@ class Database {
       final name = group.groupName;
       final dataType = _getValueDataType(group.attributes);
       switch (dataType) {
-        case 'integer':
+        case quiver_data_type_t.QUIVER_DATA_TYPE_INTEGER:
           result[name] = readSetIntegersById(collection, name, id);
-        case 'real':
+        case quiver_data_type_t.QUIVER_DATA_TYPE_FLOAT:
           result[name] = readSetFloatsById(collection, name, id);
-        case 'text':
+        case quiver_data_type_t.QUIVER_DATA_TYPE_STRING:
           result[name] = readSetStringsById(collection, name, id);
       }
     }
