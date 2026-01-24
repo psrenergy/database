@@ -174,28 +174,63 @@ struct Database::Impl {
             logger->info("Database closed");
         }
     }
-};
 
-class TransactionGuard {
-    Database& db_;
-    bool committed_ = false;
-
-public:
-    explicit TransactionGuard(Database& db) : db_(db) { db_.begin_transaction(); }
-
-    void commit() {
-        db_.commit();
-        committed_ = true;
+    void begin_transaction() {
+        char* err_msg = nullptr;
+        const auto rc = sqlite3_exec(db, "BEGIN TRANSACTION;", nullptr, nullptr, &err_msg);
+        if (rc != SQLITE_OK) {
+            std::string error = err_msg ? err_msg : "Unknown error";
+            sqlite3_free(err_msg);
+            throw std::runtime_error("Failed to begin transaction: " + error);
+        }
+        logger->debug("Transaction started");
     }
 
-    ~TransactionGuard() {
-        if (!committed_) {
-            db_.rollback();
+    void commit() {
+        char* err_msg = nullptr;
+        const auto rc = sqlite3_exec(db, "COMMIT;", nullptr, nullptr, &err_msg);
+        if (rc != SQLITE_OK) {
+            std::string error = err_msg ? err_msg : "Unknown error";
+            sqlite3_free(err_msg);
+            throw std::runtime_error("Failed to commit transaction: " + error);
+        }
+        logger->debug("Transaction committed");
+    }
+
+    void rollback() {
+        char* err_msg = nullptr;
+        const auto rc = sqlite3_exec(db, "ROLLBACK;", nullptr, nullptr, &err_msg);
+        if (rc != SQLITE_OK) {
+            std::string error = err_msg ? err_msg : "Unknown error";
+            sqlite3_free(err_msg);
+            logger->error("Failed to rollback transaction: {}", error);
+            // Don't throw - rollback is often called in error recovery
+        } else {
+            logger->debug("Transaction rolled back");
         }
     }
 
-    TransactionGuard(const TransactionGuard&) = delete;
-    TransactionGuard& operator=(const TransactionGuard&) = delete;
+    class TransactionGuard {
+        Impl& impl_;
+        bool committed_ = false;
+
+    public:
+        explicit TransactionGuard(Impl& impl) : impl_(impl) { impl_.begin_transaction(); }
+
+        void commit() {
+            impl_.commit();
+            committed_ = true;
+        }
+
+        ~TransactionGuard() {
+            if (!committed_) {
+                impl_.rollback();
+            }
+        }
+
+        TransactionGuard(const TransactionGuard&) = delete;
+        TransactionGuard& operator=(const TransactionGuard&) = delete;
+    };
 };
 
 Database::Database(const std::string& path, const DatabaseOptions& options) : impl_(std::make_unique<Impl>()) {
@@ -366,40 +401,9 @@ void Database::set_version(int64_t version) {
     impl_->logger->debug("Set database version to {}", version);
 }
 
-void Database::begin_transaction() {
-    char* err_msg = nullptr;
-    const auto rc = sqlite3_exec(impl_->db, "BEGIN TRANSACTION;", nullptr, nullptr, &err_msg);
-    if (rc != SQLITE_OK) {
-        std::string error = err_msg ? err_msg : "Unknown error";
-        sqlite3_free(err_msg);
-        throw std::runtime_error("Failed to begin transaction: " + error);
-    }
-    impl_->logger->debug("Transaction started");
-}
-
-void Database::commit() {
-    char* err_msg = nullptr;
-    const auto rc = sqlite3_exec(impl_->db, "COMMIT;", nullptr, nullptr, &err_msg);
-    if (rc != SQLITE_OK) {
-        std::string error = err_msg ? err_msg : "Unknown error";
-        sqlite3_free(err_msg);
-        throw std::runtime_error("Failed to commit transaction: " + error);
-    }
-    impl_->logger->debug("Transaction committed");
-}
-
-void Database::rollback() {
-    char* err_msg = nullptr;
-    const auto rc = sqlite3_exec(impl_->db, "ROLLBACK;", nullptr, nullptr, &err_msg);
-    if (rc != SQLITE_OK) {
-        std::string error = err_msg ? err_msg : "Unknown error";
-        sqlite3_free(err_msg);
-        impl_->logger->error("Failed to rollback transaction: {}", error);
-        // Don't throw here - rollback is often called in error recovery
-    } else {
-        impl_->logger->debug("Transaction rolled back");
-    }
-}
+void Database::begin_transaction() { impl_->begin_transaction(); }
+void Database::commit() { impl_->commit(); }
+void Database::rollback() { impl_->rollback(); }
 
 void Database::execute_raw(const std::string& sql) {
     char* err_msg = nullptr;
@@ -1039,7 +1043,7 @@ void Database::update_vector_integers(const std::string& collection,
 
     auto vector_table = impl_->schema->find_vector_table(collection, attribute);
 
-    TransactionGuard txn(*this);
+    Impl::TransactionGuard txn(*impl_);
 
     auto delete_sql = "DELETE FROM " + vector_table + " WHERE id = ?";
     execute(delete_sql, {id});
@@ -1063,7 +1067,7 @@ void Database::update_vector_floats(const std::string& collection,
 
     auto vector_table = impl_->schema->find_vector_table(collection, attribute);
 
-    TransactionGuard txn(*this);
+    Impl::TransactionGuard txn(*impl_);
 
     auto delete_sql = "DELETE FROM " + vector_table + " WHERE id = ?";
     execute(delete_sql, {id});
@@ -1087,7 +1091,7 @@ void Database::update_vector_strings(const std::string& collection,
 
     auto vector_table = impl_->schema->find_vector_table(collection, attribute);
 
-    TransactionGuard txn(*this);
+    Impl::TransactionGuard txn(*impl_);
 
     auto delete_sql = "DELETE FROM " + vector_table + " WHERE id = ?";
     execute(delete_sql, {id});
@@ -1111,7 +1115,7 @@ void Database::update_set_integers(const std::string& collection,
 
     auto set_table = impl_->schema->find_set_table(collection, attribute);
 
-    TransactionGuard txn(*this);
+    Impl::TransactionGuard txn(*impl_);
 
     auto delete_sql = "DELETE FROM " + set_table + " WHERE id = ?";
     execute(delete_sql, {id});
@@ -1134,7 +1138,7 @@ void Database::update_set_floats(const std::string& collection,
 
     auto set_table = impl_->schema->find_set_table(collection, attribute);
 
-    TransactionGuard txn(*this);
+    Impl::TransactionGuard txn(*impl_);
 
     auto delete_sql = "DELETE FROM " + set_table + " WHERE id = ?";
     execute(delete_sql, {id});
@@ -1157,7 +1161,7 @@ void Database::update_set_strings(const std::string& collection,
 
     auto set_table = impl_->schema->find_set_table(collection, attribute);
 
-    TransactionGuard txn(*this);
+    Impl::TransactionGuard txn(*impl_);
 
     auto delete_sql = "DELETE FROM " + set_table + " WHERE id = ?";
     execute(delete_sql, {id});

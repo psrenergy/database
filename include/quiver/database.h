@@ -147,8 +147,6 @@ public:
     const std::string& path() const;
 
 private:
-    friend class TransactionGuard;
-
     struct Impl;
     std::unique_ptr<Impl> impl_;
 
