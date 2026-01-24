@@ -22,13 +22,15 @@ tests/schemas/            # Shared SQL schemas for all tests
 
 ## Principles
 
-- WIP project - no backwards compatibility required
-- Be critical, not passive
-- Breaking changes are acceptable
-- Clean code over defensive code
-- Simple solutions over complex abstractions
-- Delete unused code, do not deprecate
-- Intelligence in C++ layer, bindings are thin wrappers
+- **Human-Centric**: Codebase optimized for human readability, not machine parsing
+- **Status**: WIP project - breaking changes acceptable, no backwards compatibility required
+- **ABI Stability**: Verify correct usage of Pimpl idiom
+- **Target Standard**: C++20 - use modern language features where they simplify logic
+- **Philosophy**: Clean code over defensive code (assume callers obey contracts, avoid excessive null checks). Simple solutions over complex abstractions. Delete unused code, do not deprecate.
+- **Intelligence**: Logic resides in C++ layer. Bindings/wrappers remain thin.
+- **Homogeneity**: Binding interfaces must be consistent and intuitive. API surface should feel uniform across wrappers.
+- **Ownership**: RAII used strictly. Ownership of pointers/resources must be explicit and unambiguous.
+- **Constraint**: Be critical. If code is already optimal, state that clearly. Do not invent useless suggestions just to provide output.
 - All public C++ methods should be bound to C API, then to Julia/Dart/Lua
 - All *.sql test schemas in `tests/schemas/`, bindings reference from there
 
