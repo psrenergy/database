@@ -1355,59 +1355,6 @@ void Database::update_set_strings(const std::string& collection,
     impl_->logger->info("Updated set {}.{} for id {} with {} values", collection, attribute, id, values.size());
 }
 
-AttributeType Database::get_attribute_type(const std::string& collection, const std::string& attribute) const {
-    if (!impl_->schema) {
-        throw std::runtime_error("Cannot get attribute type: no schema loaded");
-    }
-
-    const auto* table_def = impl_->schema->get_table(collection);
-    if (!table_def) {
-        throw std::runtime_error("Collection not found in schema: " + collection);
-    }
-
-    // Check if attribute exists as scalar (column on collection table)
-    if (table_def->has_column(attribute)) {
-        auto data_type = table_def->get_data_type(attribute);
-        if (data_type) {
-            return AttributeType{DataStructure::Scalar, *data_type};
-        }
-    }
-
-    // Check if vector table exists for attribute
-    for (const auto& table_name : impl_->schema->table_names()) {
-        if (!impl_->schema->is_vector_table(table_name))
-            continue;
-        if (impl_->schema->get_parent_collection(table_name) != collection)
-            continue;
-
-        const auto* vec_table = impl_->schema->get_table(table_name);
-        if (vec_table && vec_table->has_column(attribute)) {
-            auto data_type = vec_table->get_data_type(attribute);
-            if (data_type) {
-                return AttributeType{DataStructure::Vector, *data_type};
-            }
-        }
-    }
-
-    // Check if set table exists for attribute
-    for (const auto& table_name : impl_->schema->table_names()) {
-        if (!impl_->schema->is_set_table(table_name))
-            continue;
-        if (impl_->schema->get_parent_collection(table_name) != collection)
-            continue;
-
-        const auto* set_table = impl_->schema->get_table(table_name);
-        if (set_table && set_table->has_column(attribute)) {
-            auto data_type = set_table->get_data_type(attribute);
-            if (data_type) {
-                return AttributeType{DataStructure::Set, *data_type};
-            }
-        }
-    }
-
-    throw std::runtime_error("Attribute '" + attribute + "' not found in collection '" + collection + "'");
-}
-
 ScalarMetadata Database::get_scalar_metadata(const std::string& collection, const std::string& attribute) const {
     if (!impl_->schema) {
         throw std::runtime_error("Cannot get scalar metadata: no schema loaded");
@@ -1461,7 +1408,7 @@ VectorMetadata Database::get_vector_metadata(const std::string& collection, cons
         attr.not_null = col.not_null;
         attr.primary_key = col.primary_key;
         attr.default_value = col.default_value;
-        meta.attributes.push_back(std::move(attr));
+        meta.value_columns.push_back(std::move(attr));
     }
 
     return meta;
@@ -1495,7 +1442,7 @@ SetMetadata Database::get_set_metadata(const std::string& collection, const std:
         attr.not_null = col.not_null;
         attr.primary_key = col.primary_key;
         attr.default_value = col.default_value;
-        meta.attributes.push_back(std::move(attr));
+        meta.value_columns.push_back(std::move(attr));
     }
 
     return meta;

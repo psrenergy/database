@@ -3,7 +3,6 @@
 
 #include "export.h"
 #include "quiver/attribute_metadata.h"
-#include "quiver/attribute_type.h"
 #include "quiver/element.h"
 #include "quiver/log_level.h"
 #include "quiver/result.h"
@@ -98,9 +97,6 @@ public:
 
     // Read element IDs
     std::vector<int64_t> read_element_ids(const std::string& collection);
-
-    // Attribute type query
-    AttributeType get_attribute_type(const std::string& collection, const std::string& attribute) const;
 
     // Attribute metadata queries
     ScalarMetadata get_scalar_metadata(const std::string& collection, const std::string& attribute) const;

@@ -1,6 +1,6 @@
 struct ScalarMetadata
     name::String
-    data_type::Symbol
+    data_type::C.quiver_data_type_t
     not_null::Bool
     primary_key::Bool
     default_value::Union{String, Nothing}
@@ -8,24 +8,12 @@ end
 
 struct VectorMetadata
     group_name::String
-    attributes::Vector{ScalarMetadata}
+    value_columns::Vector{ScalarMetadata}
 end
 
 struct SetMetadata
     group_name::String
-    attributes::Vector{ScalarMetadata}
-end
-
-function _data_type_symbol(dt::C.quiver_data_type_t)
-    if dt == C.QUIVER_DATA_TYPE_INTEGER
-        return :integer
-    elseif dt == C.QUIVER_DATA_TYPE_FLOAT
-        return :real
-    elseif dt == C.QUIVER_DATA_TYPE_STRING
-        return :text
-    else
-        return :unknown
-    end
+    value_columns::Vector{ScalarMetadata}
 end
 
 function get_scalar_metadata(db::Database, collection::AbstractString, attribute::AbstractString)
@@ -37,7 +25,7 @@ function get_scalar_metadata(db::Database, collection::AbstractString, attribute
 
     result = ScalarMetadata(
         unsafe_string(metadata[].name),
-        _data_type_symbol(metadata[].data_type),
+        metadata[].data_type,
         metadata[].not_null != 0,
         metadata[].primary_key != 0,
         metadata[].default_value == C_NULL ? nothing : unsafe_string(metadata[].default_value),
@@ -54,25 +42,25 @@ function get_vector_metadata(db::Database, collection::AbstractString, group_nam
         throw(DatabaseException("Failed to get vector metadata for '$collection.$group_name'"))
     end
 
-    attributes = ScalarMetadata[]
-    for i in 1:metadata[].attribute_count
-        attr_ptr = metadata[].attributes + (i - 1) * sizeof(C.quiver_scalar_metadata_t)
-        attr = unsafe_load(Ptr{C.quiver_scalar_metadata_t}(attr_ptr))
+    value_columns = ScalarMetadata[]
+    for i in 1:metadata[].value_column_count
+        col_ptr = metadata[].value_columns + (i - 1) * sizeof(C.quiver_scalar_metadata_t)
+        col = unsafe_load(Ptr{C.quiver_scalar_metadata_t}(col_ptr))
         push!(
-            attributes,
+            value_columns,
             ScalarMetadata(
-                unsafe_string(attr.name),
-                _data_type_symbol(attr.data_type),
-                attr.not_null != 0,
-                attr.primary_key != 0,
-                attr.default_value == C_NULL ? nothing : unsafe_string(attr.default_value),
+                unsafe_string(col.name),
+                col.data_type,
+                col.not_null != 0,
+                col.primary_key != 0,
+                col.default_value == C_NULL ? nothing : unsafe_string(col.default_value),
             ),
         )
     end
 
     result = VectorMetadata(
         unsafe_string(metadata[].group_name),
-        attributes,
+        value_columns,
     )
 
     C.quiver_free_vector_metadata(metadata)
@@ -86,25 +74,25 @@ function get_set_metadata(db::Database, collection::AbstractString, group_name::
         throw(DatabaseException("Failed to get set metadata for '$collection.$group_name'"))
     end
 
-    attributes = ScalarMetadata[]
-    for i in 1:metadata[].attribute_count
-        attr_ptr = metadata[].attributes + (i - 1) * sizeof(C.quiver_scalar_metadata_t)
-        attr = unsafe_load(Ptr{C.quiver_scalar_metadata_t}(attr_ptr))
+    value_columns = ScalarMetadata[]
+    for i in 1:metadata[].value_column_count
+        col_ptr = metadata[].value_columns + (i - 1) * sizeof(C.quiver_scalar_metadata_t)
+        col = unsafe_load(Ptr{C.quiver_scalar_metadata_t}(col_ptr))
         push!(
-            attributes,
+            value_columns,
             ScalarMetadata(
-                unsafe_string(attr.name),
-                _data_type_symbol(attr.data_type),
-                attr.not_null != 0,
-                attr.primary_key != 0,
-                attr.default_value == C_NULL ? nothing : unsafe_string(attr.default_value),
+                unsafe_string(col.name),
+                col.data_type,
+                col.not_null != 0,
+                col.primary_key != 0,
+                col.default_value == C_NULL ? nothing : unsafe_string(col.default_value),
             ),
         )
     end
 
     result = SetMetadata(
         unsafe_string(metadata[].group_name),
-        attributes,
+        value_columns,
     )
 
     C.quiver_free_set_metadata(metadata)
@@ -132,7 +120,7 @@ function list_scalar_attributes(db::Database, collection::AbstractString)
             result,
             ScalarMetadata(
                 unsafe_string(meta.name),
-                _data_type_symbol(meta.data_type),
+                meta.data_type,
                 meta.not_null != 0,
                 meta.primary_key != 0,
                 meta.default_value == C_NULL ? nothing : unsafe_string(meta.default_value),
@@ -161,23 +149,23 @@ function list_vector_groups(db::Database, collection::AbstractString)
         meta_ptr = out_metadata[] + (i - 1) * sizeof(C.quiver_vector_metadata_t)
         meta = unsafe_load(Ptr{C.quiver_vector_metadata_t}(meta_ptr))
 
-        attributes = ScalarMetadata[]
-        for j in 1:meta.attribute_count
-            attr_ptr = meta.attributes + (j - 1) * sizeof(C.quiver_scalar_metadata_t)
-            attr = unsafe_load(Ptr{C.quiver_scalar_metadata_t}(attr_ptr))
+        value_columns = ScalarMetadata[]
+        for j in 1:meta.value_column_count
+            col_ptr = meta.value_columns + (j - 1) * sizeof(C.quiver_scalar_metadata_t)
+            col = unsafe_load(Ptr{C.quiver_scalar_metadata_t}(col_ptr))
             push!(
-                attributes,
+                value_columns,
                 ScalarMetadata(
-                    unsafe_string(attr.name),
-                    _data_type_symbol(attr.data_type),
-                    attr.not_null != 0,
-                    attr.primary_key != 0,
-                    attr.default_value == C_NULL ? nothing : unsafe_string(attr.default_value),
+                    unsafe_string(col.name),
+                    col.data_type,
+                    col.not_null != 0,
+                    col.primary_key != 0,
+                    col.default_value == C_NULL ? nothing : unsafe_string(col.default_value),
                 ),
             )
         end
 
-        push!(result, VectorMetadata(unsafe_string(meta.group_name), attributes))
+        push!(result, VectorMetadata(unsafe_string(meta.group_name), value_columns))
     end
     C.quiver_free_vector_metadata_array(out_metadata[], count)
     return result
@@ -201,23 +189,23 @@ function list_set_groups(db::Database, collection::AbstractString)
         meta_ptr = out_metadata[] + (i - 1) * sizeof(C.quiver_set_metadata_t)
         meta = unsafe_load(Ptr{C.quiver_set_metadata_t}(meta_ptr))
 
-        attributes = ScalarMetadata[]
-        for j in 1:meta.attribute_count
-            attr_ptr = meta.attributes + (j - 1) * sizeof(C.quiver_scalar_metadata_t)
-            attr = unsafe_load(Ptr{C.quiver_scalar_metadata_t}(attr_ptr))
+        value_columns = ScalarMetadata[]
+        for j in 1:meta.value_column_count
+            col_ptr = meta.value_columns + (j - 1) * sizeof(C.quiver_scalar_metadata_t)
+            col = unsafe_load(Ptr{C.quiver_scalar_metadata_t}(col_ptr))
             push!(
-                attributes,
+                value_columns,
                 ScalarMetadata(
-                    unsafe_string(attr.name),
-                    _data_type_symbol(attr.data_type),
-                    attr.not_null != 0,
-                    attr.primary_key != 0,
-                    attr.default_value == C_NULL ? nothing : unsafe_string(attr.default_value),
+                    unsafe_string(col.name),
+                    col.data_type,
+                    col.not_null != 0,
+                    col.primary_key != 0,
+                    col.default_value == C_NULL ? nothing : unsafe_string(col.default_value),
                 ),
             )
         end
 
-        push!(result, SetMetadata(unsafe_string(meta.group_name), attributes))
+        push!(result, SetMetadata(unsafe_string(meta.group_name), value_columns))
     end
     C.quiver_free_set_metadata_array(out_metadata[], count)
     return result

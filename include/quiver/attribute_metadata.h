@@ -20,12 +20,12 @@ struct QUIVER_API ScalarMetadata {
 
 struct QUIVER_API VectorMetadata {
     std::string group_name;
-    std::vector<ScalarMetadata> attributes;
+    std::vector<ScalarMetadata> value_columns;
 };
 
 struct QUIVER_API SetMetadata {
     std::string group_name;
-    std::vector<ScalarMetadata> attributes;
+    std::vector<ScalarMetadata> value_columns;
 };
 
 }  // namespace quiver

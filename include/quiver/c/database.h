@@ -217,13 +217,6 @@ QUIVER_C_API quiver_error_t quiver_database_read_element_ids(quiver_database_t* 
                                                              int64_t** out_ids,
                                                              size_t* out_count);
 
-// Attribute type query
-QUIVER_C_API quiver_error_t quiver_database_get_attribute_type(quiver_database_t* db,
-                                                               const char* collection,
-                                                               const char* attribute,
-                                                               quiver_data_structure_t* out_data_structure,
-                                                               quiver_data_type_t* out_data_type);
-
 // Attribute metadata types
 typedef struct {
     const char* name;
@@ -235,14 +228,14 @@ typedef struct {
 
 typedef struct {
     const char* group_name;
-    quiver_scalar_metadata_t* attributes;
-    size_t attribute_count;
+    quiver_scalar_metadata_t* value_columns;
+    size_t value_column_count;
 } quiver_vector_metadata_t;
 
 typedef struct {
     const char* group_name;
-    quiver_scalar_metadata_t* attributes;
-    size_t attribute_count;
+    quiver_scalar_metadata_t* value_columns;
+    size_t value_column_count;
 } quiver_set_metadata_t;
 
 // Attribute metadata queries

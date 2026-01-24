@@ -179,26 +179,6 @@ TEST(DatabaseErrors, ReadSetStringsCollectionNotFound) {
 }
 
 // ============================================================================
-// GetAttributeType error tests
-// Note: get_attribute_type without schema causes segfault (null pointer dereference)
-// because impl_->schema is dereferenced without null check.
-// ============================================================================
-
-TEST(DatabaseErrors, GetAttributeTypeCollectionNotFound) {
-    auto db =
-        quiver::Database::from_schema(":memory:", VALID_SCHEMA("basic.sql"), {.console_level = quiver::LogLevel::off});
-
-    EXPECT_THROW(db.get_attribute_type("NonexistentCollection", "label"), std::runtime_error);
-}
-
-TEST(DatabaseErrors, GetAttributeTypeAttributeNotFound) {
-    auto db =
-        quiver::Database::from_schema(":memory:", VALID_SCHEMA("basic.sql"), {.console_level = quiver::LogLevel::off});
-
-    EXPECT_THROW(db.get_attribute_type("Configuration", "nonexistent_attribute"), std::runtime_error);
-}
-
-// ============================================================================
 // Relation error tests
 // ============================================================================
 

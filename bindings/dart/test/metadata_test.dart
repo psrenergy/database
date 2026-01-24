@@ -1,4 +1,5 @@
 import 'package:quiver_db/quiver_db.dart';
+import 'package:quiver_db/src/ffi/bindings.dart';
 import 'package:test/test.dart';
 import 'package:path/path.dart' as path;
 
@@ -20,7 +21,7 @@ void main() {
       try {
         final meta = db.getScalarMetadata('Collection', 'label');
         expect(meta.name, equals('label'));
-        expect(meta.dataType, equals('text'));
+        expect(meta.dataType, equals(quiver_data_type_t.QUIVER_DATA_TYPE_STRING));
         expect(meta.notNull, isTrue);
         expect(meta.primaryKey, isFalse);
       } finally {
@@ -36,7 +37,7 @@ void main() {
       try {
         final meta = db.getScalarMetadata('Collection', 'some_integer');
         expect(meta.name, equals('some_integer'));
-        expect(meta.dataType, equals('integer'));
+        expect(meta.dataType, equals(quiver_data_type_t.QUIVER_DATA_TYPE_INTEGER));
         expect(meta.notNull, isFalse);
         expect(meta.primaryKey, isFalse);
       } finally {
@@ -52,7 +53,7 @@ void main() {
       try {
         final meta = db.getScalarMetadata('Collection', 'some_float');
         expect(meta.name, equals('some_float'));
-        expect(meta.dataType, equals('real'));
+        expect(meta.dataType, equals(quiver_data_type_t.QUIVER_DATA_TYPE_FLOAT));
         expect(meta.notNull, isFalse);
         expect(meta.primaryKey, isFalse);
       } finally {
@@ -68,7 +69,7 @@ void main() {
       try {
         final meta = db.getScalarMetadata('Collection', 'id');
         expect(meta.name, equals('id'));
-        expect(meta.dataType, equals('integer'));
+        expect(meta.dataType, equals(quiver_data_type_t.QUIVER_DATA_TYPE_INTEGER));
         expect(meta.primaryKey, isTrue);
       } finally {
         db.close();
@@ -115,17 +116,17 @@ void main() {
       try {
         final meta = db.getVectorMetadata('Collection', 'values');
         expect(meta.groupName, equals('values'));
-        expect(meta.attributes.length, equals(2));
+        expect(meta.valueColumns.length, equals(2));
 
-        final attrNames = meta.attributes.map((a) => a.name).toList();
-        expect(attrNames, contains('value_int'));
-        expect(attrNames, contains('value_float'));
+        final colNames = meta.valueColumns.map((a) => a.name).toList();
+        expect(colNames, contains('value_int'));
+        expect(colNames, contains('value_float'));
 
-        final valueIntAttr = meta.attributes.firstWhere((a) => a.name == 'value_int');
-        expect(valueIntAttr.dataType, equals('integer'));
+        final valueIntCol = meta.valueColumns.firstWhere((a) => a.name == 'value_int');
+        expect(valueIntCol.dataType, equals(quiver_data_type_t.QUIVER_DATA_TYPE_INTEGER));
 
-        final valueFloatAttr = meta.attributes.firstWhere((a) => a.name == 'value_float');
-        expect(valueFloatAttr.dataType, equals('real'));
+        final valueFloatCol = meta.valueColumns.firstWhere((a) => a.name == 'value_float');
+        expect(valueFloatCol.dataType, equals(quiver_data_type_t.QUIVER_DATA_TYPE_FLOAT));
       } finally {
         db.close();
       }
@@ -156,11 +157,11 @@ void main() {
       try {
         final meta = db.getSetMetadata('Collection', 'tags');
         expect(meta.groupName, equals('tags'));
-        expect(meta.attributes.length, equals(1));
+        expect(meta.valueColumns.length, equals(1));
 
-        final tagAttr = meta.attributes[0];
-        expect(tagAttr.name, equals('tag'));
-        expect(tagAttr.dataType, equals('text'));
+        final tagCol = meta.valueColumns[0];
+        expect(tagCol.name, equals('tag'));
+        expect(tagCol.dataType, equals(quiver_data_type_t.QUIVER_DATA_TYPE_STRING));
       } finally {
         db.close();
       }
@@ -198,11 +199,11 @@ void main() {
 
         // Verify metadata is included
         final labelAttr = attrs.firstWhere((a) => a.name == 'label');
-        expect(labelAttr.dataType, equals('text'));
+        expect(labelAttr.dataType, equals(quiver_data_type_t.QUIVER_DATA_TYPE_STRING));
         expect(labelAttr.notNull, isTrue);
 
         final someIntAttr = attrs.firstWhere((a) => a.name == 'some_integer');
-        expect(someIntAttr.dataType, equals('integer'));
+        expect(someIntAttr.dataType, equals(quiver_data_type_t.QUIVER_DATA_TYPE_INTEGER));
         expect(someIntAttr.notNull, isFalse);
       } finally {
         db.close();
@@ -223,10 +224,10 @@ void main() {
 
         // Verify metadata is included
         final valuesGroup = groups.firstWhere((g) => g.groupName == 'values');
-        expect(valuesGroup.attributes.length, equals(2));
-        final attrNames = valuesGroup.attributes.map((a) => a.name).toList();
-        expect(attrNames, contains('value_int'));
-        expect(attrNames, contains('value_float'));
+        expect(valuesGroup.valueColumns.length, equals(2));
+        final colNames = valuesGroup.valueColumns.map((a) => a.name).toList();
+        expect(colNames, contains('value_int'));
+        expect(colNames, contains('value_float'));
       } finally {
         db.close();
       }
@@ -246,9 +247,9 @@ void main() {
 
         // Verify metadata is included
         final tagsGroup = groups.firstWhere((g) => g.groupName == 'tags');
-        expect(tagsGroup.attributes.length, equals(1));
-        expect(tagsGroup.attributes[0].name, equals('tag'));
-        expect(tagsGroup.attributes[0].dataType, equals('text'));
+        expect(tagsGroup.valueColumns.length, equals(1));
+        expect(tagsGroup.valueColumns[0].name, equals('tag'));
+        expect(tagsGroup.valueColumns[0].dataType, equals(quiver_data_type_t.QUIVER_DATA_TYPE_STRING));
       } finally {
         db.close();
       }

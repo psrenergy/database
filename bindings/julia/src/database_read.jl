@@ -442,90 +442,112 @@ function read_element_ids(db::Database, collection::String)
     return result
 end
 
-function get_attribute_type(db::Database, collection::String, attribute::String)
-    out_data_structure = Ref{C.quiver_data_structure_t}(C.QUIVER_DATA_STRUCTURE_SCALAR)
-    out_data_type = Ref{C.quiver_data_type_t}(C.QUIVER_DATA_TYPE_INTEGER)
-
-    err = C.quiver_database_get_attribute_type(db.ptr, collection, attribute, out_data_structure, out_data_type)
-    if err != C.QUIVER_OK
-        throw(DatabaseException("Failed to get attribute type for '$collection.$attribute'"))
+function _get_value_data_type(value_columns::Vector{ScalarMetadata})
+    if !isempty(value_columns)
+        return value_columns[1].data_type
     end
-
-    return (data_structure = out_data_structure[], data_type = out_data_type[])
+    return :text
 end
 
-function read(db::Database, collection::String, attribute::String)
-    attribute_type = get_attribute_type(db, collection, attribute)
-
-    if attribute_type.data_structure == C.QUIVER_DATA_STRUCTURE_SCALAR
-        if attribute_type.data_type == C.QUIVER_DATA_TYPE_INTEGER
-            return read_scalar_integers(db, collection, attribute)
-        elseif attribute_type.data_type == C.QUIVER_DATA_TYPE_FLOAT
-            return read_scalar_floats(db, collection, attribute)
-        elseif attribute_type.data_type == C.QUIVER_DATA_TYPE_STRING
-            return read_scalar_strings(db, collection, attribute)
+function read_all_scalars_by_id(db::Database, collection::String, id::Int64)
+    result = Dict{String, Any}()
+    for attr in list_scalar_attributes(db, collection)
+        name = attr.name
+        if attr.data_type == :integer
+            result[name] = read_scalar_integers_by_id(db, collection, name, id)
+        elseif attr.data_type == :real
+            result[name] = read_scalar_floats_by_id(db, collection, name, id)
         else
-            throw(DatabaseException("Unsupported data type for '$collection.$attribute'"))
+            result[name] = read_scalar_strings_by_id(db, collection, name, id)
         end
-    elseif attribute_type.data_structure == C.QUIVER_DATA_STRUCTURE_VECTOR
-        if attribute_type.data_type == C.QUIVER_DATA_TYPE_INTEGER
-            return read_vector_integers(db, collection, attribute)
-        elseif attribute_type.data_type == C.QUIVER_DATA_TYPE_FLOAT
-            return read_vector_floats(db, collection, attribute)
-        elseif attribute_type.data_type == C.QUIVER_DATA_TYPE_STRING
-            return read_vector_strings(db, collection, attribute)
-        else
-            throw(DatabaseException("Unsupported data type for '$collection.$attribute'"))
-        end
-    elseif attribute_type.data_structure == C.QUIVER_DATA_STRUCTURE_SET
-        if attribute_type.data_type == C.QUIVER_DATA_TYPE_INTEGER
-            return read_set_integers(db, collection, attribute)
-        elseif attribute_type.data_type == C.QUIVER_DATA_TYPE_FLOAT
-            return read_set_floats(db, collection, attribute)
-        elseif attribute_type.data_type == C.QUIVER_DATA_TYPE_STRING
-            return read_set_strings(db, collection, attribute)
-        else
-            throw(DatabaseException("Unsupported data type for '$collection.$attribute'"))
-        end
-    else
-        throw(DatabaseException("Unsupported data structure for '$collection.$attribute'"))
     end
+    return result
 end
 
-function read_by_id(db::Database, collection::String, attribute::String, id::Int64)
-    attribute_type = get_attribute_type(db, collection, attribute)
-
-    if attribute_type.data_structure == C.QUIVER_DATA_STRUCTURE_SCALAR
-        if attribute_type.data_type == C.QUIVER_DATA_TYPE_INTEGER
-            return read_scalar_integers_by_id(db, collection, attribute, id)
-        elseif attribute_type.data_type == C.QUIVER_DATA_TYPE_FLOAT
-            return read_scalar_floats_by_id(db, collection, attribute, id)
-        elseif attribute_type.data_type == C.QUIVER_DATA_TYPE_STRING
-            return read_scalar_strings_by_id(db, collection, attribute, id)
+function read_all_vectors_by_id(db::Database, collection::String, id::Int64)
+    result = Dict{String, Vector{Any}}()
+    for group in list_vector_groups(db, collection)
+        name = group.group_name
+        data_type = _get_value_data_type(group.value_columns)
+        if data_type == :integer
+            result[name] = read_vector_integers_by_id(db, collection, name, id)
+        elseif data_type == :real
+            result[name] = read_vector_floats_by_id(db, collection, name, id)
         else
-            throw(DatabaseException("Unsupported data type for '$collection.$attribute'"))
+            result[name] = read_vector_strings_by_id(db, collection, name, id)
         end
-    elseif attribute_type.data_structure == C.QUIVER_DATA_STRUCTURE_VECTOR
-        if attribute_type.data_type == C.QUIVER_DATA_TYPE_INTEGER
-            return read_vector_integers_by_id(db, collection, attribute, id)
-        elseif attribute_type.data_type == C.QUIVER_DATA_TYPE_FLOAT
-            return read_vector_floats_by_id(db, collection, attribute, id)
-        elseif attribute_type.data_type == C.QUIVER_DATA_TYPE_STRING
-            return read_vector_strings_by_id(db, collection, attribute, id)
-        else
-            throw(DatabaseException("Unsupported data type for '$collection.$attribute'"))
-        end
-    elseif attribute_type.data_structure == C.QUIVER_DATA_STRUCTURE_SET
-        if attribute_type.data_type == C.QUIVER_DATA_TYPE_INTEGER
-            return read_set_integers_by_id(db, collection, attribute, id)
-        elseif attribute_type.data_type == C.QUIVER_DATA_TYPE_FLOAT
-            return read_set_floats_by_id(db, collection, attribute, id)
-        elseif attribute_type.data_type == C.QUIVER_DATA_TYPE_STRING
-            return read_set_strings_by_id(db, collection, attribute, id)
-        else
-            throw(DatabaseException("Unsupported data type for '$collection.$attribute'"))
-        end
-    else
-        throw(DatabaseException("Unsupported data structure for '$collection.$attribute'"))
     end
+    return result
+end
+
+function read_all_sets_by_id(db::Database, collection::String, id::Int64)
+    result = Dict{String, Vector{Any}}()
+    for group in list_set_groups(db, collection)
+        name = group.group_name
+        data_type = _get_value_data_type(group.value_columns)
+        if data_type == :integer
+            result[name] = read_set_integers_by_id(db, collection, name, id)
+        elseif data_type == :real
+            result[name] = read_set_floats_by_id(db, collection, name, id)
+        else
+            result[name] = read_set_strings_by_id(db, collection, name, id)
+        end
+    end
+    return result
+end
+
+function _get_value_data_type(attributes::Vector{ScalarMetadata})
+    for attr in attributes
+        if !attr.primary_key && attr.name != "vector_index"
+            return attr.data_type
+        end
+    end
+    return isempty(attributes) ? :text : attributes[1].data_type
+end
+
+function read_all_scalars_by_id(db::Database, collection::String, id::Int64)
+    result = Dict{String, Any}()
+    for attr in list_scalar_attributes(db, collection)
+        name = attr.name
+        if attr.data_type == :integer
+            result[name] = read_scalar_integers_by_id(db, collection, name, id)
+        elseif attr.data_type == :real
+            result[name] = read_scalar_floats_by_id(db, collection, name, id)
+        else
+            result[name] = read_scalar_strings_by_id(db, collection, name, id)
+        end
+    end
+    return result
+end
+
+function read_all_vectors_by_id(db::Database, collection::String, id::Int64)
+    result = Dict{String, Vector{Any}}()
+    for group in list_vector_groups(db, collection)
+        name = group.group_name
+        data_type = _get_value_data_type(group.attributes)
+        if data_type == :integer
+            result[name] = read_vector_integers_by_id(db, collection, name, id)
+        elseif data_type == :real
+            result[name] = read_vector_floats_by_id(db, collection, name, id)
+        else
+            result[name] = read_vector_strings_by_id(db, collection, name, id)
+        end
+    end
+    return result
+end
+
+function read_all_sets_by_id(db::Database, collection::String, id::Int64)
+    result = Dict{String, Vector{Any}}()
+    for group in list_set_groups(db, collection)
+        name = group.group_name
+        data_type = _get_value_data_type(group.attributes)
+        if data_type == :integer
+            result[name] = read_set_integers_by_id(db, collection, name, id)
+        elseif data_type == :real
+            result[name] = read_set_floats_by_id(db, collection, name, id)
+        else
+            result[name] = read_set_strings_by_id(db, collection, name, id)
+        end
+    end
+    return result
 end

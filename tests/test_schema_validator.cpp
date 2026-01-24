@@ -118,85 +118,90 @@ TEST_F(SchemaValidatorFixture, ArrayTypeValidation) {
 }
 
 // ============================================================================
-// Schema attribute lookup tests
+// Schema attribute lookup tests (using metadata API)
 // ============================================================================
 
-TEST_F(SchemaValidatorFixture, GetAttributeTypeScalarInteger) {
+TEST_F(SchemaValidatorFixture, GetScalarMetadataInteger) {
     auto db = quiver::Database::from_schema(":memory:", VALID_SCHEMA("basic.sql"), opts);
 
-    auto type = db.get_attribute_type("Configuration", "integer_attribute");
+    auto meta = db.get_scalar_metadata("Configuration", "integer_attribute");
 
-    EXPECT_EQ(type.data_structure, quiver::DataStructure::Scalar);
-    EXPECT_EQ(type.data_type, quiver::DataType::Integer);
+    EXPECT_EQ(meta.name, "integer_attribute");
+    EXPECT_EQ(meta.data_type, quiver::DataType::Integer);
 }
 
-TEST_F(SchemaValidatorFixture, GetAttributeTypeScalarReal) {
+TEST_F(SchemaValidatorFixture, GetScalarMetadataReal) {
     auto db = quiver::Database::from_schema(":memory:", VALID_SCHEMA("basic.sql"), opts);
 
-    auto type = db.get_attribute_type("Configuration", "float_attribute");
+    auto meta = db.get_scalar_metadata("Configuration", "float_attribute");
 
-    EXPECT_EQ(type.data_structure, quiver::DataStructure::Scalar);
-    EXPECT_EQ(type.data_type, quiver::DataType::Real);
+    EXPECT_EQ(meta.name, "float_attribute");
+    EXPECT_EQ(meta.data_type, quiver::DataType::Real);
 }
 
-TEST_F(SchemaValidatorFixture, GetAttributeTypeScalarText) {
+TEST_F(SchemaValidatorFixture, GetScalarMetadataText) {
     auto db = quiver::Database::from_schema(":memory:", VALID_SCHEMA("basic.sql"), opts);
 
-    auto type = db.get_attribute_type("Configuration", "label");
+    auto meta = db.get_scalar_metadata("Configuration", "label");
 
-    EXPECT_EQ(type.data_structure, quiver::DataStructure::Scalar);
-    EXPECT_EQ(type.data_type, quiver::DataType::Text);
+    EXPECT_EQ(meta.name, "label");
+    EXPECT_EQ(meta.data_type, quiver::DataType::Text);
 }
 
-TEST_F(SchemaValidatorFixture, GetAttributeTypeVectorInteger) {
+TEST_F(SchemaValidatorFixture, GetVectorMetadataValues) {
     auto db = quiver::Database::from_schema(":memory:", VALID_SCHEMA("collections.sql"), opts);
 
-    auto type = db.get_attribute_type("Collection", "value_int");
+    // Vector table is Collection_vector_values, so group name is "values"
+    auto meta = db.get_vector_metadata("Collection", "values");
 
-    EXPECT_EQ(type.data_structure, quiver::DataStructure::Vector);
-    EXPECT_EQ(type.data_type, quiver::DataType::Integer);
+    EXPECT_EQ(meta.group_name, "values");
+    EXPECT_EQ(meta.value_columns.size(), 2);  // value_int and value_float columns
+
+    // Check both columns exist with correct types (order may vary)
+    bool found_int = false, found_float = false;
+    for (const auto& col : meta.value_columns) {
+        if (col.name == "value_int") {
+            EXPECT_EQ(col.data_type, quiver::DataType::Integer);
+            found_int = true;
+        } else if (col.name == "value_float") {
+            EXPECT_EQ(col.data_type, quiver::DataType::Real);
+            found_float = true;
+        }
+    }
+    EXPECT_TRUE(found_int);
+    EXPECT_TRUE(found_float);
 }
 
-TEST_F(SchemaValidatorFixture, GetAttributeTypeSetText) {
+TEST_F(SchemaValidatorFixture, GetSetMetadataTags) {
     auto db = quiver::Database::from_schema(":memory:", VALID_SCHEMA("collections.sql"), opts);
 
-    auto type = db.get_attribute_type("Collection", "tag");
+    // Set table is Collection_set_tags, so group name is "tags"
+    auto meta = db.get_set_metadata("Collection", "tags");
 
-    EXPECT_EQ(type.data_structure, quiver::DataStructure::Set);
-    EXPECT_EQ(type.data_type, quiver::DataType::Text);
+    EXPECT_EQ(meta.group_name, "tags");
+    EXPECT_FALSE(meta.value_columns.empty());
+    EXPECT_EQ(meta.value_columns[0].name, "tag");
+    EXPECT_EQ(meta.value_columns[0].data_type, quiver::DataType::Text);
 }
 
-// ============================================================================
-// Additional attribute type tests
-// ============================================================================
-
-TEST_F(SchemaValidatorFixture, GetAttributeTypeVectorReal) {
-    auto db = quiver::Database::from_schema(":memory:", VALID_SCHEMA("collections.sql"), opts);
-
-    auto type = db.get_attribute_type("Collection", "value_float");
-
-    EXPECT_EQ(type.data_structure, quiver::DataStructure::Vector);
-    EXPECT_EQ(type.data_type, quiver::DataType::Real);
-}
-
-TEST_F(SchemaValidatorFixture, GetAttributeTypeForeignKeyAsInteger) {
+TEST_F(SchemaValidatorFixture, GetScalarMetadataForeignKeyAsInteger) {
     auto db = quiver::Database::from_schema(":memory:", VALID_SCHEMA("relations.sql"), opts);
 
     // parent_id is a foreign key but stored as INTEGER
-    auto type = db.get_attribute_type("Child", "parent_id");
+    auto meta = db.get_scalar_metadata("Child", "parent_id");
 
-    EXPECT_EQ(type.data_structure, quiver::DataStructure::Scalar);
-    EXPECT_EQ(type.data_type, quiver::DataType::Integer);
+    EXPECT_EQ(meta.name, "parent_id");
+    EXPECT_EQ(meta.data_type, quiver::DataType::Integer);
 }
 
-TEST_F(SchemaValidatorFixture, GetAttributeTypeSelfReference) {
+TEST_F(SchemaValidatorFixture, GetScalarMetadataSelfReference) {
     auto db = quiver::Database::from_schema(":memory:", VALID_SCHEMA("relations.sql"), opts);
 
     // sibling_id is a self-referencing foreign key
-    auto type = db.get_attribute_type("Child", "sibling_id");
+    auto meta = db.get_scalar_metadata("Child", "sibling_id");
 
-    EXPECT_EQ(type.data_structure, quiver::DataStructure::Scalar);
-    EXPECT_EQ(type.data_type, quiver::DataType::Integer);
+    EXPECT_EQ(meta.name, "sibling_id");
+    EXPECT_EQ(meta.data_type, quiver::DataType::Integer);
 }
 
 // ============================================================================
@@ -226,8 +231,8 @@ TEST_F(SchemaValidatorFixture, RelationsSchemaWithVectorFK) {
     auto db = quiver::Database::from_schema(":memory:", VALID_SCHEMA("relations.sql"), opts);
 
     // Verify the schema loaded successfully with vector FK table
-    auto type = db.get_attribute_type("Child", "label");
-    EXPECT_EQ(type.data_type, quiver::DataType::Text);
+    auto meta = db.get_scalar_metadata("Child", "label");
+    EXPECT_EQ(meta.data_type, quiver::DataType::Text);
 }
 
 // ============================================================================
@@ -287,14 +292,14 @@ TEST_F(SchemaValidatorFixture, ReadFromMultipleCollections) {
 }
 
 // ============================================================================
-// get_attribute_type error cases
+// Metadata edge cases
 // ============================================================================
 
-TEST_F(SchemaValidatorFixture, GetAttributeTypeIdColumn) {
+TEST_F(SchemaValidatorFixture, GetScalarMetadataIdColumn) {
     auto db = quiver::Database::from_schema(":memory:", VALID_SCHEMA("basic.sql"), opts);
 
     // 'id' column should exist and be INTEGER
-    auto type = db.get_attribute_type("Configuration", "id");
-    EXPECT_EQ(type.data_structure, quiver::DataStructure::Scalar);
-    EXPECT_EQ(type.data_type, quiver::DataType::Integer);
+    auto meta = db.get_scalar_metadata("Configuration", "id");
+    EXPECT_EQ(meta.name, "id");
+    EXPECT_EQ(meta.data_type, quiver::DataType::Integer);
 }
