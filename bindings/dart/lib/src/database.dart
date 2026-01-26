@@ -1498,6 +1498,7 @@ class Database {
         case quiver_data_type_t.QUIVER_DATA_TYPE_FLOAT:
           result[name] = readScalarFloatById(collection, name, id);
         case quiver_data_type_t.QUIVER_DATA_TYPE_STRING:
+          result[name] = readScalarStringById(collection, name, id);
         case quiver_data_type_t.QUIVER_DATA_TYPE_DATETIME:
           result[name] = readScalarStringById(collection, name, id);
       }
@@ -1520,6 +1521,7 @@ class Database {
         case quiver_data_type_t.QUIVER_DATA_TYPE_FLOAT:
           result[name] = readVectorFloatsById(collection, name, id);
         case quiver_data_type_t.QUIVER_DATA_TYPE_STRING:
+          result[name] = readVectorStringsById(collection, name, id);
         case quiver_data_type_t.QUIVER_DATA_TYPE_DATETIME:
           result[name] = readVectorStringsById(collection, name, id);
       }
@@ -1542,6 +1544,7 @@ class Database {
         case quiver_data_type_t.QUIVER_DATA_TYPE_FLOAT:
           result[name] = readSetFloatsById(collection, name, id);
         case quiver_data_type_t.QUIVER_DATA_TYPE_STRING:
+          result[name] = readSetStringsById(collection, name, id);
         case quiver_data_type_t.QUIVER_DATA_TYPE_DATETIME:
           result[name] = readSetStringsById(collection, name, id);
       }
@@ -1575,6 +1578,7 @@ class Database {
         case quiver_data_type_t.QUIVER_DATA_TYPE_FLOAT:
           values = readVectorFloatsById(collection, name, id);
         case quiver_data_type_t.QUIVER_DATA_TYPE_STRING:
+        values = readVectorStringsById(collection, name, id);
         case quiver_data_type_t.QUIVER_DATA_TYPE_DATETIME:
           values = readVectorStringsById(collection, name, id);
         default:
@@ -1624,6 +1628,7 @@ class Database {
         case quiver_data_type_t.QUIVER_DATA_TYPE_FLOAT:
           values = readSetFloatsById(collection, name, id);
         case quiver_data_type_t.QUIVER_DATA_TYPE_STRING:
+          values = readSetStringsById(collection, name, id);
         case quiver_data_type_t.QUIVER_DATA_TYPE_DATETIME:
           values = readSetStringsById(collection, name, id);
         default:

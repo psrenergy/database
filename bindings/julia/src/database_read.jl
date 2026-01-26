@@ -457,8 +457,10 @@ function read_all_scalars_by_id(db::Database, collection::String, id::Int64)
             result[name] = read_scalar_integers_by_id(db, collection, name, id)
         elseif attr.data_type == :real
             result[name] = read_scalar_floats_by_id(db, collection, name, id)
-        else
+        elseif attr.data_type == :string
             result[name] = read_scalar_strings_by_id(db, collection, name, id)
+        else
+            throw(DatabaseException("Unsupported scalar data type for '$collection.$name'"))
         end
     end
     return result
@@ -473,8 +475,10 @@ function read_all_vectors_by_id(db::Database, collection::String, id::Int64)
             result[name] = read_vector_integers_by_id(db, collection, name, id)
         elseif data_type == :real
             result[name] = read_vector_floats_by_id(db, collection, name, id)
-        else
+        elseif data_type == :string
             result[name] = read_vector_strings_by_id(db, collection, name, id)
+        else
+            throw(DatabaseException("Unsupported vector data type for '$collection.$name'"))
         end
     end
     return result
@@ -489,8 +493,10 @@ function read_all_sets_by_id(db::Database, collection::String, id::Int64)
             result[name] = read_set_integers_by_id(db, collection, name, id)
         elseif data_type == :real
             result[name] = read_set_floats_by_id(db, collection, name, id)
-        else
+        elseif data_type == :string
             result[name] = read_set_strings_by_id(db, collection, name, id)
+        else
+            throw(DatabaseException("Unsupported set data type for '$collection.$name'"))
         end
     end
     return result
