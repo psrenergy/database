@@ -41,7 +41,8 @@ void TypeValidator::validate_value(const std::string& context, DataType expected
                 }
             } else if constexpr (std::is_same_v<T, std::string>) {
                 // String can go to TEXT, INTEGER (FK label resolution), or DATE_TIME (stored as TEXT)
-                if (expected_type != DataType::Text && expected_type != DataType::Integer && expected_type != DataType::DateTime) {
+                if (expected_type != DataType::Text && expected_type != DataType::Integer &&
+                    expected_type != DataType::DateTime) {
                     throw std::runtime_error("Type mismatch for " + context + ": expected " +
                                              data_type_to_string(expected_type) + ", got TEXT");
                 }
