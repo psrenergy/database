@@ -446,19 +446,22 @@ function _get_value_data_type(value_columns::Vector{ScalarMetadata})
     if !isempty(value_columns)
         return value_columns[1].data_type
     end
-    return :text
+    return C.QUIVER_DATA_TYPE_STRING
 end
 
 function read_all_scalars_by_id(db::Database, collection::String, id::Int64)
     result = Dict{String, Any}()
     for attr in list_scalar_attributes(db, collection)
         name = attr.name
-        if attr.data_type == :integer
+        if attr.data_type == C.QUIVER_DATA_TYPE_INTEGER
             result[name] = read_scalar_integers_by_id(db, collection, name, id)
-        elseif attr.data_type == :real
+        elseif attr.data_type == C.QUIVER_DATA_TYPE_FLOAT
             result[name] = read_scalar_floats_by_id(db, collection, name, id)
-        elseif attr.data_type == :string
+        elseif attr.data_type == C.QUIVER_DATA_TYPE_STRING
             result[name] = read_scalar_strings_by_id(db, collection, name, id)
+        elseif attr.data_type == C.QUIVER_DATA_TYPE_DATE_TIME
+            str_value = read_scalar_strings_by_id(db, collection, name, id)
+            result[name] = str_value === nothing ? nothing : _string_to_datetime(str_value)
         else
             throw(DatabaseException("Unsupported scalar data type for '$collection.$name'"))
         end
@@ -471,12 +474,15 @@ function read_all_vectors_by_id(db::Database, collection::String, id::Int64)
     for group in list_vector_groups(db, collection)
         name = group.group_name
         data_type = _get_value_data_type(group.value_columns)
-        if data_type == :integer
+        if data_type == C.QUIVER_DATA_TYPE_INTEGER
             result[name] = read_vector_integers_by_id(db, collection, name, id)
-        elseif data_type == :real
+        elseif data_type == C.QUIVER_DATA_TYPE_FLOAT
             result[name] = read_vector_floats_by_id(db, collection, name, id)
-        elseif data_type == :string
+        elseif data_type == C.QUIVER_DATA_TYPE_STRING
             result[name] = read_vector_strings_by_id(db, collection, name, id)
+        elseif data_type == C.QUIVER_DATA_TYPE_DATE_TIME
+            str_values = read_vector_strings_by_id(db, collection, name, id)
+            result[name] = [_string_to_datetime(s) for s in str_values]
         else
             throw(DatabaseException("Unsupported vector data type for '$collection.$name'"))
         end
@@ -489,12 +495,15 @@ function read_all_sets_by_id(db::Database, collection::String, id::Int64)
     for group in list_set_groups(db, collection)
         name = group.group_name
         data_type = _get_value_data_type(group.value_columns)
-        if data_type == :integer
+        if data_type == C.QUIVER_DATA_TYPE_INTEGER
             result[name] = read_set_integers_by_id(db, collection, name, id)
-        elseif data_type == :real
+        elseif data_type == C.QUIVER_DATA_TYPE_FLOAT
             result[name] = read_set_floats_by_id(db, collection, name, id)
-        elseif data_type == :string
+        elseif data_type == C.QUIVER_DATA_TYPE_STRING
             result[name] = read_set_strings_by_id(db, collection, name, id)
+        elseif data_type == C.QUIVER_DATA_TYPE_DATE_TIME
+            str_values = read_set_strings_by_id(db, collection, name, id)
+            result[name] = [_string_to_datetime(s) for s in str_values]
         else
             throw(DatabaseException("Unsupported set data type for '$collection.$name'"))
         end
