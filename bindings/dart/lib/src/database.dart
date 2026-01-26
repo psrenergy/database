@@ -1498,6 +1498,7 @@ class Database {
         case quiver_data_type_t.QUIVER_DATA_TYPE_FLOAT:
           result[name] = readScalarFloatById(collection, name, id);
         case quiver_data_type_t.QUIVER_DATA_TYPE_STRING:
+        case quiver_data_type_t.QUIVER_DATA_TYPE_DATETIME:
           result[name] = readScalarStringById(collection, name, id);
       }
     }
@@ -1519,6 +1520,7 @@ class Database {
         case quiver_data_type_t.QUIVER_DATA_TYPE_FLOAT:
           result[name] = readVectorFloatsById(collection, name, id);
         case quiver_data_type_t.QUIVER_DATA_TYPE_STRING:
+        case quiver_data_type_t.QUIVER_DATA_TYPE_DATETIME:
           result[name] = readVectorStringsById(collection, name, id);
       }
     }
@@ -1540,6 +1542,7 @@ class Database {
         case quiver_data_type_t.QUIVER_DATA_TYPE_FLOAT:
           result[name] = readSetFloatsById(collection, name, id);
         case quiver_data_type_t.QUIVER_DATA_TYPE_STRING:
+        case quiver_data_type_t.QUIVER_DATA_TYPE_DATETIME:
           result[name] = readSetStringsById(collection, name, id);
       }
     }
@@ -1572,6 +1575,7 @@ class Database {
         case quiver_data_type_t.QUIVER_DATA_TYPE_FLOAT:
           values = readVectorFloatsById(collection, name, id);
         case quiver_data_type_t.QUIVER_DATA_TYPE_STRING:
+        case quiver_data_type_t.QUIVER_DATA_TYPE_DATETIME:
           values = readVectorStringsById(collection, name, id);
         default:
           throw Exception('Unknown data type: ${col.dataType}');
@@ -1620,6 +1624,7 @@ class Database {
         case quiver_data_type_t.QUIVER_DATA_TYPE_FLOAT:
           values = readSetFloatsById(collection, name, id);
         case quiver_data_type_t.QUIVER_DATA_TYPE_STRING:
+        case quiver_data_type_t.QUIVER_DATA_TYPE_DATETIME:
           values = readSetStringsById(collection, name, id);
         default:
           throw Exception('Unknown data type: ${col.dataType}');

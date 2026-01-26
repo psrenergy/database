@@ -484,6 +484,8 @@ struct LuaRunner::Impl {
             return "real";
         case DataType::Text:
             return "text";
+        case DataType::DateTime:
+            return "datetime";
         }
         return "unknown";
     }
@@ -581,7 +583,8 @@ struct LuaRunner::Impl {
                 result[attr.name] = val.has_value() ? sol::make_object(lua, *val) : sol::nil;
                 break;
             }
-            case DataType::Text: {
+            case DataType::Text:
+            case DataType::DateTime: {
                 auto val = db.read_scalar_strings_by_id(collection, attr.name, id);
                 result[attr.name] = val.has_value() ? sol::make_object(lua, *val) : sol::nil;
                 break;
@@ -614,7 +617,8 @@ struct LuaRunner::Impl {
                 }
                 break;
             }
-            case DataType::Text: {
+            case DataType::Text:
+            case DataType::DateTime: {
                 auto values = db.read_vector_strings_by_id(collection, group.group_name, id);
                 for (size_t i = 0; i < values.size(); ++i) {
                     vec[i + 1] = values[i];
@@ -650,7 +654,8 @@ struct LuaRunner::Impl {
                 }
                 break;
             }
-            case DataType::Text: {
+            case DataType::Text:
+            case DataType::DateTime: {
                 auto values = db.read_set_strings_by_id(collection, group.group_name, id);
                 for (size_t i = 0; i < values.size(); ++i) {
                     set[i + 1] = values[i];

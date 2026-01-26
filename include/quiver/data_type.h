@@ -6,7 +6,7 @@
 
 namespace quiver {
 
-enum class DataType { Integer, Real, Text };
+enum class DataType { Integer, Real, Text, DateTime };
 
 inline DataType data_type_from_string(const std::string& type_str) {
     if (type_str == "INTEGER")
@@ -15,6 +15,8 @@ inline DataType data_type_from_string(const std::string& type_str) {
         return DataType::Real;
     else if (type_str == "TEXT")
         return DataType::Text;
+    else if (type_str == "DATETIME")
+        return DataType::DateTime;
     throw std::runtime_error("Unknown data type: " + type_str);
 }
 
@@ -26,8 +28,16 @@ inline const char* data_type_to_string(DataType type) {
         return "REAL";
     case DataType::Text:
         return "TEXT";
+    case DataType::DateTime:
+        return "DATETIME";
     }
     return "UNKNOWN";
+}
+
+// Check if a column name indicates a datetime column
+// Columns beginning with "date_" are treated as DATETIME
+inline bool is_datetime_column(const std::string& name) {
+    return name.starts_with("date_");
 }
 
 }  // namespace quiver
