@@ -280,6 +280,25 @@ include("fixture.jl")
         Quiver.close!(db)
     end
 
+    @testset "DateTime Attribute" begin
+        path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
+        db = Quiver.from_schema(":memory:", path_schema)
+
+        Quiver.create_element!(db, "Configuration";
+            label = "Config 1",
+            date_attribute = "2024-01-01T00:00:00"
+        )
+
+        # Update DateTime value
+        Quiver.update_scalar_string!(db, "Configuration", "date_attribute", Int64(1), "2025-12-31T23:59:59")
+
+        # Verify update
+        date = Quiver.read_scalar_strings_by_id(db, "Configuration", "date_attribute", Int64(1))
+        @test date == "2025-12-31T23:59:59"
+
+        Quiver.close!(db)
+    end
+
     @testset "Multiple Elements Sequentially" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
         db = Quiver.from_schema(":memory:", path_schema)

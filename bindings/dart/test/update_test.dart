@@ -567,6 +567,28 @@ void main() {
     });
   });
 
+  group('Update DateTime Attributes', () {
+    test('updates datetime value', () {
+      final db = Database.fromSchema(
+        ':memory:',
+        path.join(testsPath, 'schemas', 'valid', 'basic.sql'),
+      );
+      try {
+        db.createElement('Configuration', {
+          'label': 'Config 1',
+          'date_attribute': '2024-01-01T00:00:00',
+        });
+
+        db.updateScalarString('Configuration', 'date_attribute', 1, '2025-12-31T23:59:59');
+
+        final date = db.readScalarStringById('Configuration', 'date_attribute', 1);
+        expect(date, equals('2025-12-31T23:59:59'));
+      } finally {
+        db.close();
+      }
+    });
+  });
+
   // ==========================================================================
   // Vector update functions tests
   // ==========================================================================

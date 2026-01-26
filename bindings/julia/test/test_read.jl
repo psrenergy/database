@@ -276,6 +276,32 @@ include("fixture.jl")
         Quiver.close!(db)
     end
 
+    @testset "DateTime Attributes" begin
+        path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
+        db = Quiver.from_schema(":memory:", path_schema)
+
+        Quiver.create_element!(db, "Configuration";
+            label = "Config 1",
+            date_attribute = "2024-01-15T10:30:00"
+        )
+        Quiver.create_element!(db, "Configuration";
+            label = "Config 2",
+            date_attribute = "2024-06-20T14:45:30"
+        )
+
+        # Read all DateTime values
+        dates = Quiver.read_scalar_strings(db, "Configuration", "date_attribute")
+        @test length(dates) == 2
+        @test dates[1] == "2024-01-15T10:30:00"
+        @test dates[2] == "2024-06-20T14:45:30"
+
+        # Read DateTime by ID
+        date = Quiver.read_scalar_strings_by_id(db, "Configuration", "date_attribute", Int64(1))
+        @test date == "2024-01-15T10:30:00"
+
+        Quiver.close!(db)
+    end
+
     @testset "Vector Integers by ID" begin
         path_schema = joinpath(tests_path(), "schemas", "valid", "collections.sql")
         db = Quiver.from_schema(":memory:", path_schema)
