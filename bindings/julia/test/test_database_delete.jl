@@ -1,4 +1,4 @@
-module TestDelete
+module TestDatabaseDelete
 
 using Quiver
 using Test

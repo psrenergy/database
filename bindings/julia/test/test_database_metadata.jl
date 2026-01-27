@@ -1,4 +1,4 @@
-module TestMetadata
+module TestDatabaseMetadata
 
 using Quiver
 using Test
