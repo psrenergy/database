@@ -8,7 +8,7 @@ function create_element!(db::Database, collection::String, e::Element)
             throw(DatabaseException("Failed to create element in collection $collection: $detail"))
         end
     end
-    return nothing
+    return Int64(result)
 end
 
 function create_element!(db::Database, collection::String; kwargs...)
@@ -17,11 +17,10 @@ function create_element!(db::Database, collection::String; kwargs...)
         e[String(k)] = v
     end
     try
-        create_element!(db, collection, e)
+        return create_element!(db, collection, e)
     finally
         destroy!(e)
     end
-    return nothing
 end
 
 function set_scalar_relation!(
