@@ -1,4 +1,4 @@
-module TestUpdate
+module TestDatabaseUpdate
 
 using Dates
 using Quiver
