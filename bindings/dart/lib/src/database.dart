@@ -760,9 +760,7 @@ class Database {
 
   /// Reads DateTime vector for a vector attribute by element ID.
   List<DateTime> readVectorDateTimesById(String collection, String attribute, int id) {
-    return readVectorStringsById(collection, attribute, id)
-        .map((s) => stringToDateTime(s))
-        .toList();
+    return readVectorStringsById(collection, attribute, id).map((s) => stringToDateTime(s)).toList();
   }
 
   // Read set by ID methods
@@ -874,9 +872,7 @@ class Database {
 
   /// Reads DateTime set for a set attribute by element ID.
   List<DateTime> readSetDateTimesById(String collection, String attribute, int id) {
-    return readSetStringsById(collection, attribute, id)
-        .map((s) => stringToDateTime(s))
-        .toList();
+    return readSetStringsById(collection, attribute, id).map((s) => stringToDateTime(s)).toList();
   }
 
   // Read element IDs
