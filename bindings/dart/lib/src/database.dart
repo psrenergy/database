@@ -4,6 +4,7 @@ import 'package:ffi/ffi.dart';
 
 import 'ffi/bindings.dart';
 import 'ffi/library_loader.dart';
+import 'date_time.dart';
 import 'element.dart';
 import 'exceptions.dart';
 
@@ -643,6 +644,13 @@ class Database {
     }
   }
 
+  /// Reads a DateTime value for a scalar attribute by element ID.
+  /// Returns null if the element is not found.
+  DateTime? readScalarDateTimeById(String collection, String attribute, int id) {
+    final strValue = readScalarStringById(collection, attribute, id);
+    return strValue == null ? null : stringToDateTime(strValue);
+  }
+
   // Read vector by ID methods
 
   /// Reads integer vector for a vector attribute by element ID.
@@ -750,6 +758,11 @@ class Database {
     }
   }
 
+  /// Reads DateTime vector for a vector attribute by element ID.
+  List<DateTime> readVectorDateTimesById(String collection, String attribute, int id) {
+    return readVectorStringsById(collection, attribute, id).map((s) => stringToDateTime(s)).toList();
+  }
+
   // Read set by ID methods
 
   /// Reads integer set for a set attribute by element ID.
@@ -855,6 +868,11 @@ class Database {
     } finally {
       arena.releaseAll();
     }
+  }
+
+  /// Reads DateTime set for a set attribute by element ID.
+  List<DateTime> readSetDateTimesById(String collection, String attribute, int id) {
+    return readSetStringsById(collection, attribute, id).map((s) => stringToDateTime(s)).toList();
   }
 
   // Read element IDs
@@ -1486,6 +1504,7 @@ class Database {
 
   /// Reads all scalar attributes for an element by ID.
   /// Returns a map of attribute name to value.
+  /// DateTime columns are converted to DateTime objects.
   Map<String, Object?> readAllScalarsById(String collection, int id) {
     _ensureNotClosed();
 
@@ -1499,6 +1518,8 @@ class Database {
           result[name] = readScalarFloatById(collection, name, id);
         case quiver_data_type_t.QUIVER_DATA_TYPE_STRING:
           result[name] = readScalarStringById(collection, name, id);
+        case quiver_data_type_t.QUIVER_DATA_TYPE_DATE_TIME:
+          result[name] = readScalarDateTimeById(collection, name, id);
       }
     }
     return result;
@@ -1506,6 +1527,7 @@ class Database {
 
   /// Reads all vector attributes for an element by ID.
   /// Returns a map of group name to list of values.
+  /// DateTime columns are converted to DateTime objects.
   Map<String, List<Object>> readAllVectorsById(String collection, int id) {
     _ensureNotClosed();
 
@@ -1520,6 +1542,8 @@ class Database {
           result[name] = readVectorFloatsById(collection, name, id);
         case quiver_data_type_t.QUIVER_DATA_TYPE_STRING:
           result[name] = readVectorStringsById(collection, name, id);
+        case quiver_data_type_t.QUIVER_DATA_TYPE_DATE_TIME:
+          result[name] = readVectorDateTimesById(collection, name, id);
       }
     }
     return result;
@@ -1527,6 +1551,7 @@ class Database {
 
   /// Reads all set attributes for an element by ID.
   /// Returns a map of group name to list of values.
+  /// DateTime columns are converted to DateTime objects.
   Map<String, List<Object>> readAllSetsById(String collection, int id) {
     _ensureNotClosed();
 
@@ -1541,6 +1566,8 @@ class Database {
           result[name] = readSetFloatsById(collection, name, id);
         case quiver_data_type_t.QUIVER_DATA_TYPE_STRING:
           result[name] = readSetStringsById(collection, name, id);
+        case quiver_data_type_t.QUIVER_DATA_TYPE_DATE_TIME:
+          result[name] = readSetDateTimesById(collection, name, id);
       }
     }
     return result;
@@ -1573,6 +1600,8 @@ class Database {
           values = readVectorFloatsById(collection, name, id);
         case quiver_data_type_t.QUIVER_DATA_TYPE_STRING:
           values = readVectorStringsById(collection, name, id);
+        case quiver_data_type_t.QUIVER_DATA_TYPE_DATE_TIME:
+          values = readVectorDateTimesById(collection, name, id);
         default:
           throw Exception('Unknown data type: ${col.dataType}');
       }
@@ -1621,6 +1650,8 @@ class Database {
           values = readSetFloatsById(collection, name, id);
         case quiver_data_type_t.QUIVER_DATA_TYPE_STRING:
           values = readSetStringsById(collection, name, id);
+        case quiver_data_type_t.QUIVER_DATA_TYPE_DATE_TIME:
+          values = readSetDateTimesById(collection, name, id);
         default:
           throw Exception('Unknown data type: ${col.dataType}');
       }

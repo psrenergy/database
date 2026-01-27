@@ -222,6 +222,11 @@ std::vector<ColumnDefinition> Schema::query_columns(sqlite3* db, const std::stri
             col.default_value = std::string(dflt_value);
         }
 
+        // Infer DATE_TIME type from column name for TEXT columns
+        if (col.type == DataType::Text && is_date_time_column(col.name)) {
+            col.type = DataType::DateTime;
+        }
+
         columns.push_back(std::move(col));
     }
     sqlite3_finalize(stmt);

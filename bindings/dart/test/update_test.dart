@@ -567,6 +567,60 @@ void main() {
     });
   });
 
+  group('Update DateTime Attributes', () {
+    test('updates date time value', () {
+      final db = Database.fromSchema(
+        ':memory:',
+        path.join(testsPath, 'schemas', 'valid', 'basic.sql'),
+      );
+      try {
+        db.createElement('Configuration', {
+          'label': 'Config 1',
+          'date_attribute': '2024-01-01T00:00:00',
+        });
+
+        db.updateScalarString('Configuration', 'date_attribute', 1, '2025-12-31T23:59:59');
+
+        final date = db.readScalarStringById('Configuration', 'date_attribute', 1);
+        expect(date, equals('2025-12-31T23:59:59'));
+      } finally {
+        db.close();
+      }
+    });
+
+    test('updates with native DateTime object via Element builder', () {
+      final db = Database.fromSchema(
+        ':memory:',
+        path.join(testsPath, 'schemas', 'valid', 'basic.sql'),
+      );
+      try {
+        db.createElement('Configuration', {
+          'label': 'Config 1',
+          'date_attribute': '2024-01-01T00:00:00',
+        });
+
+        final element = Element();
+        try {
+          element.set('date_attribute', DateTime(2025, 6, 15, 12, 30, 45));
+          db.updateElementFromBuilder('Configuration', 1, element);
+        } finally {
+          element.dispose();
+        }
+
+        // Verify it was stored correctly
+        final dateStr = db.readScalarStringById('Configuration', 'date_attribute', 1);
+        expect(dateStr, equals('2025-06-15T12:30:45'));
+
+        // Verify readAllScalarsById returns native DateTime
+        final scalars = db.readAllScalarsById('Configuration', 1);
+        expect(scalars['date_attribute'], isA<DateTime>());
+        expect(scalars['date_attribute'], equals(DateTime(2025, 6, 15, 12, 30, 45)));
+      } finally {
+        db.close();
+      }
+    });
+  });
+
   // ==========================================================================
   // Vector update functions tests
   // ==========================================================================
@@ -915,5 +969,4 @@ void main() {
       }
     });
   });
-
 }
