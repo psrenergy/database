@@ -1655,8 +1655,7 @@ class Database {
         case quiver_data_type_t.QUIVER_DATA_TYPE_STRING:
           values = readSetStringsById(collection, name, id);
         case quiver_data_type_t.QUIVER_DATA_TYPE_DATE_TIME:
-          final strValues = readSetStringsById(collection, name, id);
-          values = strValues.map((s) => DateTime.parse(s)).toList();
+          values = readSetDateTimesById(collection, name, id);
         default:
           throw Exception('Unknown data type: ${col.dataType}');
       }

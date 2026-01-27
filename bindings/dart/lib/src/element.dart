@@ -57,7 +57,7 @@ class Element {
       case String v:
         setString(name, v);
       case DateTime v:
-        setString(name, dateTimeToString(v));
+        setDateTime(name, v);
       case List<int> v:
         setArrayInteger(name, v);
       case List<double> v:
@@ -136,6 +136,11 @@ class Element {
       malloc.free(namePtr);
       malloc.free(valuePtr);
     }
+  }
+
+  /// Sets a DateTime value (converted to ISO 8601 string).
+  void setDateTime(String name, DateTime value) {
+    setString(name, dateTimeToString(value));
   }
 
   /// Sets a null value.
