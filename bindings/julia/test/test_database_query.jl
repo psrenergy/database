@@ -2,6 +2,7 @@ module TestDatabaseQuery
 
 using Quiver
 using Test
+using Dates
 
 include("fixture.jl")
 
