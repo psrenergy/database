@@ -1219,9 +1219,7 @@ QUIVER_C_API void quiver_free_set_metadata_array(quiver_set_metadata_t* metadata
     delete[] metadata;
 }
 
-QUIVER_C_API quiver_error_t quiver_database_export_to_csv(quiver_database_t* db,
-                                                          const char* table,
-                                                          const char* path) {
+QUIVER_C_API quiver_error_t quiver_database_export_to_csv(quiver_database_t* db, const char* table, const char* path) {
     if (!db || !table || !path) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -1234,9 +1232,7 @@ QUIVER_C_API quiver_error_t quiver_database_export_to_csv(quiver_database_t* db,
     }
 }
 
-QUIVER_C_API quiver_error_t quiver_database_import_csv(quiver_database_t* db,
-                                                       const char* table,
-                                                       const char* path) {
+QUIVER_C_API quiver_error_t quiver_database_import_csv(quiver_database_t* db, const char* table, const char* path) {
     if (!db || !table || !path) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
