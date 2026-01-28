@@ -1409,18 +1409,6 @@ void Database::import_from_csv(const std::string& table, const std::string& path
     return;
 }
 
-std::optional<std::string> Database::query_string(const std::string& sql) {
-    return query_string(sql, {});
-}
-
-std::optional<int64_t> Database::query_integer(const std::string& sql) {
-    return query_integer(sql, {});
-}
-
-std::optional<double> Database::query_float(const std::string& sql) {
-    return query_float(sql, {});
-}
-
 std::optional<std::string> Database::query_string(const std::string& sql, const std::vector<Value>& params) {
     auto result = execute(sql, params);
     if (result.empty()) {
