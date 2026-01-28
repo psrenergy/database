@@ -63,6 +63,7 @@ Test files organized by functionality:
 - `test_database_read.cpp` - read scalar/vector/set operations
 - `test_database_update.cpp` - update scalar/vector/set operations
 - `test_database_delete.cpp` - delete element operations
+- `test_database_query.cpp` - parameterized and non-parameterized query operations
 - `test_database_relations.cpp` - relation operations
 
 C API tests follow same pattern with `test_c_api_database_*.cpp` prefix.
@@ -179,6 +180,14 @@ if (!db) { quiver_set_last_error("Null db"); return QUIVER_ERROR; }
 if (!collection) { quiver_set_last_error("Null collection"); return QUIVER_ERROR; }
 ```
 
+### Parameterized Queries
+`_params` variants use parallel arrays for typed parameters:
+```c
+// param_types[i]: QUIVER_DATA_TYPE_INTEGER(0), FLOAT(1), STRING(2), NULL(4)
+// param_values[i]: pointer to int64_t, double, const char*, or NULL
+quiver_database_query_string_params(db, sql, param_types, param_values, param_count, &out, &has);
+```
+
 ## Schema Conventions
 
 ### Configuration Table (Required)
@@ -233,6 +242,8 @@ Always use `ON DELETE CASCADE ON UPDATE CASCADE` for parent references.
 - Vector readers: `read_vector_integers/floats/strings(collection, attribute)`
 - Set readers: `read_set_integers/floats/strings(collection, attribute)`
 - Relations: `set_scalar_relation()`, `read_scalar_relation()`
+- Query: `query_string/integer/float(sql, params = {})` - parameterized SQL with positional `?` placeholders
+- Schema inspection: `describe()` - prints schema info to stdout
 
 ### Element Class
 Builder for element creation with fluent API:

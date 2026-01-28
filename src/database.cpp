@@ -9,6 +9,7 @@
 #include <atomic>
 #include <filesystem>
 #include <fstream>
+#include <iostream>
 #include <mutex>
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
@@ -164,6 +165,13 @@ struct Database::Impl {
         if (!schema->has_table(collection)) {
             throw std::runtime_error("Collection not found in schema: " + collection);
         }
+    }
+
+    void load_schema_metadata() {
+        schema = std::make_unique<Schema>(Schema::from_database(db));
+        SchemaValidator validator(*schema);
+        validator.validate();
+        type_validator = std::make_unique<TypeValidator>(*schema);
     }
 
     ~Impl() {
@@ -377,6 +385,13 @@ const std::string& Database::path() const {
 Database Database::from_migrations(const std::string& db_path,
                                    const std::string& migrations_path,
                                    const DatabaseOptions& options) {
+    namespace fs = std::filesystem;
+    if (!fs::exists(migrations_path)) {
+        throw std::runtime_error("Migrations path not found: " + migrations_path);
+    }
+    if (!fs::is_directory(migrations_path)) {
+        throw std::runtime_error("Migrations path is not a directory: " + migrations_path);
+    }
     auto db = Database(db_path, options);
     db.migrate_up(migrations_path);
     return db;
@@ -384,6 +399,10 @@ Database Database::from_migrations(const std::string& db_path,
 
 Database
 Database::from_schema(const std::string& db_path, const std::string& schema_path, const DatabaseOptions& options) {
+    namespace fs = std::filesystem;
+    if (!fs::exists(schema_path)) {
+        throw std::runtime_error("Schema file not found: " + schema_path);
+    }
     auto db = Database(db_path, options);
     db.apply_schema(schema_path);
     return db;
@@ -433,6 +452,9 @@ void Database::migrate_up(const std::string& migrations_path) {
 
     if (pending.empty()) {
         impl_->logger->debug("Database is up to date at version {}", current);
+        if (!impl_->schema) {
+            impl_->load_schema_metadata();
+        }
         return;
     }
 
@@ -460,20 +482,14 @@ void Database::migrate_up(const std::string& migrations_path) {
         }
     }
 
+    impl_->load_schema_metadata();
     impl_->logger->info("All migrations applied successfully. Database now at version {}", current_version());
 }
 
 void Database::apply_schema(const std::string& schema_path) {
-    namespace fs = std::filesystem;
-    auto canonical_schema_path = fs::canonical(schema_path).string();
-
-    if (!fs::exists(canonical_schema_path)) {
-        throw std::runtime_error("Schema file not found: " + canonical_schema_path);
-    }
-
-    std::ifstream file(canonical_schema_path);
+    std::ifstream file(schema_path);
     if (!file.is_open()) {
-        throw std::runtime_error("Failed to open schema file: " + canonical_schema_path);
+        throw std::runtime_error("Failed to open schema file: " + schema_path);
     }
 
     std::stringstream buffer;
@@ -481,25 +497,15 @@ void Database::apply_schema(const std::string& schema_path) {
     const auto schema_sql = buffer.str();
 
     if (schema_sql.empty()) {
-        throw std::runtime_error("Schema file is empty: " + canonical_schema_path);
+        throw std::runtime_error("Schema file is empty: " + schema_path);
     }
 
-    impl_->logger->info("Applying schema from: {}", canonical_schema_path);
+    impl_->logger->info("Applying schema from: {}", schema_path);
 
     begin_transaction();
     try {
         execute_raw(schema_sql);
-
-        // Load schema metadata
-        impl_->schema = std::make_unique<Schema>(Schema::from_database(impl_->db));
-
-        // Validate schema structure
-        SchemaValidator validator(*impl_->schema);
-        validator.validate();
-
-        // Create type validator
-        impl_->type_validator = std::make_unique<TypeValidator>(*impl_->schema);
-
+        impl_->load_schema_metadata();
         commit();
     } catch (const std::exception& e) {
         rollback();
@@ -1431,6 +1437,90 @@ std::optional<double> Database::query_float(const std::string& sql, const std::v
         return std::nullopt;
     }
     return result[0].get_float(0);
+}
+
+void Database::describe() const {
+    std::cout << "Database: " << impl_->path << "\n";
+    std::cout << "Version: " << current_version() << "\n";
+
+    if (!impl_->schema) {
+        std::cout << "\nNo schema loaded.\n";
+        return;
+    }
+
+    for (const auto& collection : impl_->schema->collection_names()) {
+        std::cout << "\nCollection: " << collection << "\n";
+
+        // Scalars
+        const auto* table_def = impl_->schema->get_table(collection);
+        if (table_def && !table_def->columns.empty()) {
+            std::cout << "  Scalars:\n";
+            for (const auto& [name, col] : table_def->columns) {
+                std::cout << "    - " << name << " (" << data_type_to_string(col.type) << ")";
+                if (col.primary_key) {
+                    std::cout << " PRIMARY KEY";
+                }
+                if (col.not_null && !col.primary_key) {
+                    std::cout << " NOT NULL";
+                }
+                std::cout << "\n";
+            }
+        }
+
+        // Vectors
+        auto prefix_vec = collection + "_vector_";
+        for (const auto& table_name : impl_->schema->table_names()) {
+            if (!impl_->schema->is_vector_table(table_name))
+                continue;
+            if (impl_->schema->get_parent_collection(table_name) != collection)
+                continue;
+
+            auto group_name = table_name.substr(prefix_vec.size());
+            const auto* vec_table = impl_->schema->get_table(table_name);
+            if (!vec_table)
+                continue;
+
+            std::cout << "  Vectors:\n";
+            std::cout << "    - " << group_name << ": ";
+            bool first = true;
+            for (const auto& [col_name, col] : vec_table->columns) {
+                if (col_name == "id" || col_name == "vector_index")
+                    continue;
+                if (!first)
+                    std::cout << ", ";
+                std::cout << col_name << "(" << data_type_to_string(col.type) << ")";
+                first = false;
+            }
+            std::cout << "\n";
+        }
+
+        // Sets
+        auto prefix_set = collection + "_set_";
+        for (const auto& table_name : impl_->schema->table_names()) {
+            if (!impl_->schema->is_set_table(table_name))
+                continue;
+            if (impl_->schema->get_parent_collection(table_name) != collection)
+                continue;
+
+            auto group_name = table_name.substr(prefix_set.size());
+            const auto* set_table = impl_->schema->get_table(table_name);
+            if (!set_table)
+                continue;
+
+            std::cout << "  Sets:\n";
+            std::cout << "    - " << group_name << ": ";
+            bool first = true;
+            for (const auto& [col_name, col] : set_table->columns) {
+                if (col_name == "id")
+                    continue;
+                if (!first)
+                    std::cout << ", ";
+                std::cout << col_name << "(" << data_type_to_string(col.type) << ")";
+                first = false;
+            }
+            std::cout << "\n";
+        }
+    }
 }
 
 }  // namespace quiver

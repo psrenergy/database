@@ -10,6 +10,7 @@ add_executable(quiver_tests
     test_database_relations.cpp
     test_database_update.cpp
     test_element.cpp
+    test_issues.cpp
     test_lua_runner.cpp
     test_migrations.cpp
     test_row_result.cpp
