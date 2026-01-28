@@ -1405,8 +1405,8 @@ void Database::export_to_csv(const std::string& table, const std::string& path) 
     throw std::runtime_error("export_to_csv not yet implemented");
 }
 
-void Database::import_csv(const std::string& table, const std::string& path) {
-    throw std::runtime_error("import_csv not yet implemented");
+void Database::import_from_csv(const std::string& table, const std::string& path) {
+    throw std::runtime_error("import_from_csv not yet implemented");
 }
 
 }  // namespace quiver

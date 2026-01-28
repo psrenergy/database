@@ -347,8 +347,8 @@ function quiver_database_export_to_csv(db, table, path)
     @ccall libquiver_c.quiver_database_export_to_csv(db::Ptr{quiver_database_t}, table::Ptr{Cchar}, path::Ptr{Cchar})::quiver_error_t
 end
 
-function quiver_database_import_csv(db, table, path)
-    @ccall libquiver_c.quiver_database_import_csv(db::Ptr{quiver_database_t}, table::Ptr{Cchar}, path::Ptr{Cchar})::quiver_error_t
+function quiver_database_import_from_csv(db, table, path)
+    @ccall libquiver_c.quiver_database_import_from_csv(db::Ptr{quiver_database_t}, table::Ptr{Cchar}, path::Ptr{Cchar})::quiver_error_t
 end
 
 function quiver_element_create()

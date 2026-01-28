@@ -25,7 +25,7 @@ extension DatabaseCSV on Database {
     _ensureNotClosed();
     final arena = Arena();
     try {
-      final err = bindings.quiver_database_import_csv(
+      final err = bindings.quiver_database_import_from_csv(
         _ptr,
         table.toNativeUtf8(allocator: arena).cast(),
         path.toNativeUtf8(allocator: arena).cast(),
