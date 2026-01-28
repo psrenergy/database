@@ -314,9 +314,12 @@ TEST_F(MigrationFixture, FromMigrationsLoadsSchemaMetadata) {
     // Verify expected columns exist
     bool has_id = false, has_label = false, has_name = false;
     for (const auto& attr : attrs) {
-        if (attr.name == "id") has_id = true;
-        if (attr.name == "label") has_label = true;
-        if (attr.name == "name") has_name = true;
+        if (attr.name == "id")
+            has_id = true;
+        if (attr.name == "label")
+            has_label = true;
+        if (attr.name == "name")
+            has_name = true;
     }
     EXPECT_TRUE(has_id);
     EXPECT_TRUE(has_label);
