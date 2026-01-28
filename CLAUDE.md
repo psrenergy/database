@@ -243,6 +243,7 @@ Always use `ON DELETE CASCADE ON UPDATE CASCADE` for parent references.
 - Set readers: `read_set_integers/floats/strings(collection, attribute)`
 - Relations: `set_scalar_relation()`, `read_scalar_relation()`
 - Query: `query_string/integer/float(sql, params = {})` - parameterized SQL with positional `?` placeholders
+- Schema inspection: `describe()` - prints schema info to stdout
 
 ### Element Class
 Builder for element creation with fluent API:
