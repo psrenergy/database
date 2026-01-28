@@ -3,7 +3,7 @@ part of 'database.dart';
 /// CSV import/export operations for Database.
 extension DatabaseCSV on Database {
   /// Exports a table to a CSV file.
-  void exportToCsv(String table, String path) {
+  void exportToCSV(String table, String path) {
     _ensureNotClosed();
     final arena = Arena();
     try {
@@ -21,7 +21,7 @@ extension DatabaseCSV on Database {
   }
 
   /// Imports a CSV file into a table.
-  void importCsv(String table, String path) {
+  void importFromCSV(String table, String path) {
     _ensureNotClosed();
     final arena = Arena();
     try {
