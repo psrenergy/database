@@ -148,7 +148,12 @@ public:
 
     // CSV operations
     void export_to_csv(const std::string& table, const std::string& path);
-    void import_csv(const std::string& table, const std::string& path);
+    void import_from_csv(const std::string& table, const std::string& path);
+
+    // Query methods - execute SQL and return first row's first column
+    std::optional<std::string> query_string(const std::string& sql);
+    std::optional<int64_t> query_integer(const std::string& sql);
+    std::optional<double> query_float(const std::string& sql);
 
 private:
     struct Impl;

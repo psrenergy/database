@@ -1232,12 +1232,81 @@ QUIVER_C_API quiver_error_t quiver_database_export_to_csv(quiver_database_t* db,
     }
 }
 
-QUIVER_C_API quiver_error_t quiver_database_import_csv(quiver_database_t* db, const char* table, const char* path) {
+QUIVER_C_API quiver_error_t quiver_database_import_from_csv(quiver_database_t* db,
+                                                            const char* table,
+                                                            const char* path) {
     if (!db || !table || !path) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
     try {
-        db->db.import_csv(table, path);
+        db->db.import_from_csv(table, path);
+        return QUIVER_OK;
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
+        return QUIVER_ERROR_DATABASE;
+    }
+}
+
+QUIVER_C_API quiver_error_t quiver_database_query_string(quiver_database_t* db,
+                                                         const char* sql,
+                                                         char** out_value,
+                                                         int* out_has_value) {
+    if (!db || !sql || !out_value || !out_has_value) {
+        return QUIVER_ERROR_INVALID_ARGUMENT;
+    }
+    try {
+        auto result = db->db.query_string(sql);
+        if (result.has_value()) {
+            *out_value = strdup_safe(*result);
+            *out_has_value = 1;
+        } else {
+            *out_value = nullptr;
+            *out_has_value = 0;
+        }
+        return QUIVER_OK;
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
+        return QUIVER_ERROR_DATABASE;
+    }
+}
+
+QUIVER_C_API quiver_error_t quiver_database_query_integer(quiver_database_t* db,
+                                                          const char* sql,
+                                                          int64_t* out_value,
+                                                          int* out_has_value) {
+    if (!db || !sql || !out_value || !out_has_value) {
+        return QUIVER_ERROR_INVALID_ARGUMENT;
+    }
+    try {
+        auto result = db->db.query_integer(sql);
+        if (result.has_value()) {
+            *out_value = *result;
+            *out_has_value = 1;
+        } else {
+            *out_has_value = 0;
+        }
+        return QUIVER_OK;
+    } catch (const std::exception& e) {
+        quiver_set_last_error(e.what());
+        return QUIVER_ERROR_DATABASE;
+    }
+}
+
+QUIVER_C_API quiver_error_t quiver_database_query_float(quiver_database_t* db,
+                                                        const char* sql,
+                                                        double* out_value,
+                                                        int* out_has_value) {
+    if (!db || !sql || !out_value || !out_has_value) {
+        return QUIVER_ERROR_INVALID_ARGUMENT;
+    }
+    try {
+        auto result = db->db.query_float(sql);
+        if (result.has_value()) {
+            *out_value = *result;
+            *out_has_value = 1;
+        } else {
+            *out_has_value = 0;
+        }
         return QUIVER_OK;
     } catch (const std::exception& e) {
         quiver_set_last_error(e.what());

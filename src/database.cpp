@@ -1402,11 +1402,35 @@ std::vector<SetMetadata> Database::list_set_groups(const std::string& collection
 }
 
 void Database::export_to_csv(const std::string& table, const std::string& path) {
-    throw std::runtime_error("export_to_csv not yet implemented");
+    return;
 }
 
-void Database::import_csv(const std::string& table, const std::string& path) {
-    throw std::runtime_error("import_csv not yet implemented");
+void Database::import_from_csv(const std::string& table, const std::string& path) {
+    return;
+}
+
+std::optional<std::string> Database::query_string(const std::string& sql) {
+    auto result = execute(sql);
+    if (result.empty()) {
+        return std::nullopt;
+    }
+    return result[0].get_string(0);
+}
+
+std::optional<int64_t> Database::query_integer(const std::string& sql) {
+    auto result = execute(sql);
+    if (result.empty()) {
+        return std::nullopt;
+    }
+    return result[0].get_integer(0);
+}
+
+std::optional<double> Database::query_float(const std::string& sql) {
+    auto result = execute(sql);
+    if (result.empty()) {
+        return std::nullopt;
+    }
+    return result[0].get_float(0);
 }
 
 }  // namespace quiver

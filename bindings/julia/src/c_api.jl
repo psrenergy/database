@@ -347,8 +347,20 @@ function quiver_database_export_to_csv(db, table, path)
     @ccall libquiver_c.quiver_database_export_to_csv(db::Ptr{quiver_database_t}, table::Ptr{Cchar}, path::Ptr{Cchar})::quiver_error_t
 end
 
-function quiver_database_import_csv(db, table, path)
-    @ccall libquiver_c.quiver_database_import_csv(db::Ptr{quiver_database_t}, table::Ptr{Cchar}, path::Ptr{Cchar})::quiver_error_t
+function quiver_database_import_from_csv(db, table, path)
+    @ccall libquiver_c.quiver_database_import_from_csv(db::Ptr{quiver_database_t}, table::Ptr{Cchar}, path::Ptr{Cchar})::quiver_error_t
+end
+
+function quiver_database_query_string(db, sql, out_value, out_has_value)
+    @ccall libquiver_c.quiver_database_query_string(db::Ptr{quiver_database_t}, sql::Ptr{Cchar}, out_value::Ptr{Ptr{Cchar}}, out_has_value::Ptr{Cint})::quiver_error_t
+end
+
+function quiver_database_query_integer(db, sql, out_value, out_has_value)
+    @ccall libquiver_c.quiver_database_query_integer(db::Ptr{quiver_database_t}, sql::Ptr{Cchar}, out_value::Ptr{Int64}, out_has_value::Ptr{Cint})::quiver_error_t
+end
+
+function quiver_database_query_float(db, sql, out_value, out_has_value)
+    @ccall libquiver_c.quiver_database_query_float(db::Ptr{quiver_database_t}, sql::Ptr{Cchar}, out_value::Ptr{Cdouble}, out_has_value::Ptr{Cint})::quiver_error_t
 end
 
 function quiver_element_create()
