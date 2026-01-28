@@ -114,6 +114,25 @@ include("fixture.jl")
 
         Quiver.close!(db)
     end
+
+    @testset "Query DateTime" begin
+        path_schema = joinpath(tests_path(), "schemas", "valid", "basic.sql")
+        db = Quiver.from_schema(":memory:", path_schema)
+
+        Quiver.create_element!(db, "Configuration";
+            label = "Test",
+            date_attribute = DateTime(2024, 6, 15, 10, 30, 0),
+        )
+
+        result = Quiver.query_date_time(db, "SELECT date_attribute FROM Configuration WHERE label = 'Test'")
+        @test result == DateTime(2024, 6, 15, 10, 30, 0)
+
+        # Test empty result returns nothing
+        result = Quiver.query_date_time(db, "SELECT date_attribute FROM Configuration WHERE 1 = 0")
+        @test result === nothing
+
+        Quiver.close!(db)
+    end
 end
 
 end

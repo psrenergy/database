@@ -96,4 +96,12 @@ extension DatabaseQuery on Database {
       arena.releaseAll();
     }
   }
+
+  /// Executes a SQL query and returns the first column of the first row as a DateTime.
+  /// Returns null if the query returns no rows.
+  DateTime? queryDateTime(String sql) {
+    final result = queryString(sql);
+    if (result == null) return null;
+    return stringToDateTime(result);
+  }
 }

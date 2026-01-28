@@ -62,3 +62,17 @@ function query_float(db::Database, sql::String)
     end
     return out_value[]
 end
+
+"""
+    query_date_time(db::Database, sql::String) -> Union{DateTime, Nothing}
+
+Execute a SQL query and return the first column of the first row as a DateTime.
+Returns `nothing` if the query returns no rows.
+"""
+function query_date_time(db::Database, sql::String)
+    result = query_string(db, sql)
+    if result === nothing
+        return nothing
+    end
+    return string_to_date_time(result)
+end

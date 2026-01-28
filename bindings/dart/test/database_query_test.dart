@@ -186,4 +186,41 @@ void main() {
       }
     });
   });
+
+  group('Query DateTime', () {
+    test('returns value when row exists', () {
+      final db = Database.fromSchema(
+        ':memory:',
+        path.join(testsPath, 'schemas', 'valid', 'basic.sql'),
+      );
+      try {
+        db.createElement('Configuration', {
+          'label': 'Test',
+          'date_attribute': DateTime(2024, 6, 15, 10, 30, 0),
+        });
+
+        final result = db.queryDateTime(
+          "SELECT date_attribute FROM Configuration WHERE label = 'Test'",
+        );
+        expect(result, equals(DateTime(2024, 6, 15, 10, 30, 0)));
+      } finally {
+        db.close();
+      }
+    });
+
+    test('returns null when no rows', () {
+      final db = Database.fromSchema(
+        ':memory:',
+        path.join(testsPath, 'schemas', 'valid', 'basic.sql'),
+      );
+      try {
+        final result = db.queryDateTime(
+          'SELECT date_attribute FROM Configuration WHERE 1 = 0',
+        );
+        expect(result, isNull);
+      } finally {
+        db.close();
+      }
+    });
+  });
 }
