@@ -299,3 +299,70 @@ TEST_F(MigrationFixture, DatabaseFromMigrationsMemory) {
     EXPECT_EQ(db.current_version(), 3);
     EXPECT_TRUE(db.is_healthy());
 }
+
+// ============================================================================
+// Schema loading after migrations tests
+// ============================================================================
+
+TEST_F(MigrationFixture, FromMigrationsLoadsSchemaMetadata) {
+    auto db = quiver::Database::from_migrations(":memory:", migrations_path);
+
+    // list_scalar_attributes requires schema to be loaded
+    auto attrs = db.list_scalar_attributes("Test1");
+    EXPECT_FALSE(attrs.empty());
+
+    // Verify expected columns exist
+    bool has_id = false, has_label = false, has_name = false;
+    for (const auto& attr : attrs) {
+        if (attr.name == "id") has_id = true;
+        if (attr.name == "label") has_label = true;
+        if (attr.name == "name") has_name = true;
+    }
+    EXPECT_TRUE(has_id);
+    EXPECT_TRUE(has_label);
+    EXPECT_TRUE(has_name);
+}
+
+TEST_F(MigrationFixture, FromMigrationsAllowsCreateElement) {
+    auto db = quiver::Database::from_migrations(":memory:", migrations_path);
+
+    // create_element requires schema and type_validator to be loaded
+    auto id = db.create_element("Test1", quiver::Element().set("label", "item1").set("name", "Test Item"));
+    EXPECT_GT(id, 0);
+
+    // Verify element was created
+    auto names = db.read_scalar_strings("Test1", "name");
+    ASSERT_EQ(names.size(), 1u);
+    EXPECT_EQ(names[0], "Test Item");
+}
+
+TEST_F(MigrationFixture, FromMigrationsAllowsCreateElementInLaterMigration) {
+    auto db = quiver::Database::from_migrations(":memory:", migrations_path);
+
+    // Test3 is created in migration 3
+    auto id = db.create_element("Test3", quiver::Element().set("label", "item1").set("capacity", int64_t{100}));
+    EXPECT_GT(id, 0);
+
+    auto capacities = db.read_scalar_integers("Test3", "capacity");
+    ASSERT_EQ(capacities.size(), 1u);
+    EXPECT_EQ(capacities[0], 100);
+}
+
+TEST_F(MigrationFixture, FromMigrationsLoadsSchemaWhenAlreadyUpToDate) {
+    // First, apply all migrations
+    {
+        auto db = quiver::Database::from_migrations(path, migrations_path);
+        EXPECT_EQ(db.current_version(), 3);
+    }
+
+    // Reopen with from_migrations again (no pending migrations)
+    auto db = quiver::Database::from_migrations(path, migrations_path);
+
+    // Schema should be loaded even though no migrations were applied
+    auto attrs = db.list_scalar_attributes("Test3");
+    EXPECT_FALSE(attrs.empty());
+
+    // Verify we can create elements
+    auto id = db.create_element("Test3", quiver::Element().set("label", "item1").set("capacity", int64_t{42}));
+    EXPECT_GT(id, 0);
+}
