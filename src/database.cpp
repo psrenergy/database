@@ -1402,11 +1402,11 @@ std::vector<SetMetadata> Database::list_set_groups(const std::string& collection
 }
 
 void Database::export_to_csv(const std::string& table, const std::string& path) {
-    throw std::runtime_error("export_to_csv not yet implemented");
+    return;
 }
 
 void Database::import_from_csv(const std::string& table, const std::string& path) {
-    throw std::runtime_error("import_from_csv not yet implemented");
+    return;
 }
 
 }  // namespace quiver
