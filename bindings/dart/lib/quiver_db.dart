@@ -7,6 +7,7 @@ export 'src/database.dart'
         DatabaseCSV,
         DatabaseDelete,
         DatabaseMetadata,
+        DatabaseQuery,
         DatabaseRead,
         DatabaseRelations,
         DatabaseUpdate;
