@@ -255,9 +255,13 @@ TEST(DatabaseCApiQuery, QueryStringWithParams) {
 
     char* value = nullptr;
     int has_value = 0;
-    auto err = quiver_database_query_string_params(
-        db, "SELECT string_attribute FROM Configuration WHERE label = ?",
-        param_types, param_values, 1, &value, &has_value);
+    auto err = quiver_database_query_string_params(db,
+                                                   "SELECT string_attribute FROM Configuration WHERE label = ?",
+                                                   param_types,
+                                                   param_values,
+                                                   1,
+                                                   &value,
+                                                   &has_value);
 
     EXPECT_EQ(err, QUIVER_OK);
     EXPECT_EQ(has_value, 1);
@@ -285,9 +289,13 @@ TEST(DatabaseCApiQuery, QueryIntegerWithParams) {
 
     int64_t value = 0;
     int has_value = 0;
-    auto err = quiver_database_query_integer_params(
-        db, "SELECT integer_attribute FROM Configuration WHERE label = ?",
-        param_types, param_values, 1, &value, &has_value);
+    auto err = quiver_database_query_integer_params(db,
+                                                    "SELECT integer_attribute FROM Configuration WHERE label = ?",
+                                                    param_types,
+                                                    param_values,
+                                                    1,
+                                                    &value,
+                                                    &has_value);
 
     EXPECT_EQ(err, QUIVER_OK);
     EXPECT_EQ(has_value, 1);
@@ -314,9 +322,13 @@ TEST(DatabaseCApiQuery, QueryFloatWithParams) {
 
     double value = 0.0;
     int has_value = 0;
-    auto err = quiver_database_query_float_params(
-        db, "SELECT float_attribute FROM Configuration WHERE label = ?",
-        param_types, param_values, 1, &value, &has_value);
+    auto err = quiver_database_query_float_params(db,
+                                                  "SELECT float_attribute FROM Configuration WHERE label = ?",
+                                                  param_types,
+                                                  param_values,
+                                                  1,
+                                                  &value,
+                                                  &has_value);
 
     EXPECT_EQ(err, QUIVER_OK);
     EXPECT_EQ(has_value, 1);
@@ -343,9 +355,14 @@ TEST(DatabaseCApiQuery, QueryWithIntegerParam) {
 
     int64_t value = 0;
     int has_value = 0;
-    auto err = quiver_database_query_integer_params(
-        db, "SELECT integer_attribute FROM Configuration WHERE integer_attribute > ?",
-        param_types, param_values, 1, &value, &has_value);
+    auto err =
+        quiver_database_query_integer_params(db,
+                                             "SELECT integer_attribute FROM Configuration WHERE integer_attribute > ?",
+                                             param_types,
+                                             param_values,
+                                             1,
+                                             &value,
+                                             &has_value);
 
     EXPECT_EQ(err, QUIVER_OK);
     EXPECT_EQ(has_value, 1);
@@ -371,8 +388,7 @@ TEST(DatabaseCApiQuery, QueryWithNullParam) {
     int64_t value = 0;
     int has_value = 0;
     auto err = quiver_database_query_integer_params(
-        db, "SELECT COUNT(*) FROM Configuration WHERE ? IS NULL",
-        param_types, param_values, 1, &value, &has_value);
+        db, "SELECT COUNT(*) FROM Configuration WHERE ? IS NULL", param_types, param_values, 1, &value, &has_value);
 
     EXPECT_EQ(err, QUIVER_OK);
     EXPECT_EQ(has_value, 1);
@@ -399,8 +415,7 @@ TEST(DatabaseCApiQuery, QueryParamsNoMatch) {
     char* value = nullptr;
     int has_value = 1;
     auto err = quiver_database_query_string_params(
-        db, "SELECT label FROM Configuration WHERE label = ?",
-        param_types, param_values, 1, &value, &has_value);
+        db, "SELECT label FROM Configuration WHERE label = ?", param_types, param_values, 1, &value, &has_value);
 
     EXPECT_EQ(err, QUIVER_OK);
     EXPECT_EQ(has_value, 0);

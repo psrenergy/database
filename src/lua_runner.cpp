@@ -588,10 +588,8 @@ struct LuaRunner::Impl {
         return values;
     }
 
-    static sol::object query_string_to_lua(Database& db,
-                                           const std::string& sql,
-                                           sol::optional<sol::table> params,
-                                           sol::this_state s) {
+    static sol::object
+    query_string_to_lua(Database& db, const std::string& sql, sol::optional<sol::table> params, sol::this_state s) {
         sol::state_view lua(s);
         auto values = params ? lua_table_to_values(*params) : std::vector<Value>{};
         auto result = db.query_string(sql, values);
@@ -601,10 +599,8 @@ struct LuaRunner::Impl {
         return sol::make_object(lua, sol::nil);
     }
 
-    static sol::object query_integer_to_lua(Database& db,
-                                            const std::string& sql,
-                                            sol::optional<sol::table> params,
-                                            sol::this_state s) {
+    static sol::object
+    query_integer_to_lua(Database& db, const std::string& sql, sol::optional<sol::table> params, sol::this_state s) {
         sol::state_view lua(s);
         auto values = params ? lua_table_to_values(*params) : std::vector<Value>{};
         auto result = db.query_integer(sql, values);
@@ -614,10 +610,8 @@ struct LuaRunner::Impl {
         return sol::make_object(lua, sol::nil);
     }
 
-    static sol::object query_float_to_lua(Database& db,
-                                          const std::string& sql,
-                                          sol::optional<sol::table> params,
-                                          sol::this_state s) {
+    static sol::object
+    query_float_to_lua(Database& db, const std::string& sql, sol::optional<sol::table> params, sol::this_state s) {
         sol::state_view lua(s);
         auto values = params ? lua_table_to_values(*params) : std::vector<Value>{};
         auto result = db.query_float(sql, values);

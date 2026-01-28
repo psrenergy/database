@@ -203,7 +203,8 @@ TEST(DatabaseQuery, QueryIntegerWithParams) {
     e.set("label", std::string("Test")).set("integer_attribute", int64_t{42});
     db.create_element("Configuration", e);
 
-    auto result = db.query_integer("SELECT integer_attribute FROM Configuration WHERE label = ?", {std::string("Test")});
+    auto result =
+        db.query_integer("SELECT integer_attribute FROM Configuration WHERE label = ?", {std::string("Test")});
     ASSERT_TRUE(result.has_value());
     EXPECT_EQ(*result, 42);
 }
@@ -233,9 +234,9 @@ TEST(DatabaseQuery, QueryIntegerWithMultipleParams) {
     e2.set("label", std::string("B")).set("integer_attribute", int64_t{20});
     db.create_element("Configuration", e2);
 
-    auto result = db.query_integer(
-        "SELECT integer_attribute FROM Configuration WHERE label = ? AND integer_attribute > ?",
-        {std::string("B"), int64_t{5}});
+    auto result =
+        db.query_integer("SELECT integer_attribute FROM Configuration WHERE label = ? AND integer_attribute > ?",
+                         {std::string("B"), int64_t{5}});
     ASSERT_TRUE(result.has_value());
     EXPECT_EQ(*result, 20);
 }

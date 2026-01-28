@@ -1341,12 +1341,12 @@ convert_params(const int* param_types, const void* const* param_values, size_t p
 }
 
 QUIVER_C_API quiver_error_t quiver_database_query_string_params(quiver_database_t* db,
-                                                                 const char* sql,
-                                                                 const int* param_types,
-                                                                 const void* const* param_values,
-                                                                 size_t param_count,
-                                                                 char** out_value,
-                                                                 int* out_has_value) {
+                                                                const char* sql,
+                                                                const int* param_types,
+                                                                const void* const* param_values,
+                                                                size_t param_count,
+                                                                char** out_value,
+                                                                int* out_has_value) {
     if (!db || !sql || !out_value || !out_has_value || (param_count > 0 && (!param_types || !param_values))) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -1368,12 +1368,12 @@ QUIVER_C_API quiver_error_t quiver_database_query_string_params(quiver_database_
 }
 
 QUIVER_C_API quiver_error_t quiver_database_query_integer_params(quiver_database_t* db,
-                                                                  const char* sql,
-                                                                  const int* param_types,
-                                                                  const void* const* param_values,
-                                                                  size_t param_count,
-                                                                  int64_t* out_value,
-                                                                  int* out_has_value) {
+                                                                 const char* sql,
+                                                                 const int* param_types,
+                                                                 const void* const* param_values,
+                                                                 size_t param_count,
+                                                                 int64_t* out_value,
+                                                                 int* out_has_value) {
     if (!db || !sql || !out_value || !out_has_value || (param_count > 0 && (!param_types || !param_values))) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }
@@ -1394,12 +1394,12 @@ QUIVER_C_API quiver_error_t quiver_database_query_integer_params(quiver_database
 }
 
 QUIVER_C_API quiver_error_t quiver_database_query_float_params(quiver_database_t* db,
-                                                                const char* sql,
-                                                                const int* param_types,
-                                                                const void* const* param_values,
-                                                                size_t param_count,
-                                                                double* out_value,
-                                                                int* out_has_value) {
+                                                               const char* sql,
+                                                               const int* param_types,
+                                                               const void* const* param_values,
+                                                               size_t param_count,
+                                                               double* out_value,
+                                                               int* out_has_value) {
     if (!db || !sql || !out_value || !out_has_value || (param_count > 0 && (!param_types || !param_values))) {
         return QUIVER_ERROR_INVALID_ARGUMENT;
     }

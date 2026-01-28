@@ -2078,7 +2078,13 @@ class QuiverDatabaseBindings {
     ffi.Pointer<ffi.Int> out_has_value,
   ) {
     return _quiver_database_query_string_params(
-      db, sql, param_types, param_values, param_count, out_value, out_has_value,
+      db,
+      sql,
+      param_types,
+      param_values,
+      param_count,
+      out_value,
+      out_has_value,
     );
   }
 
@@ -2119,7 +2125,13 @@ class QuiverDatabaseBindings {
     ffi.Pointer<ffi.Int> out_has_value,
   ) {
     return _quiver_database_query_integer_params(
-      db, sql, param_types, param_values, param_count, out_value, out_has_value,
+      db,
+      sql,
+      param_types,
+      param_values,
+      param_count,
+      out_value,
+      out_has_value,
     );
   }
 
@@ -2160,7 +2172,13 @@ class QuiverDatabaseBindings {
     ffi.Pointer<ffi.Int> out_has_value,
   ) {
     return _quiver_database_query_float_params(
-      db, sql, param_types, param_values, param_count, out_value, out_has_value,
+      db,
+      sql,
+      param_types,
+      param_values,
+      param_count,
+      out_value,
+      out_has_value,
     );
   }
 
