@@ -478,10 +478,6 @@ void Database::apply_schema(const std::string& schema_path) {
     namespace fs = std::filesystem;
     auto canonical_schema_path = fs::canonical(schema_path).string();
 
-    if (!fs::exists(canonical_schema_path)) {
-        throw std::runtime_error("Schema file not found: " + canonical_schema_path);
-    }
-
     std::ifstream file(canonical_schema_path);
     if (!file.is_open()) {
         throw std::runtime_error("Failed to open schema file: " + canonical_schema_path);
